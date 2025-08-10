@@ -7,9 +7,9 @@ const useYouTubeData = () => {
   const [error, setError] = useState(null);
 
   // IMPORTANT: Replace this URL with the URL of your deployed YouTube worker.
-  const workerUrl = 'https://your-youtube-worker.workers.dev';
+  const workerUrl = 'https://youtube-count.imdhanashekar.workers.dev';
   // IMPORTANT: Replace with your actual YouTube Channel ID.
-  const channelId = 'YOUR_YOUTUBE_CHANNEL_ID';
+  const channelId = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
 
   useEffect(() => {
     const fetchYouTubeData = async () => {
@@ -55,9 +55,9 @@ const useFaceitData = () => {
   const [error, setError] = useState(null);
   
   // IMPORTANT: Replace with the URL of your deployed Faceit worker
-  const faceitWorkerUrl = 'https://your-faceit-worker.workers.dev';
+  const faceitWorkerUrl = 'hhttps://faceit-elo.imdhanashekar.workers.dev/';
   // IMPORTANT: Replace with your actual Faceit Player ID
-  const playerId = 'YOUR_FACEIT_PLAYER_ID'; 
+  const playerId = '57280df3-9f9c-464e-bca9-e943c5d037f0'; 
 
   useEffect(() => {
     const fetchEloData = async () => {
