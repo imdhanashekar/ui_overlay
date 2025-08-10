@@ -55,7 +55,7 @@ const useFaceitData = () => {
   const [error, setError] = useState(null);
   
   // IMPORTANT: Replace with the URL of your deployed Faceit worker
-  const faceitWorkerUrl = 'hhttps://faceit-elo.imdhanashekar.workers.dev/';
+  const faceitWorkerUrl = 'https://faceit-elo.imdhanashekar.workers.dev/';
   // IMPORTANT: Replace with your actual Faceit Player ID
   const playerId = '57280df3-9f9c-464e-bca9-e943c5d037f0'; 
 
