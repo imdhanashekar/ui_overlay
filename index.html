@@ -65,32 +65,54 @@
 
         // Function to fetch YouTube Subscriber count
         const fetchYouTubeSubs = async () => {
+            // Check for placeholder values before making the API call
+            if (YOUTUBE_WORKER_URL.includes('your-youtube-worker') || YOUTUBE_CHANNEL_ID === 'YOUR_YOUTUBE_CHANNEL_ID') {
+                console.error("Please update the YouTube worker URL and channel ID in the code.");
+                document.getElementById('subscriber-count').textContent = 'N/A';
+                return;
+            }
+
             const url = `${YOUTUBE_WORKER_URL}?channelId=${YOUTUBE_CHANNEL_ID}`;
             try {
+                console.log("Fetching YouTube data from:", url); // Log the URL for debugging
                 const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch YouTube data');
-                }
                 const data = await response.json();
-                document.getElementById('subscriber-count').textContent = data.subscriberCount;
+                
+                if (response.ok && data.subscriberCount) {
+                    document.getElementById('subscriber-count').textContent = data.subscriberCount;
+                } else {
+                    throw new Error(data.error || 'Failed to fetch YouTube data');
+                }
             } catch (error) {
-                console.error("Could not fetch YouTube subs:", error);
+                // A more descriptive error message to help the user diagnose the problem.
+                console.error("Could not fetch YouTube subs. Possible issues: incorrect URL, worker not deployed, or network connectivity problems.", error);
                 document.getElementById('subscriber-count').textContent = 'N/A';
             }
         };
 
         // Function to fetch Faceit ELO
         const fetchFaceitElo = async () => {
+            // Check for placeholder values before making the API call
+            if (FACEIT_WORKER_URL.includes('your-faceit-worker') || FACEIT_PLAYER_ID === 'YOUR_FACEIT_PLAYER_ID') {
+                console.error("Please update the Faceit worker URL and player ID in the code.");
+                document.getElementById('elo-value').textContent = 'N/A';
+                return;
+            }
+            
             const url = `${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`;
             try {
+                console.log("Fetching Faceit data from:", url); // Log the URL for debugging
                 const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch Faceit data');
-                }
                 const data = await response.json();
-                document.getElementById('elo-value').textContent = data.games.cs2.faceit_elo;
+                
+                if (response.ok && data.games && data.games.cs2 && data.games.cs2.faceit_elo) {
+                    document.getElementById('elo-value').textContent = data.games.cs2.faceit_elo;
+                } else {
+                    throw new Error(data.error || 'Failed to fetch Faceit data');
+                }
             } catch (error) {
-                console.error("Could not fetch Faceit ELO:", error);
+                // A more descriptive error message to help the user diagnose the problem.
+                console.error("Could not fetch Faceit ELO. Possible issues: incorrect URL, worker not deployed, or network connectivity problems.", error);
                 document.getElementById('elo-value').textContent = 'N/A';
             }
         };
@@ -104,7 +126,6 @@
             setInterval(fetchYouTubeSubs, 300000); // Every 5 minutes
             setInterval(fetchFaceitElo, 30000);   // Every 30 seconds
         });
-
     </script>
 </body>
 </html>
