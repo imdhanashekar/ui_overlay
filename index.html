@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Overlay</title>
+    <!-- Tailwind CSS for modern, customizable styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: transparent; /* Makes the background transparent in OBS */
+            overflow: hidden;
+        }
+
+        .overlay-card {
+            background-color: rgba(30, 41, 59, 0.7); /* slate-800 with transparency */
+            color: #ffffff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .highlight-text {
+            color: #29b6f6; /* A light blue color */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-transparent overflow-hidden">
+
+    <div class="p-4 flex flex-col space-y-4 w-full h-full justify-center items-center">
+        <!-- YouTube Subscriber Card -->
+        <div id="youtube-subscribers" class="overlay-card transform transition-transform hover:scale-105">
+            <span class="text-sm font-semibold">YouTube Subs:</span>
+            <span id="subscriber-count" class="text-2xl font-bold highlight-text">Loading...</span>
+        </div>
+
+        <!-- Faceit ELO Card -->
+        <div id="faceit-elo" class="overlay-card transform transition-transform hover:scale-105">
+            <span class="text-sm font-semibold">CS2 ELO:</span>
+            <span id="elo-value" class="text-2xl font-bold highlight-text">Loading...</span>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION SECTION ---
+
+        // IMPORTANT: Replace this URL with the URL of your deployed YouTube worker.
+        const YOUTUBE_WORKER_URL = 'https://youtube-count.imdhanashekar.workers.dev';
+        // IMPORTANT: Replace with your actual YouTube Channel ID.
+        const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
+
+        // IMPORTANT: Replace with the URL of your deployed Faceit worker.
+        const FACEIT_WORKER_URL = 'https://faceit-elo.imdhanashekar.workers.dev';
+        // IMPORTANT: Replace with your actual Faceit Player ID.
+        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
+
+        // --- DO NOT MODIFY BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING ---
+
+        // Function to fetch YouTube Subscriber count
+        const fetchYouTubeSubs = async () => {
+            const url = `${YOUTUBE_WORKER_URL}?channelId=${YOUTUBE_CHANNEL_ID}`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch YouTube data');
+                }
+                const data = await response.json();
+                document.getElementById('subscriber-count').textContent = data.subscriberCount;
+            } catch (error) {
+                console.error("Could not fetch YouTube subs:", error);
+                document.getElementById('subscriber-count').textContent = 'N/A';
+            }
+        };
+
+        // Function to fetch Faceit ELO
+        const fetchFaceitElo = async () => {
+            const url = `${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch Faceit data');
+                }
+                const data = await response.json();
+                document.getElementById('elo-value').textContent = data.games.cs2.faceit_elo;
+            } catch (error) {
+                console.error("Could not fetch Faceit ELO:", error);
+                document.getElementById('elo-value').textContent = 'N/A';
+            }
+        };
+
+        // Fetch data on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchYouTubeSubs();
+            fetchFaceitElo();
+
+            // Set intervals for periodic updates
+            setInterval(fetchYouTubeSubs, 300000); // Every 5 minutes
+            setInterval(fetchFaceitElo, 30000);   // Every 30 seconds
+        });
+
+    </script>
+</body>
+</html>
