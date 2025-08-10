@@ -51,27 +51,18 @@
     <script>
         // --- CONFIGURATION SECTION ---
 
-        // IMPORTANT: Replace this URL with the URL of your deployed YouTube worker.
+        // IMPORTANT: The placeholder values have been replaced with the URLs and IDs you provided earlier.
+        // If these are incorrect, please update them here.
         const YOUTUBE_WORKER_URL = 'https://youtube-count.imdhanashekar.workers.dev';
-        // IMPORTANT: Replace with your actual YouTube Channel ID.
         const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
 
-        // IMPORTANT: Replace with the URL of your deployed Faceit worker.
         const FACEIT_WORKER_URL = 'https://faceit-elo.imdhanashekar.workers.dev';
-        // IMPORTANT: Replace with your actual Faceit Player ID.
         const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
 
         // --- DO NOT MODIFY BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING ---
 
         // Function to fetch YouTube Subscriber count
         const fetchYouTubeSubs = async () => {
-            // Check for placeholder values before making the API call
-            if (YOUTUBE_WORKER_URL.includes('your-youtube-worker') || YOUTUBE_CHANNEL_ID === 'YOUR_YOUTUBE_CHANNEL_ID') {
-                console.error("Please update the YouTube worker URL and channel ID in the code.");
-                document.getElementById('subscriber-count').textContent = 'N/A';
-                return;
-            }
-
             const url = `${YOUTUBE_WORKER_URL}?channelId=${YOUTUBE_CHANNEL_ID}`;
             try {
                 console.log("Fetching YouTube data from:", url); // Log the URL for debugging
@@ -92,13 +83,6 @@
 
         // Function to fetch Faceit ELO
         const fetchFaceitElo = async () => {
-            // Check for placeholder values before making the API call
-            if (FACEIT_WORKER_URL.includes('your-faceit-worker') || FACEIT_PLAYER_ID === 'YOUR_FACEIT_PLAYER_ID') {
-                console.error("Please update the Faceit worker URL and player ID in the code.");
-                document.getElementById('elo-value').textContent = 'N/A';
-                return;
-            }
-            
             const url = `${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`;
             try {
                 console.log("Fetching Faceit data from:", url); // Log the URL for debugging
