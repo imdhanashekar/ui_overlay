@@ -3,112 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Overlay</title>
-    <!-- Tailwind CSS for modern, customizable styling -->
+    <title>CS2 Stream Overlay</title>
+    <!-- Tailwind CSS for a modern utility-first approach -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Import a clean, modern font that matches the CS2 feel */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: transparent; /* Makes the background transparent in OBS */
+            background-color: transparent; /* Essential for OBS transparency */
             overflow: hidden;
+            color: #E2E8F0; /* Light text for high contrast */
         }
 
-        .overlay-card {
-            background-color: rgba(30, 41, 59, 0.7); /* slate-800 with transparency */
-            color: #ffffff;
-            padding: 0.75rem 1.25rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .overlay-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .card {
+            /* Increased transparency to 0.3 (was 0.4) */
+            background-color: rgba(30, 41, 59, 0.3); /* slate-800 with increased transparency */
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 1rem; /* p-4 for consistency with chat box */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Stronger shadow for depth */
+            border: 2px solid rgba(45, 212, 191, 0.5); /* A subtle teal border */
+            backdrop-filter: blur(8px); /* A more noticeable blur effect */
+            transition: all 0.3s ease-in-out;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            transition: all 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
         }
 
         .highlight-text {
-            color: #29b6f6; /* A light blue color */
+            color: #FF5500; /* A crisp orange for highlights */
             font-weight: bold;
+        }
+
+        /* The chat container's transparency is also increased */
+        .chat-container {
+            width: 30vw; /* Responsive width */
+            max-width: 320px; /* max-w-xs for consistency with other elements on the left side */
+            height: 30vh; /* Responsive height */
+            max-height: 400px;
+            overflow: hidden;
+            background-color: rgba(30, 41, 59, 0.3); /* More transparent background */
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(45, 212, 191, 0.5);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .chat-container:hover {
+            transform: scale(1.01);
+        }
+
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            overflow-y: auto; /* Allows scrolling if chat gets too long */
+        }
+        
+        /* Custom scrollbar styling for a cleaner look */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(45, 212, 191, 0.5);
+            border-radius: 4px;
+        }
+
+        .chat-message {
+            animation: fadeIn 0.5s ease-out forwards;
+            background-color: rgba(255, 255, 255, 0.05); /* Subtle background for each message */
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
     </style>
 </head>
 <body class="bg-transparent overflow-hidden">
 
-    <div class="p-4 flex flex-col space-y-4 w-full h-full justify-center items-center">
-        <!-- YouTube Subscriber Card -->
-        <div id="youtube-subscribers" class="overlay-card transform transition-transform hover:scale-105">
-            <span class="text-sm font-semibold">YouTube Subs:</span>
-            <span id="subscriber-count" class="text-2xl font-bold highlight-text">Loading...</span>
-        </div>
+    <div class="overlay-container">
 
-        <!-- Faceit ELO Card -->
-        <div id="faceit-elo" class="overlay-card transform transition-transform hover:scale-105">
-            <span class="text-sm font-semibold">CS2 ELO:</span>
-            <span id="elo-value" class="text-2xl font-bold highlight-text">Loading...</span>
+        <!-- Left-side content grouped and vertically centered -->
+        <div class="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col space-y-8">
+            <!-- Combined YouTube Sub Count and Recent Follower Box -->
+            <div id="combined-info-box" class="w-full max-w-xs">
+                <div class="card flex-col items-start space-y-4">
+                    <!-- YouTube Live Sub Count -->
+                    <div class="flex items-center w-full justify-between">
+                        <span class="text-sm font-bold">Subscribers:</span>
+                        <div class="flex items-center">
+                            <span id="youtube-count" class="ml-2 text-lg font-bold highlight-text">0</span>
+                            <span class="text-sm font-bold">/</span>
+                            <span id="youtube-goal" class="text-sm">100</span>
+                        </div>
+                    </div>
+                    <div class="w-full h-px bg-teal-500 opacity-50"></div> <!-- A subtle separator line -->
+                    <!-- Recent Follower/Subscriber -->
+                    <div class="flex-col items-start w-full">
+                        <span class="text-sm font-bold">Recent Follower</span>
+                        <span id="recent-follower-name" class="mt-1 text-lg font-bold highlight-text">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Faceit ELO -->
+            <div id="faceit-elo-box" class="w-full max-w-xs">
+                <div class="card">
+                    <span class="text-sm font-bold">FACEIT ELO:</span>
+                    <span id="elo-value" class="ml-2 text-lg font-bold highlight-text">0</span>
+                    <span class="text-sm ml-2 font-bold">Level:</span>
+                    <span id="elo-level" class="text-lg font-bold highlight-text">0</span>
+                </div>
+            </div>
+            <!-- Live Chat Box (moved to the left) -->
+            <div id="live-chat-box">
+                <div class="chat-container">
+                    <div id="chat-messages" class="chat-messages">
+                        <!-- Placeholder messages to show the style -->
+                        <div class="chat-message">
+                            <span class="font-bold text-teal-300">Gemini:</span>
+                            <span>Welcome to the stream! Let's get this dub.</span>
+                        </div>
+                        <div class="chat-message">
+                            <span class="font-bold text-purple-300">Viewer1:</span>
+                            <span>Nice shot! What ELO are you?</span>
+                        </div>
+                        <div class="chat-message">
+                            <span class="font-bold text-blue-300">Viewer2:</span>
+                            <span>Looking great! Let's get to a higher level.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         // --- CONFIGURATION SECTION ---
 
-        // IMPORTANT: The placeholder values have been replaced with the URLs and IDs you provided earlier.
-        // If these are incorrect, please update them here.
-        const YOUTUBE_WORKER_URL = 'https://youtube-count.darms1er.workers.dev/';
+        // IMPORTANT: Replace with the URL of your deployed YouTube Count Worker.
+        const YOUTUBE_COUNT_WORKER_URL = 'https://youtube-count.darms1er.workers.dev/';
+        // IMPORTANT: Replace with your actual YouTube Channel ID.
         const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
+        // Your subscriber goal (e.g., 100, 500, etc.)
+        const SUBSCRIBER_GOAL = 80;
 
+        // IMPORTANT: Replace with the URL of your deployed Faceit Worker.
         const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev/';
+        // IMPORTANT: Replace with your actual FACEIT Player ID.
         const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
+        
+        // Set a refresh rate in milliseconds. 30000 (30 seconds) is a good balance.
+        const REFRESH_RATE = 30000; 
 
         // --- DO NOT MODIFY BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING ---
 
-        // Function to fetch YouTube Subscriber count
-        const fetchYouTubeSubs = async () => {
-            const url = `${YOUTUBE_WORKER_URL}?channelId=${YOUTUBE_CHANNEL_ID}`;
+        // Function to fetch the YouTube subscriber count
+        const fetchYouTubeCount = async () => {
+            if (YOUTUBE_COUNT_WORKER_URL === 'https://your-youtube-count-worker.workers.dev' && YOUTUBE_CHANNEL_ID === 'UC_uN3iaa1OZxpQ05Fl-dhgA') {
+                document.getElementById('youtube-count').textContent = 'N/A';
+                console.warn("Please update the YouTube worker URL and channel ID.");
+                return;
+            }
+
+            const url = `${YOUTUBE_COUNT_WORKER_URL}?channelId=${YOUTUBE_CHANNEL_ID}`;
             try {
-                console.log("Fetching YouTube data from:", url); // Log the URL for debugging
                 const response = await fetch(url);
                 const data = await response.json();
                 
                 if (response.ok && data.subscriberCount) {
-                    document.getElementById('subscriber-count').textContent = data.subscriberCount;
+                    document.getElementById('youtube-count').textContent = data.subscriberCount;
+                    document.getElementById('youtube-goal').textContent = SUBSCRIBER_GOAL;
                 } else {
-                    throw new Error(data.error || 'Failed to fetch YouTube data');
+                    throw new Error(data.error || 'Failed to fetch YouTube count.');
                 }
             } catch (error) {
-                // A more descriptive error message to help the user diagnose the problem.
-                console.error("Could not fetch YouTube subs. Possible issues: incorrect URL, worker not deployed, or network connectivity problems.", error);
-                document.getElementById('subscriber-count').textContent = 'N/A';
+                console.error("Could not fetch YouTube count:", error);
+                document.getElementById('youtube-count').textContent = 'N/A';
             }
         };
 
-        // Function to fetch Faceit ELO
-        const fetchFaceitElo = async () => {
-            const url = `${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`;
+        // Function to fetch Faceit ELO and Level
+        const fetchFaceitData = async () => {
+            if (FACEIT_WORKER_URL === 'https://your-faceit-worker.workers.dev' || FACEIT_PLAYER_ID === 'PLEASE_REPLACE_WITH_YOUR_ID') {
+                document.getElementById('elo-value').textContent = 'N/A';
+                document.getElementById('elo-level').textContent = 'N/A';
+                console.warn("Please update the FACEIT worker URL and Player ID.");
+                return;
+            }
+
+            // The API URL now points to your secure Cloudflare Worker
+            const apiUrl = `${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`;
+
             try {
-                console.log("Fetching Faceit data from:", url); // Log the URL for debugging
-                const response = await fetch(url);
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
                 
-                if (response.ok && data.games && data.games.cs2 && data.games.cs2.faceit_elo) {
-                    document.getElementById('elo-value').textContent = data.games.cs2.faceit_elo;
-                } else {
-                    throw new Error(data.error || 'Failed to fetch Faceit data');
-                }
+                const elo = data.games.cs2.faceit_elo || 0;
+                const level = data.games.cs2.skill_level || 0;
+
+                document.getElementById('elo-value').textContent = elo;
+                document.getElementById('elo-level').textContent = level;
+
             } catch (error) {
-                // A more descriptive error message to help the user diagnose the problem.
-                console.error("Could not fetch Faceit ELO. Possible issues: incorrect URL, worker not deployed, or network connectivity problems.", error);
+                console.error("Could not fetch Faceit ELO:", error);
                 document.getElementById('elo-value').textContent = 'N/A';
+                document.getElementById('elo-level').textContent = 'N/A';
             }
         };
 
-        // Fetch data on page load
+        // Fetch data on page load and then set an interval for periodic updates
         document.addEventListener('DOMContentLoaded', () => {
-            fetchYouTubeSubs();
-            fetchFaceitElo();
-
+            fetchYouTubeCount();
+            fetchFaceitData();
+            
             // Set intervals for periodic updates
-            setInterval(fetchYouTubeSubs, 300000); // Every 5 minutes
-            setInterval(fetchFaceitElo, 30000);   // Every 30 seconds
+            setInterval(fetchYouTubeCount, REFRESH_RATE);
+            setInterval(fetchFaceitData, REFRESH_RATE);
         });
     </script>
 </body>
