@@ -186,7 +186,7 @@
         // Function to fetch the YouTube subscriber count
         const fetchYouTubeCount = async () => {
             if (YOUTUBE_COUNT_WORKER_URL === 'https://your-youtube-count-worker.workers.dev' && YOUTUBE_CHANNEL_ID === 'UC_uN3iaa1OZxpQ05Fl-dhgA') {
-                document.getElementById('youtube-count').textContent = 'N/A';
+                document.getElementById('youtube-count').textContent = '';
                 console.warn("Please update the YouTube worker URL and channel ID.");
                 return;
             }
