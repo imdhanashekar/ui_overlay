@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS2 Stream Overlay</title>
+    <!-- Tailwind CSS for a modern utility-first approach -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Import a clean, modern font that matches the CS2 feel */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: transparent; /* Essential for OBS transparency */
@@ -23,10 +24,10 @@
         }
 
         .card {
-            /* Increased transparency to 0.3 (was 0.4) */
+            /* Increased transparency to 0.3 */
             background-color: rgba(30, 41, 59, 0.3); /* slate-800 with increased transparency */
             border-radius: 0.75rem; /* rounded-xl */
-            padding: 1rem; /* p-4 for consistency with chat box */
+            padding: 1.5rem; /* Increased padding from p-4 to p-6 */
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Stronger shadow for depth */
             border: 2px solid rgba(45, 212, 191, 0.5); /* A subtle teal border */
             backdrop-filter: blur(8px); /* A more noticeable blur effect */
@@ -44,78 +45,18 @@
             color: #FF5500; /* A crisp orange for highlights */
             font-weight: bold;
         }
-
-        /* The chat container's transparency is also increased */
-        .chat-container {
-            width: 30vw; /* Responsive width */
-            max-width: 320px; /* max-w-xs for consistency with other elements on the left side */
-            height: 30vh; /* Responsive height */
-            max-height: 400px;
-            overflow: hidden;
-            background-color: rgba(30, 41, 59, 0.3); /* More transparent background */
-            padding: 1rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-            border: 2px solid rgba(45, 212, 191, 0.5);
-            backdrop-filter: blur(8px);
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Center the message */
-            align-items: center; /* Center the message */
-            text-align: center;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .chat-container:hover {
-            transform: scale(1.01);
-        }
-
-        .chat-messages {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            overflow-y: auto; /* Allows scrolling if chat gets too long */
-        }
-
-        /* Custom scrollbar styling for a cleaner look */
-        .chat-messages::-webkit-scrollbar {
-            width: 8px;
-        }
-        .chat-messages::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.2);
-            border-radius: 4px;
-        }
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: rgba(45, 212, 191, 0.5);
-            border-radius: 4px;
-        }
-
-        .chat-message {
-            animation: fadeIn 0.5s ease-out forwards;
-            background-color: rgba(255, 255, 255, 0.05); /* Subtle background for each message */
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateX(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
     </style>
 </head>
 <body class="bg-transparent overflow-hidden">
 
     <div class="overlay-container">
 
+        <!-- Left-side content grouped and vertically centered -->
         <div class="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col space-y-8">
-            <div id="combined-info-box" class="w-full max-w-xs">
+            <!-- Combined YouTube Sub Count and Recent Follower Box -->
+            <div id="combined-info-box" class="w-full max-w-2xl">
                 <div class="card flex-col items-start space-y-4">
+                    <!-- YouTube Live Sub Count -->
                     <div class="flex items-center w-full justify-between">
                         <span class="text-sm font-bold">Subscribers:</span>
                         <div class="flex items-center">
@@ -124,16 +65,19 @@
                             <span id="youtube-goal" class="text-sm">100</span>
                         </div>
                     </div>
-                    <div class="w-full h-px bg-teal-500 opacity-50"></div> <div class="flex items-center w-full justify-between">
-                        <span class="text-sm font-bold">Recent Follower:</span>
-                        <span id="recent-follower-name" class="ml-2 text-lg font-bold highlight-text max-w-[15rem] overflow-hidden whitespace-nowrap text-ellipsis"></span>
+                    <div class="w-full h-px bg-teal-500 opacity-50"></div> <!-- A subtle separator line -->
+                    <!-- Recent Follower/Subscriber -->
+                    <div class="flex items-center w-full justify-between">
+                        <span class="text-sm font-bold">Recent Follower</span>
+                        <span id="recent-follower-name" class="ml-2 text-lg font-bold highlight-text max-w-xl overflow-hidden whitespace-nowrap text-ellipsis">Bhavesh Sharma</span>
                     </div>
                 </div>
             </div>
-            <div id="faceit-elo-box" class="w-full max-w-xs">
+            <!-- Faceit ELO -->
+            <div id="faceit-elo-box" class="w-full max-w-2xl">
                 <div class="card flex items-center justify-between">
                     <div class="flex items-center">
-                        <span class="text-sm font-bold">FACEIT ELO:</span>
+                        <span class="text-sm font-bold">ELO:</span>
                         <span id="elo-value" class="ml-2 text-lg font-bold highlight-text">0</span>
                     </div>
                     <div class="flex items-center">
@@ -141,10 +85,6 @@
                         <span id="elo-level" class="ml-2 text-lg font-bold highlight-text">0</span>
                     </div>
                 </div>
-            </div>
-            <div id="live-chat-box">
-                <div class="chat-container">
-                    </div>
             </div>
         </div>
     </div>
@@ -163,10 +103,7 @@
         const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
         // IMPORTANT: Replace with your actual FACEIT Player ID.
         const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
-
-        // IMPORTANT: Replace this with the URL from your StreamElements/Streamlabs "Recent Follower" widget.
-        const RECENT_FOLLOWER_URL = 'https://your-streamelements-recent-follower-widget-url';
-
+        
         // Set a refresh rate in milliseconds. 30000 (30 seconds) is a good balance.
         const REFRESH_RATE = 30000; 
 
@@ -174,18 +111,17 @@
 
         // Function to fetch the YouTube subscriber count
         const fetchYouTubeCount = async () => {
-            if (YOUTUBE_COUNT_WORKER_URL === 'YOUTUBE_COUNT_WORKER_URL' || YOUTUBE_CHANNEL_ID === 'CHANNEL_ID') {
+            if (YOUTUBE_COUNT_WORKER_URL === 'https://your-youtube-count-worker.workers.dev' && YOUTUBE_CHANNEL_ID === 'UC_uN3iaa1OZxpQ05Fl-dhgA') {
                 document.getElementById('youtube-count').textContent = 'N/A';
                 console.warn("Please update the YouTube worker URL and channel ID.");
                 return;
             }
 
-            // Append a unique timestamp to bust the cache
-            const url = `${YOUTUBE_COUNT_WORKER_URL}?channelId=${YOUTUBE_CHANNEL_ID}&t=${new Date().getTime()}`;
+            const url = `${YOUTUBE_COUNT_WORKER_URL}?channelId=${YOUTUBE_CHANNEL_ID}`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-
+                
                 if (response.ok && data.subscriberCount) {
                     document.getElementById('youtube-count').textContent = data.subscriberCount;
                     document.getElementById('youtube-goal').textContent = SUBSCRIBER_GOAL;
@@ -200,25 +136,25 @@
 
         // Function to fetch Faceit ELO and Level
         const fetchFaceitData = async () => {
-            if (FACEIT_WORKER_URL === 'FACEIT_WORKER_URL' || FACEIT_PLAYER_ID === 'FACEIT_PLAYER_ID') {
+            if (FACEIT_WORKER_URL === 'https://your-faceit-worker.workers.dev' || FACEIT_PLAYER_ID === 'PLEASE_REPLACE_WITH_YOUR_ID') {
                 document.getElementById('elo-value').textContent = 'N/A';
                 document.getElementById('elo-level').textContent = 'N/A';
                 console.warn("Please update the FACEIT worker URL and Player ID.");
                 return;
             }
 
-            // The API URL now points to your secure Cloudflare Worker with cache busting
-            const apiUrl = `${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}?t=${new Date().getTime()}`;
+            // The API URL now points to your secure Cloudflare Worker
+            const apiUrl = `${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`;
 
             try {
                 const response = await fetch(apiUrl);
-
+                
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
-
+                
                 const elo = data.games.cs2.faceit_elo || 0;
                 const level = data.games.cs2.skill_level || 0;
 
@@ -232,52 +168,14 @@
             }
         };
 
-        // Function to fetch the recent follower's name from a widget URL
-        const fetchRecentFollower = async () => {
-            if (RECENT_FOLLOWER_URL === 'https://your-streamelements-recent-follower-widget-url') {
-                console.warn("Please update the RECENT_FOLLOWER_URL with your widget link.");
-                return;
-            }
-
-            // Append a unique timestamp to bust the cache
-            const url = `${RECENT_FOLLOWER_URL}?t=${new Date().getTime()}`;
-
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                // Get the raw HTML content from the widget URL
-                const html = await response.text();
-
-                // Use a DOMParser to safely extract the text content
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const followerName = doc.body.textContent.trim();
-
-                if (followerName) {
-                    document.getElementById('recent-follower-name').textContent = followerName;
-                } else {
-                    document.getElementById('recent-follower-name').textContent = 'N/A';
-                }
-
-            } catch (error) {
-                console.error("Could not fetch recent follower:", error);
-                document.getElementById('recent-follower-name').textContent = 'N/A';
-            }
-        };
-
-        // Fetch all data on page load and then set an interval for periodic updates
-        const updateData = () => {
+        // Fetch data on page load and then set an interval for periodic updates
+        document.addEventListener('DOMContentLoaded', () => {
             fetchYouTubeCount();
             fetchFaceitData();
-            fetchRecentFollower();
-        };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updateData(); // Initial fetch
-            setInterval(updateData, REFRESH_RATE); // Periodic updates
+            
+            // Set intervals for periodic updates
+            setInterval(fetchYouTubeCount, REFRESH_RATE);
+            setInterval(fetchFaceitData, REFRESH_RATE);
         });
     </script>
 </body>
