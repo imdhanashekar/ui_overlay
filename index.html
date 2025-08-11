@@ -61,7 +61,9 @@
             backdrop-filter: blur(8px);
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
+            justify-content: center; /* Center the message */
+            align-items: center; /* Center the message */
+            text-align: center;
             transition: all 0.3s ease-in-out;
         }
         
@@ -128,39 +130,31 @@
                     </div>
                     <div class="w-full h-px bg-teal-500 opacity-50"></div> <!-- A subtle separator line -->
                     <!-- Recent Follower/Subscriber -->
-                    <div class="flex-col items-start w-full">
+                    <div class="flex items-center w-full justify-between">
                         <span class="text-sm font-bold">Recent Follower</span>
-                        <span id="recent-follower-name" class="mt-1 text-lg font-bold highlight-text">Loading...</span>
+                        <!-- Updated to use a larger max width for longer names, with ellipsis for overflow -->
+                        <span id="recent-follower-name" class="ml-2 text-lg font-bold highlight-text max-w-[15rem] overflow-hidden whitespace-nowrap text-ellipsis">Loading...</span>
                     </div>
                 </div>
             </div>
             <!-- Faceit ELO -->
             <div id="faceit-elo-box" class="w-full max-w-xs">
-                <div class="card">
-                    <span class="text-sm font-bold">FACEIT ELO:</span>
-                    <span id="elo-value" class="ml-2 text-lg font-bold highlight-text">0</span>
-                    <span class="text-sm ml-2 font-bold">Level:</span>
-                    <span id="elo-level" class="text-lg font-bold highlight-text">0</span>
+                <div class="card flex items-center justify-between">
+                    <div class="flex items-center">
+                        <span class="text-sm font-bold">FACEIT ELO:</span>
+                        <span id="elo-value" class="ml-2 text-lg font-bold highlight-text">0</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-sm font-bold">Level:</span>
+                        <span id="elo-level" class="ml-2 text-lg font-bold highlight-text">0</span>
+                    </div>
                 </div>
             </div>
             <!-- Live Chat Box (moved to the left) -->
             <div id="live-chat-box">
                 <div class="chat-container">
-                    <div id="chat-messages" class="chat-messages">
-                        <!-- Placeholder messages to show the style -->
-                        <div class="chat-message">
-                            <span class="font-bold text-teal-300">Gemini:</span>
-                            <span>Welcome to the stream! Let's get this dub.</span>
-                        </div>
-                        <div class="chat-message">
-                            <span class="font-bold text-purple-300">Viewer1:</span>
-                            <span>Nice shot! What ELO are you?</span>
-                        </div>
-                        <div class="chat-message">
-                            <span class="font-bold text-blue-300">Viewer2:</span>
-                            <span>Looking great! Let's get to a higher level.</span>
-                        </div>
-                    </div>
+                    <!-- The chat messages from a Browser Source will go here. -->
+                    <!-- This div is now empty, ready for your live chat widget. -->
                 </div>
             </div>
         </div>
@@ -170,16 +164,19 @@
         // --- CONFIGURATION SECTION ---
 
         // IMPORTANT: Replace with the URL of your deployed YouTube Count Worker.
-        const YOUTUBE_COUNT_WORKER_URL = 'https://youtube-count.darms1er.workers.dev/';
+        const YOUTUBE_COUNT_WORKER_URL = 'https://your-youtube-count-worker.workers.dev';
         // IMPORTANT: Replace with your actual YouTube Channel ID.
         const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
         // Your subscriber goal (e.g., 100, 500, etc.)
-        const SUBSCRIBER_GOAL = 80;
+        const SUBSCRIBER_GOAL = 100;
 
         // IMPORTANT: Replace with the URL of your deployed Faceit Worker.
-        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev/';
+        const FACEIT_WORKER_URL = 'https://your-faceit-worker.workers.dev';
         // IMPORTANT: Replace with your actual FACEIT Player ID.
-        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
+        const FACEIT_PLAYER_ID = 'PLEASE_REPLACE_WITH_YOUR_ID';
+        
+        // IMPORTANT: Replace this with the URL from your StreamElements/Streamlabs "Recent Follower" widget.
+        const RECENT_FOLLOWER_URL = 'https://your-streamelements-recent-follower-widget-url';
         
         // Set a refresh rate in milliseconds. 30000 (30 seconds) is a good balance.
         const REFRESH_RATE = 30000; 
@@ -245,14 +242,49 @@
             }
         };
 
+        // Function to fetch the recent follower's name from a widget URL
+        const fetchRecentFollower = async () => {
+            if (RECENT_FOLLOWER_URL === 'https://your-streamelements-recent-follower-widget-url') {
+                console.warn("Please update the RECENT_FOLLOWER_URL with your widget link.");
+                return;
+            }
+
+            try {
+                const response = await fetch(RECENT_FOLLOWER_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                // Get the raw HTML content from the widget URL
+                const html = await response.text();
+                
+                // Use a DOMParser to safely extract the text content
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const followerName = doc.body.textContent.trim();
+
+                if (followerName) {
+                    document.getElementById('recent-follower-name').textContent = followerName;
+                } else {
+                    document.getElementById('recent-follower-name').textContent = 'N/A';
+                }
+
+            } catch (error) {
+                console.error("Could not fetch recent follower:", error);
+                document.getElementById('recent-follower-name').textContent = 'N/A';
+            }
+        };
+
         // Fetch data on page load and then set an interval for periodic updates
         document.addEventListener('DOMContentLoaded', () => {
             fetchYouTubeCount();
             fetchFaceitData();
+            fetchRecentFollower(); // Fetch the recent follower on load
             
             // Set intervals for periodic updates
             setInterval(fetchYouTubeCount, REFRESH_RATE);
             setInterval(fetchFaceitData, REFRESH_RATE);
+            setInterval(fetchRecentFollower, REFRESH_RATE); // Set interval for the new function
         });
     </script>
 </body>
