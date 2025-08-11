@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS2 Stream Overlay</title>
-    <!-- Tailwind CSS for a modern utility-first approach -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Import a clean, modern font that matches the CS2 feel */
@@ -114,12 +113,9 @@
 
     <div class="overlay-container">
 
-        <!-- Left-side content grouped and vertically centered -->
         <div class="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col space-y-8">
-            <!-- Combined YouTube Sub Count and Recent Follower Box -->
             <div id="combined-info-box" class="w-full max-w-xs">
                 <div class="card flex-col items-start space-y-4">
-                    <!-- YouTube Live Sub Count -->
                     <div class="flex items-center w-full justify-between">
                         <span class="text-sm font-bold">Subscribers:</span>
                         <div class="flex items-center">
@@ -128,16 +124,12 @@
                             <span id="youtube-goal" class="text-sm">100</span>
                         </div>
                     </div>
-                    <div class="w-full h-px bg-teal-500 opacity-50"></div> <!-- A subtle separator line -->
-                    <!-- Recent Follower/Subscriber -->
-                    <div class="flex items-center w-full justify-between">
+                    <div class="w-full h-px bg-teal-500 opacity-50"></div> <div class="flex items-center w-full justify-between">
                         <span class="text-sm font-bold">Recent Follower:</span>
-                        <!-- Updated to use a larger max width for longer names, with ellipsis for overflow -->
                         <span id="recent-follower-name" class="ml-2 text-lg font-bold highlight-text max-w-[15rem] overflow-hidden whitespace-nowrap text-ellipsis"></span>
                     </div>
                 </div>
             </div>
-            <!-- Faceit ELO -->
             <div id="faceit-elo-box" class="w-full max-w-xs">
                 <div class="card flex items-center justify-between">
                     <div class="flex items-center">
@@ -150,12 +142,9 @@
                     </div>
                 </div>
             </div>
-            <!-- Live Chat Box (moved to the left) -->
             <div id="live-chat-box">
                 <div class="chat-container">
-                    <!-- The chat messages from a Browser Source will go here. -->
-                    <!-- This div is now empty, ready for your live chat widget. -->
-                </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -164,20 +153,19 @@
         // --- CONFIGURATION SECTION ---
 
         // IMPORTANT: Replace with the URL of your deployed YouTube Count Worker.
-        const YOUTUBE_COUNT_WORKER_URL = 'https://youtube-count.darms1er.workers.dev';
+        const YOUTUBE_COUNT_WORKER_URL = 'YOUTUBE_COUNT_WORKER_URL';
         // IMPORTANT: Replace with your actual YouTube Channel ID.
-        const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
+        const YOUTUBE_CHANNEL_ID = 'CHANNEL_ID';
         // Your subscriber goal (e.g., 100, 500, etc.)
         const SUBSCRIBER_GOAL = 100;
 
         // IMPORTANT: Replace with the URL of your deployed Faceit Worker.
-        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
+        const FACEIT_WORKER_URL = 'FACEIT_WORKER_URL';
         // IMPORTANT: Replace with your actual FACEIT Player ID.
-        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
+        const FACEIT_PLAYER_ID = 'FACEIT_PLAYER_ID';
 
         // IMPORTANT: Replace this with the URL from your StreamElements/Streamlabs "Recent Follower" widget.
         const RECENT_FOLLOWER_URL = 'https://your-streamelements-recent-follower-widget-url';
-        const RECENT_FOLLOWER_URL = 'https://streamelements.com/overlay/689946b0cc95c40604a44fd8/hbKP0nhO-fRbY7Ng7ZnFjuNWkBHbwnPxgBR1sLMsmYpXZreB';
 
         // Set a refresh rate in milliseconds. 30000 (30 seconds) is a good balance.
         const REFRESH_RATE = 30000; 
@@ -186,13 +174,14 @@
 
         // Function to fetch the YouTube subscriber count
         const fetchYouTubeCount = async () => {
-            if (YOUTUBE_COUNT_WORKER_URL === 'https://your-youtube-count-worker.workers.dev' && YOUTUBE_CHANNEL_ID === 'UC_uN3iaa1OZxpQ05Fl-dhgA') {
+            if (YOUTUBE_COUNT_WORKER_URL === 'YOUTUBE_COUNT_WORKER_URL' || YOUTUBE_CHANNEL_ID === 'CHANNEL_ID') {
                 document.getElementById('youtube-count').textContent = 'N/A';
                 console.warn("Please update the YouTube worker URL and channel ID.");
                 return;
             }
 
-            const url = `${YOUTUBE_COUNT_WORKER_URL}?channelId=${YOUTUBE_CHANNEL_ID}`;
+            // Append a unique timestamp to bust the cache
+            const url = `${YOUTUBE_COUNT_WORKER_URL}?channelId=${YOUTUBE_CHANNEL_ID}&t=${new Date().getTime()}`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
@@ -211,15 +200,15 @@
 
         // Function to fetch Faceit ELO and Level
         const fetchFaceitData = async () => {
-            if (FACEIT_WORKER_URL === 'https://your-faceit-worker.workers.dev' || FACEIT_PLAYER_ID === 'PLEASE_REPLACE_WITH_YOUR_ID') {
+            if (FACEIT_WORKER_URL === 'FACEIT_WORKER_URL' || FACEIT_PLAYER_ID === 'FACEIT_PLAYER_ID') {
                 document.getElementById('elo-value').textContent = 'N/A';
                 document.getElementById('elo-level').textContent = 'N/A';
                 console.warn("Please update the FACEIT worker URL and Player ID.");
                 return;
             }
 
-            // The API URL now points to your secure Cloudflare Worker
-            const apiUrl = `${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`;
+            // The API URL now points to your secure Cloudflare Worker with cache busting
+            const apiUrl = `${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}?t=${new Date().getTime()}`;
 
             try {
                 const response = await fetch(apiUrl);
@@ -250,8 +239,11 @@
                 return;
             }
 
+            // Append a unique timestamp to bust the cache
+            const url = `${RECENT_FOLLOWER_URL}?t=${new Date().getTime()}`;
+
             try {
-                const response = await fetch(RECENT_FOLLOWER_URL);
+                const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -276,16 +268,16 @@
             }
         };
 
-        // Fetch data on page load and then set an interval for periodic updates
-        document.addEventListener('DOMContentLoaded', () => {
+        // Fetch all data on page load and then set an interval for periodic updates
+        const updateData = () => {
             fetchYouTubeCount();
             fetchFaceitData();
-            fetchRecentFollower(); // Fetch the recent follower on load
+            fetchRecentFollower();
+        };
 
-            // Set intervals for periodic updates
-            setInterval(fetchYouTubeCount, REFRESH_RATE);
-            setInterval(fetchFaceitData, REFRESH_RATE);
-            setInterval(fetchRecentFollower, REFRESH_RATE); // Set interval for the new function
+        document.addEventListener('DOMContentLoaded', () => {
+            updateData(); // Initial fetch
+            setInterval(updateData, REFRESH_RATE); // Periodic updates
         });
     </script>
 </body>
