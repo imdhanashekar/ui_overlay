@@ -186,7 +186,7 @@
         // Function to fetch the YouTube subscriber count
         const fetchYouTubeCount = async () => {
             if (YOUTUBE_COUNT_WORKER_URL === 'https://youtube-count.darms1er.workers.dev' && YOUTUBE_CHANNEL_ID === 'UC_uN3iaa1OZxpQ05Fl-dhgA') {
-                document.getElementById('youtube-count').textContent = 'N/A';
+                document.getElementById('youtube-count').textContent = '';
                 console.warn("Please update the YouTube worker URL and channel ID.");
                 return;
             }
@@ -204,15 +204,15 @@
                 }
             } catch (error) {
                 console.error("Could not fetch YouTube count:", error);
-                document.getElementById('youtube-count').textContent = 'N/A';
+                document.getElementById('youtube-count').textContent = '';
             }
         };
 
         // Function to fetch Faceit ELO and Level
         const fetchFaceitData = async () => {
             if (FACEIT_WORKER_URL === 'https://your-faceit-worker.workers.dev' || FACEIT_PLAYER_ID === 'PLEASE_REPLACE_WITH_YOUR_ID') {
-                document.getElementById('elo-value').textContent = 'N/A';
-                document.getElementById('elo-level').textContent = 'N/A';
+                document.getElementById('elo-value').textContent = '';
+                document.getElementById('elo-level').textContent = '';
                 console.warn("Please update the FACEIT worker URL and Player ID.");
                 return;
             }
@@ -237,8 +237,8 @@
 
             } catch (error) {
                 console.error("Could not fetch Faceit ELO:", error);
-                document.getElementById('elo-value').textContent = 'N/A';
-                document.getElementById('elo-level').textContent = 'N/A';
+                document.getElementById('elo-value').textContent = '';
+                document.getElementById('elo-level').textContent = '';
             }
         };
 
@@ -266,12 +266,12 @@
                 if (followerName) {
                     document.getElementById('recent-follower-name').textContent = followerName;
                 } else {
-                    document.getElementById('recent-follower-name').textContent = 'N/A';
+                    document.getElementById('recent-follower-name').textContent = '';
                 }
 
             } catch (error) {
                 console.error("Could not fetch recent follower:", error);
-                document.getElementById('recent-follower-name').textContent = 'N/A';
+                document.getElementById('recent-follower-name').textContent = '';
             }
         };
 
