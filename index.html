@@ -9,7 +9,7 @@
     <style>
         /* Import a clean, modern font that matches the CS2 feel */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-        
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: transparent; /* Essential for OBS transparency */
@@ -66,7 +66,7 @@
             text-align: center;
             transition: all 0.3s ease-in-out;
         }
-        
+
         .chat-container:hover {
             transform: scale(1.01);
         }
@@ -77,7 +77,7 @@
             gap: 0.5rem;
             overflow-y: auto; /* Allows scrolling if chat gets too long */
         }
-        
+
         /* Custom scrollbar styling for a cleaner look */
         .chat-messages::-webkit-scrollbar {
             width: 8px;
@@ -133,7 +133,7 @@
                     <div class="flex items-center w-full justify-between">
                         <span class="text-sm font-bold">Recent Follower:</span>
                         <!-- Updated to use a larger max width for longer names, with ellipsis for overflow -->
-                        <span id="recent-follower-name" class="ml-2 text-lg font-bold highlight-text max-w-[15rem] overflow-hidden whitespace-nowrap text-ellipsis"> </span>
+                        <span id="recent-follower-name" class="ml-2 text-lg font-bold highlight-text max-w-[15rem] overflow-hidden whitespace-nowrap text-ellipsis"></span>
                     </div>
                 </div>
             </div>
@@ -174,10 +174,11 @@
         const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
         // IMPORTANT: Replace with your actual FACEIT Player ID.
         const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
-        
+
         // IMPORTANT: Replace this with the URL from your StreamElements/Streamlabs "Recent Follower" widget.
+        const RECENT_FOLLOWER_URL = 'https://your-streamelements-recent-follower-widget-url';
         const RECENT_FOLLOWER_URL = 'https://streamelements.com/overlay/689946b0cc95c40604a44fd8/hbKP0nhO-fRbY7Ng7ZnFjuNWkBHbwnPxgBR1sLMsmYpXZreB';
-        
+
         // Set a refresh rate in milliseconds. 30000 (30 seconds) is a good balance.
         const REFRESH_RATE = 30000; 
 
@@ -185,8 +186,8 @@
 
         // Function to fetch the YouTube subscriber count
         const fetchYouTubeCount = async () => {
-            if (YOUTUBE_COUNT_WORKER_URL === 'https://youtube-count.darms1er.workers.dev' && YOUTUBE_CHANNEL_ID === 'UC_uN3iaa1OZxpQ05Fl-dhgA') {
-                document.getElementById('youtube-count').textContent = '';
+            if (YOUTUBE_COUNT_WORKER_URL === 'https://your-youtube-count-worker.workers.dev' && YOUTUBE_CHANNEL_ID === 'UC_uN3iaa1OZxpQ05Fl-dhgA') {
+                document.getElementById('youtube-count').textContent = 'N/A';
                 console.warn("Please update the YouTube worker URL and channel ID.");
                 return;
             }
@@ -195,7 +196,7 @@
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                
+
                 if (response.ok && data.subscriberCount) {
                     document.getElementById('youtube-count').textContent = data.subscriberCount;
                     document.getElementById('youtube-goal').textContent = SUBSCRIBER_GOAL;
@@ -204,15 +205,15 @@
                 }
             } catch (error) {
                 console.error("Could not fetch YouTube count:", error);
-                document.getElementById('youtube-count').textContent = '';
+                document.getElementById('youtube-count').textContent = 'N/A';
             }
         };
 
         // Function to fetch Faceit ELO and Level
         const fetchFaceitData = async () => {
             if (FACEIT_WORKER_URL === 'https://your-faceit-worker.workers.dev' || FACEIT_PLAYER_ID === 'PLEASE_REPLACE_WITH_YOUR_ID') {
-                document.getElementById('elo-value').textContent = '';
-                document.getElementById('elo-level').textContent = '';
+                document.getElementById('elo-value').textContent = 'N/A';
+                document.getElementById('elo-level').textContent = 'N/A';
                 console.warn("Please update the FACEIT worker URL and Player ID.");
                 return;
             }
@@ -222,13 +223,13 @@
 
             try {
                 const response = await fetch(apiUrl);
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
-                
+
                 const elo = data.games.cs2.faceit_elo || 0;
                 const level = data.games.cs2.skill_level || 0;
 
@@ -237,8 +238,8 @@
 
             } catch (error) {
                 console.error("Could not fetch Faceit ELO:", error);
-                document.getElementById('elo-value').textContent = '';
-                document.getElementById('elo-level').textContent = '';
+                document.getElementById('elo-value').textContent = 'N/A';
+                document.getElementById('elo-level').textContent = 'N/A';
             }
         };
 
@@ -254,10 +255,10 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 // Get the raw HTML content from the widget URL
                 const html = await response.text();
-                
+
                 // Use a DOMParser to safely extract the text content
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
@@ -266,7 +267,7 @@
                 if (followerName) {
                     document.getElementById('recent-follower-name').textContent = followerName;
                 } else {
-                    document.getElementById('recent-follower-name').textContent = '';
+                    document.getElementById('recent-follower-name').textContent = 'N/A';
                 }
 
             } catch (error) {
@@ -280,7 +281,7 @@
             fetchYouTubeCount();
             fetchFaceitData();
             fetchRecentFollower(); // Fetch the recent follower on load
-            
+
             // Set intervals for periodic updates
             setInterval(fetchYouTubeCount, REFRESH_RATE);
             setInterval(fetchFaceitData, REFRESH_RATE);
