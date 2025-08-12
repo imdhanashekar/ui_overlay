@@ -27,7 +27,7 @@
             /* Increased opacity for better visibility in bright scenes */
             background-color: rgba(30, 41, 59, 0.7); /* slate-800 with higher opacity */
             border-radius: 0.75rem; /* rounded-xl */
-            padding: 1.5rem; /* Increased padding from p-4 to p-6 */
+            padding: 14px; /* The requested padding has been applied here. */
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* Stronger shadow for depth */
             border: 2px solid rgba(45, 212, 191, 0.8); /* A more opaque teal border */
             backdrop-filter: blur(8px); /* A more noticeable blur effect */
@@ -39,6 +39,15 @@
         .card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+        }
+
+        /* The text-shadow property creates a clean outline for better readability in-game. */
+        .text-outline {
+            text-shadow: 
+                -1px -1px 0 #000,  
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000;
         }
 
         .highlight-text {
@@ -57,11 +66,11 @@
             <!-- YouTube Subscribers Box -->
             <div id="youtube-subs-box" class="w-full max-w-2xl">
                 <div class="card flex items-center justify-between">
-                    <span class="text-sm font-bold uppercase">Subscribers:</span>
+                    <span class="text-base font-bold uppercase text-outline">Subscribers:</span>
                     <div class="flex items-center">
-                        <span id="youtube-count" class="ml-2 text-lg font-bold highlight-text uppercase">0</span>
-                        <span class="text-sm font-bold uppercase">/</span>
-                        <span id="youtube-goal" class="text-sm uppercase">100</span>
+                        <span id="youtube-count" class="ml-2 text-base font-bold highlight-text uppercase text-outline">0</span>
+                        <span class="text-base font-bold uppercase text-outline">/</span>
+                        <span id="youtube-goal" class="text-base uppercase text-outline">100</span>
                     </div>
                 </div>
             </div>
@@ -69,8 +78,8 @@
             <!-- Recent Follower Box -->
             <div id="recent-follower-box" class="w-full max-w-2xl">
                 <div class="card flex items-center justify-between">
-                    <span class="text-sm font-bold uppercase">Recent Follower:</span>
-                    <span id="recent-follower-name" class="ml-2 text-lg font-bold highlight-text uppercase max-w-xl overflow-hidden whitespace-nowrap text-ellipsis min-w-[150px]"></span>
+                    <span class="text-base font-bold uppercase text-outline">Recent Follower:</span>
+                    <span id="recent-follower-name" class="ml-2 text-base font-bold highlight-text uppercase max-w-xl overflow-hidden whitespace-nowrap text-ellipsis min-w-[150px] text-outline">Bhavesh Sharma</span>
                 </div>
             </div>
 
@@ -78,12 +87,12 @@
             <div id="faceit-elo-box" class="w-full max-w-2xl">
                 <div class="card flex items-center justify-between">
                     <div class="flex items-center">
-                        <span class="text-sm font-bold uppercase">Level:</span>
-                        <span id="elo-level" class="ml-2 text-lg font-bold highlight-text uppercase">0</span>
+                        <span class="text-base font-bold uppercase text-outline">Level:</span>
+                        <span id="elo-level" class="ml-2 text-base font-bold highlight-text uppercase text-outline">0</span>
                     </div>
                     <div class="flex items-center">
-                        <span class="text-sm font-bold uppercase">ELO:</span>
-                        <span id="elo-value" class="ml-2 text-lg font-bold highlight-text uppercase">0</span>
+                        <span class="text-base font-bold uppercase text-outline">ELO:</span>
+                        <span id="elo-value" class="ml-2 text-base font-bold highlight-text uppercase text-outline">0</span>
                     </div>
                 </div>
             </div>
