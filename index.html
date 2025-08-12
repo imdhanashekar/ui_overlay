@@ -24,12 +24,12 @@
         }
 
         .card {
-            /* Increased transparency to 0.3 */
-            background-color: rgba(30, 41, 59, 0.3); /* slate-800 with increased transparency */
+            /* Increased opacity for better visibility in bright scenes */
+            background-color: rgba(30, 41, 59, 0.7); /* slate-800 with higher opacity */
             border-radius: 0.75rem; /* rounded-xl */
-            padding: 14px 10px; /* Increased padding from p-4 to p-6 */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Stronger shadow for depth */
-            border: 2px solid rgba(45, 212, 191, 0.5); /* A subtle teal border */
+            padding: 1.5rem; /* Increased padding from p-4 to p-6 */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* Stronger shadow for depth */
+            border: 2px solid rgba(45, 212, 191, 0.8); /* A more opaque teal border */
             backdrop-filter: blur(8px); /* A more noticeable blur effect */
             transition: all 0.3s ease-in-out;
             display: flex;
@@ -38,7 +38,7 @@
 
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
         }
 
         .highlight-text {
@@ -68,8 +68,8 @@
                     <div class="w-full h-px bg-teal-500 opacity-50"></div> <!-- A subtle separator line -->
                     <!-- Recent Follower/Subscriber -->
                     <div class="flex items-center w-full justify-between">
-                        <span class="text-sm font-bold">Recent Follower:</span>
-                        <span id="recent-follower-name" class="ml-2 text-lg font-bold highlight-text max-w-xl overflow-hidden whitespace-nowrap text-ellipsis min-w-[150px]"></span>
+                        <span class="text-sm font-bold">Recent Follower</span>
+                        <span id="recent-follower-name" class="ml-2 text-lg font-bold highlight-text max-w-xl overflow-hidden whitespace-nowrap text-ellipsis min-w-[150px]">Bhavesh Sharma</span>
                     </div>
                 </div>
             </div>
@@ -100,7 +100,8 @@
         const SUBSCRIBER_GOAL = 100;
 
         // IMPORTANT: Replace with the URL of your deployed Faceit Worker.
-        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
+        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev
+';
         // IMPORTANT: Replace with your actual FACEIT Player ID.
         const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
         
