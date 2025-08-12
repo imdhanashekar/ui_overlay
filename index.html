@@ -51,28 +51,29 @@
 
     <div class="overlay-container">
 
-        <!-- Left-side content grouped and vertically centered -->
+        <!-- Left-side content now as three separate, stackable cards -->
         <div class="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col space-y-8">
-            <!-- Combined YouTube Sub Count and Recent Follower Box -->
-            <div id="combined-info-box" class="w-full max-w-2xl">
-                <div class="card flex-col items-start space-y-4">
-                    <!-- YouTube Live Sub Count -->
-                    <div class="flex items-center w-full justify-between">
-                        <span class="text-sm font-bold">Subscribers:</span>
-                        <div class="flex items-center">
-                            <span id="youtube-count" class="ml-2 text-lg font-bold highlight-text">0</span>
-                            <span class="text-sm font-bold">/</span>
-                            <span id="youtube-goal" class="text-sm">100</span>
-                        </div>
-                    </div>
-                    <div class="w-full h-px bg-teal-500 opacity-50"></div> <!-- A subtle separator line -->
-                    <!-- Recent Follower/Subscriber -->
-                    <div class="flex items-center w-full justify-between">
-                        <span class="text-sm font-bold">Recent Follower</span>
-                        <span id="recent-follower-name" class="ml-2 text-lg font-bold highlight-text max-w-xl overflow-hidden whitespace-nowrap text-ellipsis min-w-[150px]">Bhavesh Sharma</span>
+            
+            <!-- YouTube Subscribers Box -->
+            <div id="youtube-subs-box" class="w-full max-w-2xl">
+                <div class="card flex items-center justify-between">
+                    <span class="text-sm font-bold">Subscribers Goal:</span>
+                    <div class="flex items-center">
+                        <span id="youtube-count" class="ml-2 text-lg font-bold highlight-text">0</span>
+                        <span class="text-sm font-bold">/</span>
+                        <span id="youtube-goal" class="text-sm">100</span>
                     </div>
                 </div>
             </div>
+
+            <!-- Recent Follower Box -->
+            <div id="recent-follower-box" class="w-full max-w-2xl">
+                <div class="card flex items-center justify-between">
+                    <span class="text-sm font-bold">Recent Follower:</span>
+                    <span id="recent-follower-name" class="ml-2 text-lg font-bold highlight-text max-w-xl overflow-hidden whitespace-nowrap text-ellipsis min-w-[150px]">Bhavesh Sharma</span>
+                </div>
+            </div>
+
             <!-- Faceit ELO -->
             <div id="faceit-elo-box" class="w-full max-w-2xl">
                 <div class="card flex items-center justify-between">
@@ -100,8 +101,7 @@
         const SUBSCRIBER_GOAL = 100;
 
         // IMPORTANT: Replace with the URL of your deployed Faceit Worker.
-        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev
-';
+        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
         // IMPORTANT: Replace with your actual FACEIT Player ID.
         const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
         
