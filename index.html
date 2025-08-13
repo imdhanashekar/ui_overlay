@@ -23,7 +23,6 @@
             position: relative;
         }
 
-
         .card {
             /* Increased opacity for better visibility in bright scenes */
             background-color: rgba(30, 41, 59, 0.7); /* slate-800 with higher opacity */
@@ -61,7 +60,7 @@
 
     <div class="overlay-container">
 
-        <!-- Left-side content now as three separate, stackable cards -->
+        <!-- Left-side content, now positioned with left-4 to fill from left to right -->
         <div class="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col space-y-8">
             
             <!-- YouTube Subscribers Box -->
@@ -78,9 +77,12 @@
 
             <!-- Recent Follower Box -->
             <div id="recent-follower-box" class="w-full max-w-2xl">
-                <div class="card flex items-center justify-between">
-                    <span class="text-base font-bold uppercase text-outline">Recent Follower:</span>
-                    <span id="recent-follower-name" class="ml-2 text-base font-bold highlight-text uppercase max-w-xl overflow-hidden whitespace-nowrap text-ellipsis min-w-[150px] text-outline"></span>
+                <div class="card flex flex-col items-center justify-between">
+                    <div class="flex items-center w-full justify-between">
+                        <span class="text-base font-bold uppercase text-outline">Recent Follower:</span>
+                        <span id="recent-follower-name" class="ml-2 text-base font-bold highlight-text uppercase max-w-xl overflow-hidden whitespace-nowrap text-ellipsis min-w-[150px] text-outline"></span>
+                    </div>
+                    <span class="text-xs uppercase mt-1 text-outline" style="color: #37BFB0;">Followers only visible if profile is public</span>
                 </div>
             </div>
 
