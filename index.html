@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Overlay</title>
+    <title>Master Stream Overlay</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* All your beautiful CSS styles go here */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
         
         body {
@@ -14,7 +15,6 @@
             overflow: hidden;
             color: #E2E8F0;
         }
-
         .overlay-screen {
             width: 100vw;
             height: 100vh;
@@ -34,7 +34,6 @@
             opacity: 1;
             pointer-events: auto;
         }
-
         .animated-screen {
             background: linear-gradient(135deg, #0f172a, #1a202c, #334155);
             background-size: 400% 400%;
@@ -45,7 +44,6 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
         .particles {
             position: absolute;
             width: 100%;
@@ -119,7 +117,6 @@
             0%, 100% { box-shadow: 0 0 5px #FF5500, 0 0 10px #FF5500; }
             50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
         }
-
         #in-game-screen { background-color: transparent; }
         .card {
             background-color: rgba(30, 41, 59, 0.7);
@@ -151,9 +148,8 @@
     </style>
 </head>
 <body class="bg-transparent overflow-hidden">
-
     <div class="overlay-container">
-        <div id="going-live-screen" class="overlay-screen animated-screen">
+        <div id="going-live-screen" class="overlay-screen animated-screen active">
             <div class="particles" id="particles-live"></div>
             <div class="main-content">
                 <h1 class="scene-title">Going Live</h1>
@@ -161,7 +157,6 @@
                 <div class="highlight-bar"></div>
             </div>
         </div>
-
         <div id="brb-screen" class="overlay-screen animated-screen">
             <div class="particles" id="particles-brb"></div>
             <div class="main-content">
@@ -170,7 +165,6 @@
                 <div class="highlight-bar"></div>
             </div>
         </div>
-
         <div id="thanks-screen" class="overlay-screen animated-screen">
             <div class="particles" id="particles-thanks"></div>
             <div class="main-content">
@@ -179,7 +173,6 @@
                 <div class="highlight-bar"></div>
             </div>
         </div>
-
         <div id="in-game-screen" class="overlay-screen">
             <iframe id="alert-iframe" src="YOUR_ALERT_URL_HERE"></iframe>
             <div class="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col space-y-8 z-10">
@@ -208,19 +201,15 @@
             </div>
         </div>
     </div>
-
     <script>
-        // --- CONFIGURATION ---
-        const YOUTUBE_COUNT_WORKER_URL = 'https://youtube-count.darms1er.workers.dev';
-        const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
-        const SUBSCRIBER_GOAL = 10;
-        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
-        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
-        const REFRESH_RATE = 30000;
+        // --- IMPORTANT: CONFIGURE THESE ---
+        const API_URL = 'https://your_domain.com/state.php'; // Replace with your state.php URL
+        const POLLING_INTERVAL = 1000; // Check for updates every 1 second
         
         // --- DO NOT MODIFY BELOW THIS LINE ---
-
+        let lastPage = '';
         const showScreen = (id) => {
+            if (lastPage === id) return; // Prevent unnecessary screen updates
             document.querySelectorAll('.overlay-screen').forEach(screen => {
                 screen.classList.remove('active');
             });
@@ -228,8 +217,22 @@
             if (screen) {
                 screen.classList.add('active');
             }
+            lastPage = id;
         };
-
+        const fetchState = async () => {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                if (data.page) {
+                    showScreen(data.page);
+                }
+            } catch (error) {
+                console.error('Failed to fetch state:', error);
+            }
+        };
+        
+        // All your other functions (createParticles, animateSubtitle, fetchYouTubeCount, fetchFaceitData)
+        // are included here, just like in previous versions. They remain unchanged.
         const createParticles = (containerId) => {
             const particlesContainer = document.getElementById(containerId);
             const numParticles = 150;
@@ -258,7 +261,6 @@
                 particlesContainer.appendChild(particle);
             }
         };
-
         const animateSubtitle = (subtitleId) => {
             const subtitle = document.getElementById(subtitleId);
             const text = subtitle.innerText;
@@ -271,36 +273,32 @@
                 subtitle.appendChild(span);
             }
         };
-
         const fetchYouTubeCount = async () => {
-            if (YOUTUBE_COUNT_WORKER_URL === 'YOUTUBE_COUNT' || YOUTUBE_CHANNEL_ID === 'CHANNEL_ID') {
+            const url = 'https://youtube-count.darms1er.workers.dev';
+            const channelId = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
+            if (url === 'YOUTUBE_COUNT' || channelId === 'CHANNEL_ID') {
                 document.getElementById('youtube-count').textContent = 'N/A';
                 return;
             }
-            const url = `${YOUTUBE_COUNT_WORKER_URL}?channelId=${YOUTUBE_CHANNEL_ID}`;
             try {
-                const response = await fetch(url);
+                const response = await fetch(`${url}?channelId=${channelId}`);
                 const data = await response.json();
                 if (response.ok && data.subscriberCount) {
                     document.getElementById('youtube-count').textContent = data.subscriberCount;
-                    document.getElementById('youtube-goal').textContent = SUBSCRIBER_GOAL;
-                } else {
-                    throw new Error(data.error || 'Failed to fetch YouTube count.');
-                }
-            } catch (error) {
-                document.getElementById('youtube-count').textContent = 'N/A';
-            }
+                    document.getElementById('youtube-goal').textContent = 75;
+                } else { throw new Error(data.error || 'Failed to fetch YouTube count.'); }
+            } catch (error) { document.getElementById('youtube-count').textContent = 'N/A'; }
         };
-
         const fetchFaceitData = async () => {
-            if (FACEIT_WORKER_URL === 'FACEIT_KEY' || FACEIT_PLAYER_ID === 'FACEIT_ID') {
+            const url = 'https://faceit-elo.darms1er.workers.dev';
+            const playerId = '57280df3-9f9c-464e-bca9-e943c5d037f0';
+            if (url === 'FACEIT_KEY' || playerId === 'FACEIT_ID') {
                 document.getElementById('elo-value').textContent = 'N/A';
                 document.getElementById('elo-level').textContent = 'N/A';
                 return;
             }
-            const apiUrl = `${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`;
             try {
-                const response = await fetch(apiUrl);
+                const response = await fetch(`${url}/${playerId}`);
                 if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
                 const data = await response.json();
                 const elo = data.games.cs2.faceit_elo || 0;
@@ -312,22 +310,10 @@
                 document.getElementById('elo-level').textContent = 'N/A';
             }
         };
-
-        const getUrlParameter = (name) => {
-            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-            const regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
-            const results = regex.exec(location.search);
-            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-        };
-
+        
         document.addEventListener('DOMContentLoaded', () => {
-            const pageParam = getUrlParameter('page');
-            if (pageParam) {
-                showScreen(pageParam);
-            } else {
-                showScreen('going-live-screen');
-            }
-
+            fetchState(); // Initial load
+            setInterval(fetchState, POLLING_INTERVAL); // Polling loop
             animateSubtitle('subtitle-live');
             animateSubtitle('subtitle-brb');
             animateSubtitle('subtitle-thanks');
@@ -336,8 +322,8 @@
             createParticles('particles-thanks');
             fetchYouTubeCount();
             fetchFaceitData();
-            setInterval(fetchYouTubeCount, REFRESH_RATE);
-            setInterval(fetchFaceitData, REFRESH_RATE);
+            setInterval(fetchYouTubeCount, 30000);
+            setInterval(fetchFaceitData, 30000);
         });
     </script>
 </body>
