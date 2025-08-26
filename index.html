@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Overlay</title>
+    <title>Master Stream Overlay</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
@@ -35,7 +35,6 @@
             pointer-events: auto;
         }
 
-        /* Styles for the animated screens */
         .animated-screen {
             background: linear-gradient(135deg, #0f172a, #1a202c, #334155);
             background-size: 400% 400%;
@@ -121,7 +120,6 @@
             50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
         }
 
-        /* --- In-Game Widget Styles from previous code --- */
         #in-game-screen { background-color: transparent; }
         .card {
             background-color: rgba(30, 41, 59, 0.7);
@@ -155,8 +153,7 @@
 <body class="bg-transparent overflow-hidden">
 
     <div class="overlay-container">
-
-        <div id="going-live-screen" class="overlay-screen animated-screen active">
+        <div id="going-live-screen" class="overlay-screen animated-screen">
             <div class="particles" id="particles-live"></div>
             <div class="main-content">
                 <h1 class="scene-title">Going Live</h1>
@@ -230,6 +227,18 @@
             const screen = document.getElementById(id);
             if (screen) {
                 screen.classList.add('active');
+            }
+            // Add this line to save the current screen ID to localStorage
+            localStorage.setItem('active-stream-screen', id);
+        };
+
+        const initialLoad = () => {
+            const lastScreenId = localStorage.getItem('active-stream-screen');
+            if (lastScreenId) {
+                showScreen(lastScreenId);
+            } else {
+                // If no ID is saved, default to the going-live screen
+                showScreen('going-live-screen');
             }
         };
 
@@ -326,6 +335,7 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
+            initialLoad();
             animateSubtitle('subtitle-live');
             animateSubtitle('subtitle-brb');
             animateSubtitle('subtitle-thanks');
