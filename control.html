@@ -4,80 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stream Control Panel</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
-            color: #E2E8F0;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            width: 100%;
-            max-width: 600px;
-            background-color: #1e293b;
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-        }
-        .control-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-        .control-button {
-            background-color: #334155;
-            color: #E2E8F0;
-            font-weight: bold;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            text-align: center;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-        }
-        .control-button:hover {
-            background-color: #475569;
-            transform: translateY(-2px);
-        }
-        .control-button:active {
-            transform: translateY(0);
-        }
+        body { font-family: sans-serif; text-align: center; margin: 20px; }
+        button { padding: 10px 20px; font-size: 16px; margin: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="text-3xl font-bold mb-4 text-center">Stream Control Panel 🎮</h1>
-        <p class="text-sm text-center mb-6 text-gray-400">Use these buttons to instantly switch your live overlay screen.</p>
-        <div class="control-grid">
-            <div class="control-button" onclick="sendCommand('going-live-screen')">
-                Going Live
-            </div>
-            <div class="control-button" onclick="sendCommand('brb-screen')">
-                Be Right Back
-            </div>
-            <div class="control-button" onclick="sendCommand('in-game-screen')">
-                In-Game
-            </div>
-            <div class="control-button" onclick="sendCommand('thanks-screen')">
-                Thanks for Watching
-            </div>
-        </div>
-    </div>
+    <h1>Stream Control Panel</h1>
+    <p>Use these buttons to switch the stream overlay page.</p>
+    
+    <button onclick="sendCommand('going-live-screen')">Going Live</button>
+    <button onclick="sendCommand('brb-screen')">Be Right Back</button>
+    <button onclick="sendCommand('in-game-screen')">In-Game</button>
+    <button onclick="sendCommand('thanks-screen')">Thanks for Watching</button>
+
     <script>
-        const sendCommand = (screenId) => {
-            const command = {
-                type: 'switch-screen',
-                payload: screenId
-            };
-            localStorage.setItem('stream-command', JSON.stringify(command));
-            console.log(`Command sent: Switch to ${screenId}`);
-        };
+        const API_KEY = 'your_secure_api_key_here'; // Replace with a secure key
+        const OVERLAY_URL_BASE = 'https://your_domain.com/master_overlay.html'; // Replace with your overlay's URL
+
+        function sendCommand(page) {
+            const url = `${OVERLAY_URL_BASE}?page=${page}&key=${API_KEY}`;
+            window.open(url, '_blank', 'width=100,height=100'); // Opens a tiny hidden window to trigger the command
+        }
     </script>
 </body>
 </html>
