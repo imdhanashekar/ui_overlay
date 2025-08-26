@@ -228,18 +228,6 @@
             if (screen) {
                 screen.classList.add('active');
             }
-            // Add this line to save the current screen ID to localStorage
-            localStorage.setItem('active-stream-screen', id);
-        };
-
-        const initialLoad = () => {
-            const lastScreenId = localStorage.getItem('active-stream-screen');
-            if (lastScreenId) {
-                showScreen(lastScreenId);
-            } else {
-                // If no ID is saved, default to the going-live screen
-                showScreen('going-live-screen');
-            }
         };
 
         const createParticles = (containerId) => {
@@ -325,17 +313,21 @@
             }
         };
 
-        window.addEventListener('storage', (event) => {
-            if (event.key === 'stream-command') {
-                const command = JSON.parse(event.newValue);
-                if (command.type === 'switch-screen') {
-                    showScreen(command.payload);
-                }
-            }
-        });
+        const getUrlParameter = (name) => {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            const regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+            const results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        };
 
         document.addEventListener('DOMContentLoaded', () => {
-            initialLoad();
+            const pageParam = getUrlParameter('page');
+            if (pageParam) {
+                showScreen(pageParam);
+            } else {
+                showScreen('going-live-screen');
+            }
+
             animateSubtitle('subtitle-live');
             animateSubtitle('subtitle-brb');
             animateSubtitle('subtitle-thanks');
