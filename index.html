@@ -145,6 +145,12 @@
             border: none;
             pointer-events: none;
         }
+        .chat-iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+            background: transparent;
+        }
     </style>
 </head>
 <body class="bg-transparent overflow-hidden">
@@ -198,6 +204,14 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="w-full max-w-2xl">
+                    <div class="card flex flex-col items-center p-2">
+                        <span class="text-base font-bold uppercase text-outline mb-1">Recent Chat</span>
+                        <iframe id="chat-iframe" src="https://chat-overlay-6k4.pages.dev" class="chat-iframe"></iframe>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -291,7 +305,7 @@
                 const data = await response.json();
                 if (response.ok && data.subscriberCount) {
                     document.getElementById('youtube-count').textContent = data.subscriberCount;
-                    document.getElementById('youtube-goal').textContent = 75;
+                    document.getElementById('youtube-goal').textContent = 10;
                 } else { throw new Error(data.error || 'Failed to fetch YouTube count.'); }
             } catch (error) { document.getElementById('youtube-count').textContent = 'N/A'; }
         };
