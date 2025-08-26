@@ -208,15 +208,24 @@
         
         // --- DO NOT MODIFY BELOW THIS LINE ---
         let lastPage = '';
+        
         const showScreen = (id) => {
-            if (lastPage === id) return; // Prevent unnecessary screen updates
-            document.querySelectorAll('.overlay-screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            const screen = document.getElementById(id);
-            if (screen) {
-                screen.classList.add('active');
+            // If the page is already active, do nothing
+            if (lastPage === id) return;
+        
+            // Remove the 'active' class from the currently active screen
+            const currentActiveScreen = document.querySelector('.overlay-screen.active');
+            if (currentActiveScreen) {
+                currentActiveScreen.classList.remove('active');
             }
+        
+            // Add the 'active' class to the new screen
+            const newActiveScreen = document.getElementById(id);
+            if (newActiveScreen) {
+                newActiveScreen.classList.add('active');
+            }
+        
+            // Update the lastPage variable
             lastPage = id;
         };
         const fetchState = async () => {
