@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Overlay</title>
+    <title>Master Stream Overlay</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* All your beautiful CSS styles go here */
@@ -182,7 +182,7 @@
                         <div class="flex items-center">
                             <span id="youtube-count" class="ml-2 text-base font-bold highlight-text uppercase text-outline">0</span>
                             <span class="text-base font-bold uppercase text-outline">/</span>
-                            <span id="youtube-goal" class="text-base uppercase text-outline">75</span>
+                            <span id="youtube-goal" class="text-base uppercase text-outline">10</span>
                         </div>
                     </div>
                 </div>
@@ -203,8 +203,8 @@
     </div>
     <script>
         // --- IMPORTANT: CONFIGURE THESE ---
-        const API_URL = 'https://ui-overlay.pages.dev/state.php'; // Replace with your state.php URL
-        const POLLING_INTERVAL = 1000; // Check for updates every 1 second
+        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev/'; // Replace with your Worker URL
+        const POLLING_INTERVAL = 4000; // Check for updates every 4 second (4000ms)
         
         // --- DO NOT MODIFY BELOW THIS LINE ---
         let lastPage = '';
@@ -230,9 +230,6 @@
                 console.error('Failed to fetch state:', error);
             }
         };
-        
-        // All your other functions (createParticles, animateSubtitle, fetchYouTubeCount, fetchFaceitData)
-        // are included here, just like in previous versions. They remain unchanged.
         const createParticles = (containerId) => {
             const particlesContainer = document.getElementById(containerId);
             const numParticles = 150;
