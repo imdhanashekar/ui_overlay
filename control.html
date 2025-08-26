@@ -70,22 +70,37 @@
         </div>
     </div>
     <script>
-        // --- IMPORTANT: CONFIGURE THESE ---
-        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev'; // Replace with your Worker URL
-        const API_KEY = 'js256s(236jka2%@#^sj230'; // Must match the key in your Worker
+    // --- IMPORTANT: CONFIGURE THESE ---
+    const API_URL = 'https://stream-controller-worker.darms1er.workers.dev'; // Your Worker URL
+    const API_KEY = '386jsd93kj(wsa2%@#^s2dg30'; // Your API key
 
-        const sendCommand = async (page) => {
+    const statusMessage = document.getElementById('status-message');
+
+    const sendCommand = async (page) => {
+        try {
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ page: page, key: API_KEY })
             });
+
             if (response.ok) {
-                alert(`Command sent: Switched to ${page}`);
+                statusMessage.textContent = `Command sent: Switched to ${page}`;
+                statusMessage.style.color = '#37BFB0'; // Success color
             } else {
-                alert('Failed to send command. Check your API key and URL.');
+                const errorData = await response.json();
+                statusMessage.textContent = `Error: ${errorData.message}`;
+                statusMessage.style.color = '#FF5500'; // Error color
             }
-        };
-    </script>
+        } catch (error) {
+            statusMessage.textContent = 'Network Error: Failed to send command.';
+            statusMessage.style.color = '#FF5500'; // Error color
+        }
+        
+        setTimeout(() => {
+            statusMessage.textContent = '';
+        }, 3000); // Clears the message after 3 seconds
+    };
+</script>
 </body>
 </html>
