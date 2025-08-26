@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Control Panel</title>
+    <title>Control Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -48,75 +48,42 @@
         .control-button:active {
             transform: translateY(0);
         }
-        .url-output-container {
-            margin-top: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-        #url-output {
-            background-color: #0f172a;
-            color: #d1d5db;
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border: 1px solid #475569;
-            font-size: 0.875rem;
-            word-wrap: break-word;
-        }
-        .copy-button {
-            margin-top: 0.5rem;
-            background-color: #37BFB0;
-            color: #1e293b;
-            font-weight: bold;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="text-3xl font-bold mb-4 text-center">Stream Control Panel 🎮</h1>
-        <p class="text-sm text-center mb-6 text-gray-400">Copy the URL below and paste it into OBS to switch pages.</p>
+        <p class="text-sm text-center mb-6 text-gray-400">Click a button to instantly switch your live overlay page.</p>
         <div class="control-grid">
-            <div class="control-button" onclick="generateUrl('going-live-screen')">
+            <div class="control-button" onclick="sendCommand('going-live-screen')">
                 Going Live
             </div>
-            <div class="control-button" onclick="generateUrl('brb-screen')">
+            <div class="control-button" onclick="sendCommand('brb-screen')">
                 Be Right Back
             </div>
-            <div class="control-button" onclick="generateUrl('in-game-screen')">
+            <div class="control-button" onclick="sendCommand('in-game-screen')">
                 In-Game
             </div>
-            <div class="control-button" onclick="generateUrl('thanks-screen')">
+            <div class="control-button" onclick="sendCommand('thanks-screen')">
                 Thanks for Watching
             </div>
         </div>
-        <div class="url-output-container">
-            <pre id="url-output"></pre>
-            <button class="copy-button" onclick="copyUrl()">Copy URL</button>
-        </div>
     </div>
     <script>
-        const OVERLAY_URL_BASE = 'https://your_domain.com/master_overlay.html';
-        const urlOutput = document.getElementById('url-output');
-
-        const generateUrl = (screenId) => {
-            const url = `${OVERLAY_URL_BASE}?page=${screenId}`;
-            urlOutput.textContent = url;
-        };
-
-        const copyUrl = () => {
-            const urlToCopy = urlOutput.textContent;
-            if (urlToCopy) {
-                navigator.clipboard.writeText(urlToCopy).then(() => {
-                    alert('URL copied to clipboard!');
-                }).catch(err => {
-                    console.error('Failed to copy URL: ', err);
-                });
+        // --- IMPORTANT: CONFIGURE THESE ---
+        const API_URL = 'https://your_domain.com/state.php'; // Replace with your state.php URL
+        const API_KEY = 'your_secure_api_key_here'; // Must match the key in state.php
+        
+        const sendCommand = async (page) => {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ page: page, key: API_KEY })
+            });
+            if (response.ok) {
+                alert(`Command sent: Switched to ${page}`);
+            } else {
+                alert('Failed to send command. Check your API key and URL.');
             }
         };
     </script>
