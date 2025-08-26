@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Panel</title>
+    <title>Stream Control Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -71,9 +71,9 @@
     </div>
     <script>
         // --- IMPORTANT: CONFIGURE THESE ---
-        const API_URL = 'https://ui-overlay.pages.dev/state.php'; // Replace with your state.php URL
-        const API_KEY = 'your_secure_api_key_here'; // Must match the key in state.php
-        
+        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev'; // Replace with your Worker URL
+        const API_KEY = 'js256s(236jka2%@#^sj230'; // Must match the key in your Worker
+
         const sendCommand = async (page) => {
             const response = await fetch(API_URL, {
                 method: 'POST',
