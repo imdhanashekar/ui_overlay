@@ -202,7 +202,7 @@
                         <div class="flex items-center ml-2">
                             <span id="youtube-count" class="text-base font-bold highlight-text uppercase text-outline">0</span>
                             <span class="text-base font-bold uppercase text-outline">/</span>
-                            <span id="youtube-goal" class="text-base uppercase text-outline">10</span>
+                            <span id="youtube-goal" class="text-base uppercase text-outline">76</span>
                         </div>
                     </div>
                 </div>
@@ -211,7 +211,7 @@
                     <div class="card follower-card flex items-center justify-between">
                         <span class="text-base font-bold uppercase text-outline card-label">Recent Follower:</span>
                         <span id="recent-follower-name" class="text-base font-bold highlight-text uppercase text-outline follower-name">
-                            </span>
+                            Bhavesh Sharma</span>
                     </div>
                 </div>
 
@@ -314,7 +314,7 @@
                 const data = await response.json();
                 if (response.ok && data.subscriberCount) {
                     document.getElementById('youtube-count').textContent = data.subscriberCount;
-                    document.getElementById('youtube-goal').textContent = 10;
+                    document.getElementById('youtube-goal').textContent = 76;
                 } else { throw new Error(data.error || 'Failed to fetch YouTube count.'); }
             } catch (error) { document.getElementById('youtube-count').textContent = 'N/A'; }
         };
