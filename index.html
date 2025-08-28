@@ -146,7 +146,7 @@
             pointer-events: none;
         }
         .card-label {
-            width: 120px; /* Fixed width for labels like "Subscribers", "Level", "Recent Follower" */
+            width: 120px;
             flex-shrink: 0;
         }
         .follower-card {
@@ -158,11 +158,11 @@
             white-space: nowrap;
             text-overflow: ellipsis;
             display: inline-block;
-            max-width: 120px; /* Adjust this to control how much of the name shows before ellipsis */
+            max-width: 120px;
         }
         .elo-data {
             display: flex;
-            gap: 0.5rem; /* Space between Level and ELO */
+            gap: 0.5rem;
         }
     </style>
 </head>
@@ -202,7 +202,7 @@
                         <div class="flex items-center ml-2">
                             <span id="youtube-count" class="text-base font-bold highlight-text uppercase text-outline">0</span>
                             <span class="text-base font-bold uppercase text-outline">/</span>
-                            <span id="youtube-goal" class="text-base uppercase text-outline">75</span>
+                            <span id="youtube-goal" class="text-base uppercase text-outline">10</span>
                         </div>
                     </div>
                 </div>
@@ -314,7 +314,7 @@
                 const data = await response.json();
                 if (response.ok && data.subscriberCount) {
                     document.getElementById('youtube-count').textContent = data.subscriberCount;
-                    document.getElementById('youtube-goal').textContent = 75;
+                    document.getElementById('youtube-goal').textContent = 10;
                 } else { throw new Error(data.error || 'Failed to fetch YouTube count.'); }
             } catch (error) { document.getElementById('youtube-count').textContent = 'N/A'; }
         };
