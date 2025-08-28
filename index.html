@@ -136,7 +136,7 @@
             color: #FF5500;
             font-weight: bold;
         }
-        #stream-elements-iframe {
+        #alert-iframe {
             position: absolute;
             top: 0;
             left: 0;
@@ -148,6 +148,17 @@
         .card-label {
             width: 120px;
             flex-shrink: 0;
+        }
+        .follower-card {
+            min-width: 250px;
+            max-width: 250px;
+        }
+        .follower-name {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: inline-block;
+            max-width: 120px;
         }
     </style>
 </head>
@@ -178,8 +189,7 @@
             </div>
         </div>
         <div id="in-game-screen" class="overlay-screen">
-            <iframe id="stream-elements-iframe" src="https://streamelements.com/overlay/689946b0cc95c40604a44fd8/hbKP0nhO-fRbY7Ng7ZnFjuNWkBHbwnPxgBR1sLMsmYpXZreB"></iframe>
-            
+            <iframe id="alert-iframe" src="https://streamelements.com/overlay/689946b0cc95c40604a44fd8/hbKP0nhO-fRbY7Ng7ZnFjuNWkBHbwnPxgBR1sLMsmYpXZreB"></iframe>
             <div class="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col space-y-8 z-10">
                 <div class="w-full max-w-2xl">
                     <div class="card flex items-center justify-between">
@@ -203,12 +213,19 @@
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="w-full max-w-2xl">
+                    <div class="card follower-card flex items-center justify-between">
+                        <span class="text-base font-bold uppercase text-outline card-label">Recent Follower:</span>
+                        <span id="recent-follower-name" class="text-base font-bold highlight-text uppercase text-outline follower-name">
+                            </span>
+                    </div>
+                </div>
+                </div>
         </div>
     </div>
     <script>
         // --- IMPORTANT: CONFIGURE THESE ---
-        const API_URL = 'WORKER_URL'; // Replace with your Worker URL
+        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev'; // Replace with your Worker URL
         const POLLING_INTERVAL = 4000; // Check for updates every 4 seconds (4000ms)
         
         // --- DO NOT MODIFY BELOW THIS LINE ---
@@ -314,6 +331,14 @@
                 document.getElementById('elo-level').textContent = 'N/A';
             }
         };
+
+        // This function will listen for messages from StreamElements
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'event' && event.data.event && event.data.event.listener === 'follower-latest') {
+                const followerName = event.data.event.name;
+                document.getElementById('recent-follower-name').textContent = followerName;
+            }
+        });
         
         document.addEventListener('DOMContentLoaded', () => {
             fetchState();
