@@ -145,9 +145,17 @@
             border: none;
             pointer-events: none;
         }
-        .chat-iframe {
+        .card-label {
+            width: 120px;
+            flex-shrink: 0;
+        }
+        .name-container {
+            width: calc(100% - 120px);
+            overflow: hidden;
+        }
+        .follower-iframe {
             width: 100%;
-            height: 300px;
+            height: 24px;
             border: none;
             background: transparent;
         }
@@ -184,9 +192,9 @@
             <div class="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col space-y-8 z-10">
                 <div class="w-full max-w-2xl">
                     <div class="card flex items-center justify-between">
-                        <span class="text-base font-bold uppercase text-outline">Subscribers:</span>
-                        <div class="flex items-center">
-                            <span id="youtube-count" class="ml-2 text-base font-bold highlight-text uppercase text-outline">0</span>
+                        <span class="text-base font-bold uppercase text-outline card-label">Subscribers:</span>
+                        <div class="flex items-center ml-2">
+                            <span id="youtube-count" class="text-base font-bold highlight-text uppercase text-outline">0</span>
                             <span class="text-base font-bold uppercase text-outline">/</span>
                             <span id="youtube-goal" class="text-base uppercase text-outline">10</span>
                         </div>
@@ -195,7 +203,7 @@
                 <div class="w-full max-w-2xl">
                     <div class="card flex items-center justify-between">
                         <div class="flex items-center">
-                            <span class="text-base font-bold uppercase text-outline">Level:</span>
+                            <span class="text-base font-bold uppercase text-outline card-label">Level:</span>
                             <span id="elo-level" class="ml-2 text-base font-bold highlight-text uppercase text-outline">0</span>
                         </div>
                         <div class="flex items-center">
@@ -204,47 +212,35 @@
                         </div>
                     </div>
                 </div>
-                
-<!--                 <div class="w-full max-w-2xl">
-                    <div class="card flex flex-col items-center p-2">
-                        <span class="text-base font-bold uppercase text-outline mb-1">Recent Chat</span>
-                         <iframe 
-                            id="chat-iframe" 
-                            src="https://unified-chat.darms1er.workers.dev/?platform=youtube&channelId=UC_uN3iaa1OZxpQ05Fl-dhgA&twitch=darmster_01&kick=darmster
-" 
-                            class="chat-iframe">
-                        </iframe>
+                <div class="w-full max-w-2xl">
+                    <div class="card flex items-center justify-between">
+                        <span class="text-base font-bold uppercase text-outline card-label">Recent Follower:</span>
+                        <div class="name-container">
+                            <iframe id="follower-iframe" src="YOUR_STREAMELEMENTS_FOLLOWER_URL_HERE" class="follower-iframe"></iframe>
+                        </div>
                     </div>
-                </div> -->
-
-            </div>
+                </div>
+                </div>
         </div>
     </div>
     <script>
         // --- IMPORTANT: CONFIGURE THESE ---
-        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev'; // Replace with your Worker URL
-        const POLLING_INTERVAL = 4000; // Check for updates every 4 second (4000ms)
+        const API_URL = 'WORKER_URL'; // Replace with your Worker URL
+        const POLLING_INTERVAL = 4000; // Check for updates every 4 seconds (4000ms)
         
         // --- DO NOT MODIFY BELOW THIS LINE ---
         let lastPage = '';
         
         const showScreen = (id) => {
-            // If the page is already active, do nothing
             if (lastPage === id) return;
-        
-            // Remove the 'active' class from the currently active screen
             const currentActiveScreen = document.querySelector('.overlay-screen.active');
             if (currentActiveScreen) {
                 currentActiveScreen.classList.remove('active');
             }
-        
-            // Add the 'active' class to the new screen
             const newActiveScreen = document.getElementById(id);
             if (newActiveScreen) {
                 newActiveScreen.classList.add('active');
             }
-        
-            // Update the lastPage variable
             lastPage = id;
         };
         const fetchState = async () => {
@@ -337,16 +333,18 @@
         };
         
         document.addEventListener('DOMContentLoaded', () => {
-            fetchState(); // Initial load
-            setInterval(fetchState, POLLING_INTERVAL); // Polling loop
+            fetchState();
+            setInterval(fetchState, POLLING_INTERVAL);
             animateSubtitle('subtitle-live');
             animateSubtitle('subtitle-brb');
             animateSubtitle('subtitle-thanks');
             createParticles('particles-live');
             createParticles('particles-brb');
             createParticles('particles-thanks');
+            
             fetchYouTubeCount();
             fetchFaceitData();
+
             setInterval(fetchYouTubeCount, 30000);
             setInterval(fetchFaceitData, 30000);
         });
