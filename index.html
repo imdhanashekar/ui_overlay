@@ -146,8 +146,8 @@
             pointer-events: none;
         }
         .card-label {
-            width: 135px; /* Increased width to prevent "Recent Follower" from wrapping */
             flex-shrink: 0;
+            white-space: nowrap; /* Ensures the label text itself won't wrap */
         }
         .follower-card {
             min-width: 250px;
@@ -158,7 +158,7 @@
             white-space: nowrap;
             text-overflow: ellipsis;
             display: inline-block;
-            max-width: 100px; /* Reduced width to give more space to the label */
+            margin-left: 0.5rem; /* Adds a little space between the label and the name */
         }
         .elo-data {
             display: flex;
