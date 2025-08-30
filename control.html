@@ -50,12 +50,19 @@
             transform: translateY(0);
             background-color: #3e4e62;
         }
+        .text-outline {
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
+        .highlight-text {
+            color: #FF5500;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="text-3xl font-bold mb-4 text-center">Stream Control Panel 🎮</h1>
-        <p class="text-sm text-center mb-6 text-gray-400">Control your PC and Mobile overlays with a single click.</p>
+        <p class="text-sm text-center mb-6 text-gray-400">Control your live overlays and stats with a single click.</p>
         <div class="control-grid">
             <div class="control-button" onclick="sendCommand('going-live-screen')">
                 Going Live
@@ -63,28 +70,53 @@
             <div class="control-button" onclick="sendCommand('brb-screen')">
                 Be Right Back
             </div>
-            <div class="control-button" onclick="sendCommand('in-game-pc')">
-                In-Game (PC)
-            </div>
-            <div class="control-button" onclick="sendCommand('in-game-mobile')">
-                In-Game (Mobile)
+            <div class="control-button" onclick="sendCommand('in-game-screen')">
+                In-Game
             </div>
             <div class="control-button" onclick="sendCommand('thanks-screen')">
                 Thanks for Watching
             </div>
-            <div class="control-button" onclick="toggleFaceit()">
+            <div class="control-button" onclick="sendCommand('toggle-faceit')">
                 Toggle Faceit
             </div>
         </div>
+        <div id="status-message" class="text-center mt-4 font-bold"></div>
     </div>
-
     <script>
-        const sendCommand = (screenId) => {
-            localStorage.setItem('stream-command', screenId);
-        };
-        const toggleFaceit = () => {
-            const currentState = localStorage.getItem('faceit-visible') === 'true';
-            localStorage.setItem('faceit-visible', !currentState);
+        // --- IMPORTANT: CONFIGURE THESE ---
+        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev'; // Your Worker URL
+        const API_KEY = '386jsd93kj(wsa2%@#^s2dg30'; // Your API key
+
+        const statusMessage = document.getElementById('status-message');
+
+        const sendCommand = async (page) => {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: page, key: API_KEY })
+                });
+
+                if (response.ok) {
+                    let message = `Command sent: Switched to ${page}`;
+                    if (page === 'toggle-faceit') {
+                         message = 'Command sent: Toggled Faceit stat';
+                    }
+                    statusMessage.textContent = message;
+                    statusMessage.style.color = '#37BFB0';
+                } else {
+                    const errorData = await response.json();
+                    statusMessage.textContent = `Error: ${errorData.message || 'Failed to send command.'}`;
+                    statusMessage.style.color = '#FF5500';
+                }
+            } catch (error) {
+                statusMessage.textContent = 'Network Error: Failed to send command.';
+                statusMessage.style.color = '#FF5500';
+            }
+            
+            setTimeout(() => {
+                statusMessage.textContent = '';
+            }, 3000);
         };
     </script>
 </body>
