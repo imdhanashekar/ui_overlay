@@ -252,10 +252,19 @@
         };
         const fetchState = async () => {
             try {
-                const response = await fetch(API_URL);
+                const response = await fetch(`${API_URL}?target=master`); // Now includes the 'master' target
                 const data = await response.json();
-                if (data.page) {
+        
+                // Checks for the 'page' property and prevents unnecessary updates
+                if (data.page && data.page !== lastState.page) {
                     showScreen(data.page);
+                    lastState.page = data.page;
+                }
+        
+                // Checks for the 'faceit_visible' property
+                if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
+                    updateFaceitCard(data.faceit_visible);
+                    lastState.faceit_visible = data.faceit_visible;
                 }
             } catch (error) {
                 console.error('Failed to fetch state:', error);
