@@ -3,105 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Control Panel</title>
+    <title>Stream Overlay Control Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
+            background-color: #121212;
             color: #E2E8F0;
-            padding: 2rem;
             display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 2rem;
         }
         .container {
-            width: 100%;
-            max-width: 600px;
-            background-color: #1e293b;
-            padding: 2rem;
+            background-color: #1a1a1a;
             border-radius: 1rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 800px;
         }
-        .control-grid {
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            color: #37BFB0;
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #E2E8F0;
+            border-bottom: 2px solid #2d3748;
+            padding-bottom: 0.5rem;
+        }
+        .controls-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
         .control-button {
-            background-color: #334155;
+            background-color: #2d3748;
             color: #E2E8F0;
             font-weight: bold;
             padding: 1rem;
             border-radius: 0.5rem;
+            transition: all 0.2s ease-in-out;
             cursor: pointer;
             text-align: center;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            border: 2px solid #2d3748;
         }
         .control-button:hover {
-            background-color: #475569;
-            transform: translateY(-2px);
+            background-color: #37BFB0;
+            color: #1a1a1a;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(55, 191, 176, 0.4);
         }
-        .control-button:active {
-            transform: translateY(0);
+        .control-button.active {
+            background-color: #FF5500;
+            color: #1a1a1a;
+            transform: scale(1.05);
+            border-color: #FF5500;
+        }
+        .status-message {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .status-message.success { color: #37BFB0; }
+        .status-message.error { color: #FF5500; }
+        .flex-row {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-3xl font-bold mb-4 text-center">Stream Control Panel 🎮</h1>
-        <p class="text-sm text-center mb-6 text-gray-400">Click a button to instantly switch your live overlay page.</p>
-        <div class="control-grid">
-            <div class="control-button" onclick="sendCommand('going-live-screen')">
-                Going Live
-            </div>
-            <div class="control-button" onclick="sendCommand('brb-screen')">
-                Be Right Back
-            </div>
-            <div class="control-button" onclick="sendCommand('in-game-screen')">
-                In-Game
-            </div>
-            <div class="control-button" onclick="sendCommand('thanks-screen')">
-                Thanks for Watching
-            </div>
+        <h1>Stream Overlay Controls</h1>
+
+        <h2 class="section-title">Master Overlay Controls (1920x1080)</h2>
+        <div class="controls-grid" data-target="master">
+            <button class="control-button" data-page="in-game-screen">In-Game</button>
+            <button class="control-button" data-page="brb-screen">Be Right Back</button>
+            <button class="control-button" data-page="going-live-screen">Going Live</button>
+            <button class="control-button" data-page="thanks-screen">Thanks for Watching</button>
         </div>
-        <div id="status-message" style="text-align: center; margin-top: 1rem; font-weight: bold;"></div>
-    </div>
-    <script>
-    // --- IMPORTANT: CONFIGURE THESE ---
-    const API_URL = 'https://stream-controller-worker.darms1er.workers.dev'; // Your Worker URL
-    const API_KEY = '293smnadlkjwa8%d2983eh$(@sjad'; // Your API key
-
-    const statusMessage = document.getElementById('status-message');
-
-    const sendCommand = async (page) => {
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ page: page, key: API_KEY })
-            });
-
-            if (response.ok) {
-                statusMessage.textContent = `Command sent: Switched to ${page}`;
-                statusMessage.style.color = '#37BFB0'; // Success color
-            } else {
-                const errorData = await response.json();
-                statusMessage.textContent = `Error: ${errorData.message}`;
-                statusMessage.style.color = '#FF5500'; // Error color
-            }
-        } catch (error) {
-            statusMessage.textContent = 'Network Error: Failed to send command.';
-            statusMessage.style.color = '#FF5500'; // Error color
-        }
         
-        setTimeout(() => {
-            statusMessage.textContent = '';
-        }, 3000); // Clears the message after 3 seconds
-    };
-</script>
+        <div class="flex-row">
+            <h2 class="section-title">Faceit Card Visibility</h2>
+            <button class="control-button" id="master-faceit-toggle" data-target="master">Hide/Show Faceit</button>
+        </div>
+
+        <hr class="my-6 border-gray-700">
+
+        <h2 class="section-title">Vertical Overlay Controls (1080x1920)</h2>
+        <div class="controls-grid" data-target="vertical">
+            <button class="control-button" data-page="in-game-screen">In-Game</button>
+            <button class="control-button" data-page="brb-screen">Be Right Back</button>
+            <button class="control-button" data-page="going-live-screen">Going Live</button>
+            <button class="control-button" data-page="thanks-screen">Thanks for Watching</button>
+        </div>
+
+        <div class="flex-row">
+            <h2 class="section-title">Faceit Card Visibility</h2>
+            <button class="control-button" id="vertical-faceit-toggle" data-target="vertical">Hide/Show Faceit</button>
+        </div>
+
+        <p id="status" class="status-message"></p>
+    </div>
+
+    <script>
+        // --- IMPORTANT: CONFIGURE THESE ---
+        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
+        const API_KEY = '293smnadlkjwa8%d2983eh$(@sjad';
+
+        const statusElement = document.getElementById('status');
+        const showStatusMessage = (message, type) => {
+            statusElement.textContent = message;
+            statusElement.className = `status-message ${type}`;
+            setTimeout(() => {
+                statusElement.textContent = '';
+                statusElement.className = 'status-message';
+            }, 3000);
+        };
+
+        const updateButtonState = (target, page) => {
+            const buttons = document.querySelectorAll(`[data-target="${target}"] .control-button`);
+            buttons.forEach(button => {
+                if (button.dataset.page === page) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        };
+        
+        const fetchInitialState = async () => {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Failed to fetch initial state');
+                const data = await response.json();
+                
+                updateButtonState('master', data.master.page);
+                updateButtonState('vertical', data.vertical.page);
+
+            } catch (error) {
+                console.error('Error fetching initial state:', error);
+                showStatusMessage('Error fetching initial state.', 'error');
+            }
+        };
+
+        const sendPostRequest = async (data, target) => {
+            try {
+                const response = await fetch(`${API_URL}?target=${target}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...data, key: API_KEY }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Network response was not ok.');
+                }
+
+                const responseData = await response.json();
+                showStatusMessage('State updated successfully!', 'success');
+                updateButtonState(target, responseData.newState.page);
+
+            } catch (error) {
+                console.error('API Error:', error);
+                showStatusMessage(`Error: ${error.message}`, 'error');
+            }
+        };
+
+        // Event listener for all page buttons
+        document.querySelectorAll('.controls-grid').forEach(grid => {
+            grid.addEventListener('click', (event) => {
+                if (event.target.classList.contains('control-button')) {
+                    const page = event.target.dataset.page;
+                    const target = grid.dataset.target;
+                    if (page) {
+                        sendPostRequest({ page }, target);
+                    }
+                }
+            });
+        });
+
+        // Event listeners for Faceit toggles
+        document.getElementById('master-faceit-toggle').addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${API_URL}?target=master`);
+                const data = await response.json();
+                const newVisibility = !data.faceit_visible;
+                sendPostRequest({ faceit_visible: newVisibility }, 'master');
+            } catch (error) {
+                showStatusMessage('Error toggling Faceit card.', 'error');
+            }
+        });
+
+        document.getElementById('vertical-faceit-toggle').addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${API_URL}?target=vertical`);
+                const data = await response.json();
+                const newVisibility = !data.faceit_visible;
+                sendPostRequest({ faceit_visible: newVisibility }, 'vertical');
+            } catch (error) {
+                showStatusMessage('Error toggling Faceit card.', 'error');
+            }
+        });
+
+        fetchInitialState();
+    </script>
 </body>
 </html>
