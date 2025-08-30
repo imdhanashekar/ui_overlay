@@ -232,14 +232,20 @@
     </div>
     <script>
         // --- IMPORTANT: CONFIGURE THESE ---
-        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev'; // Replace with your Worker URL
-        const POLLING_INTERVAL = 4000; // Check for updates every 4 seconds (4000ms)
+        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
+        const POLLING_INTERVAL = 4000;
+        const YOUTUBE_TARGET_GOAL = 10;
+        const YOUTUBE_COUNT_URL = 'https://youtube-count.darms1er.workers.dev';
+        const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
+        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
+        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
+
         
         // --- DO NOT MODIFY BELOW THIS LINE ---
-        let lastPage = '';
-        
+        // This is the crucial fix: declare lastState here so it's accessible everywhere
+        let lastState = { page: 'in-game-screen', faceit_visible: true };
+    
         const showScreen = (id) => {
-            if (lastPage === id) return;
             const currentActiveScreen = document.querySelector('.overlay-screen.active');
             if (currentActiveScreen) {
                 currentActiveScreen.classList.remove('active');
@@ -248,20 +254,29 @@
             if (newActiveScreen) {
                 newActiveScreen.classList.add('active');
             }
-            lastPage = id;
         };
+    
+        const updateFaceitCard = (isVisible) => {
+            const faceitCard = document.getElementById('faceit-card');
+            if (faceitCard) {
+                if (isVisible) {
+                    faceitCard.classList.remove('hidden-card');
+                } else {
+                    faceitCard.classList.add('hidden-card');
+                }
+            }
+        };
+    
         const fetchState = async () => {
             try {
-                const response = await fetch(`${API_URL}?target=master`); // Now includes the 'master' target
+                const response = await fetch(`${API_URL}?target=master`);
                 const data = await response.json();
-        
-                // Checks for the 'page' property and prevents unnecessary updates
+                
                 if (data.page && data.page !== lastState.page) {
                     showScreen(data.page);
                     lastState.page = data.page;
                 }
-        
-                // Checks for the 'faceit_visible' property
+                
                 if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
                     updateFaceitCard(data.faceit_visible);
                     lastState.faceit_visible = data.faceit_visible;
@@ -270,66 +285,29 @@
                 console.error('Failed to fetch state:', error);
             }
         };
-        const createParticles = (containerId) => {
-            const particlesContainer = document.getElementById(containerId);
-            const numParticles = 150;
-            for (let i = 0; i < numParticles; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const size = Math.random() * 4 + 1;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                const startX = Math.random() * 100;
-                const startY = 100 + Math.random() * 20;
-                const midX = Math.random() * 100;
-                const midY = 50 + Math.random() * 30;
-                const endX = Math.random() * 100;
-                const endY = -10;
-                particle.style.setProperty('--start-x', `${startX}vw`);
-                particle.style.setProperty('--start-y', `${startY}vh`);
-                particle.style.setProperty('--mid-x', `${midX}vw`);
-                particle.style.setProperty('--mid-y', `${midY}vh`);
-                particle.style.setProperty('--end-x', `${endX}vw`);
-                particle.style.setProperty('--end-y', `${endY}vh`);
-                const duration = Math.random() * 10 + 5;
-                const delay = Math.random() * 10;
-                particle.style.animationDuration = `${duration}s`;
-                particle.style.animationDelay = `${delay}s`;
-                particlesContainer.appendChild(particle);
-            }
-        };
-        const animateSubtitle = (subtitleId) => {
-            const subtitle = document.getElementById(subtitleId);
-            const text = subtitle.innerText;
-            subtitle.innerHTML = '';
-            for (let i = 0; i < text.length; i++) {
-                const char = text[i];
-                const span = document.createElement('span');
-                span.innerText = char === ' ' ? '\u00A0' : char;
-                span.style.animationDelay = `${i * 0.1}s`;
-                subtitle.appendChild(span);
-            }
-        };
+    
         const fetchYouTubeCount = async () => {
-            const url = 'https://youtube-count.darms1er.workers.dev';
-            const channelId = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
-            if (url === 'YOUTUBE_COUNT' || channelId === 'CHANNEL_ID') {
-                document.getElementById('youtube-count').textContent = 'N/A';
+            const url = YOUTUBE_COUNT_URL;
+            const channelId = YOUTUBE_CHANNEL_ID;
+            if (url === 'YOUTUBE_COUNT_URL' || channelId === 'CHANNEL_ID') {
+                document.getElementById('youtube-count-goal').textContent = 'N/A';
+                document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
                 return;
             }
             try {
                 const response = await fetch(`${url}?channelId=${channelId}`);
                 const data = await response.json();
                 if (response.ok && data.subscriberCount) {
-                    document.getElementById('youtube-count').textContent = data.subscriberCount;
-                    document.getElementById('youtube-goal').textContent = 76;
+                    document.getElementById('youtube-count-goal').textContent = data.subscriberCount.toLocaleString();
+                    document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
                 } else { throw new Error(data.error || 'Failed to fetch YouTube count.'); }
-            } catch (error) { document.getElementById('youtube-count').textContent = 'N/A'; }
+            } catch (error) { document.getElementById('youtube-count-goal').textContent = 'N/A'; }
         };
+    
         const fetchFaceitData = async () => {
-            const url = 'https://faceit-elo.darms1er.workers.dev';
-            const playerId = '57280df3-9f9c-464e-bca9-e943c5d037f0';
-            if (url === 'FACEIT_KEY' || playerId === 'FACEIT_ID') {
+            const url = FACEIT_WORKER_URL;
+            const playerId = FACEIT_PLAYER_ID;
+            if (url === 'FACEIT_WORKER_URL' || playerId === 'PLAYER_ID') {
                 document.getElementById('elo-value').textContent = 'N/A';
                 document.getElementById('elo-level').textContent = 'N/A';
                 return;
@@ -347,8 +325,7 @@
                 document.getElementById('elo-level').textContent = 'N/A';
             }
         };
-
-        // This function will listen for messages from StreamElements
+    
         window.addEventListener('message', (event) => {
             if (event.data.type === 'event' && event.data.event && event.data.event.listener === 'follower-latest') {
                 const followerName = event.data.event.name;
@@ -357,18 +334,11 @@
         });
         
         document.addEventListener('DOMContentLoaded', () => {
+            showScreen('in-game-screen');
             fetchState();
             setInterval(fetchState, POLLING_INTERVAL);
-            animateSubtitle('subtitle-live');
-            animateSubtitle('subtitle-brb');
-            animateSubtitle('subtitle-thanks');
-            createParticles('particles-live');
-            createParticles('particles-brb');
-            createParticles('particles-thanks');
-            
             fetchYouTubeCount();
             fetchFaceitData();
-
             setInterval(fetchYouTubeCount, 30000);
             setInterval(fetchFaceitData, 30000);
         });
