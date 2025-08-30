@@ -40,7 +40,6 @@
             cursor: pointer;
             text-align: center;
             transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
         .control-button:hover {
             background-color: #475569;
@@ -48,85 +47,37 @@
         }
         .control-button:active {
             transform: translateY(0);
-            background-color: #3e4e62;
-        }
-        .text-outline {
-            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-        }
-        .highlight-text {
-            color: #FF5500;
-            font-weight: bold;
-        }
-        h2 {
-            font-size: 1.75rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            text-align: center;
-            color: #37BFB0;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="text-3xl font-bold mb-4 text-center">Stream Control Panel 🎮</h1>
-        <p class="text-sm text-center mb-6 text-gray-400">Control your live overlays and stats with a single click.</p>
-
-        <h2 class="mt-4">PC Stream (Master Overlay)</h2>
+        <p class="text-sm text-center mb-6 text-gray-400">Use these buttons to instantly switch your live overlay screen.</p>
         <div class="control-grid">
-            <div class="control-button" onclick="sendCommand('going-live-screen', 'pc')">
+            <div class="control-button" onclick="sendCommand('going-live-screen')">
                 Going Live
             </div>
-            <div class="control-button" onclick="sendCommand('brb-screen', 'pc')">
+            <div class="control-button" onclick="sendCommand('brb-screen')">
                 Be Right Back
             </div>
-            <div class="control-button" onclick="sendCommand('thanks-screen', 'pc')">
+            <div class="control-button" onclick="sendCommand('in-game-screen')">
+                In-Game
+            </div>
+            <div class="control-button" onclick="sendCommand('thanks-screen')">
                 Thanks for Watching
             </div>
         </div>
-
-        <h2 class="mt-8">Mobile Stream (Vertical Overlay)</h2>
-        <div class="control-grid">
-            <div class="control-button" onclick="sendCommand('in-game-screen', 'mobile')">
-                In-Game
-            </div>
-            <div class="control-button" onclick="sendCommand('toggle-faceit', 'mobile')">
-                Toggle Faceit
-            </div>
-        </div>
-        <div id="status-message" class="text-center mt-4 font-bold"></div>
     </div>
+
     <script>
-        // --- IMPORTANT: CONFIGURE THESE ---
-        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
-        const API_KEY = '293smnadlkjwa8%d2983eh$(@sjad';
-
-        const statusMessage = document.getElementById('status-message');
-
-        const sendCommand = async (command, target) => {
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ command: command, target: target, key: API_KEY })
-                });
-
-                if (response.ok) {
-                    let message = `Command sent: ${command}`;
-                    statusMessage.textContent = message;
-                    statusMessage.style.color = '#37BFB0';
-                } else {
-                    const errorData = await response.json();
-                    statusMessage.textContent = `Error: ${errorData.message || 'Failed to send command.'}`;
-                    statusMessage.style.color = '#FF5500';
-                }
-            } catch (error) {
-                statusMessage.textContent = 'Network Error: Failed to send command.';
-                statusMessage.style.color = '#FF5500';
-            }
-            
-            setTimeout(() => {
-                statusMessage.textContent = '';
-            }, 3000);
+        const sendCommand = (screenId) => {
+            const command = {
+                type: 'switch-screen',
+                payload: screenId
+            };
+            localStorage.setItem('stream-command', JSON.stringify(command));
+            console.log(`Command sent: Switch to ${screenId}`);
         };
     </script>
 </body>
