@@ -40,6 +40,7 @@
             cursor: pointer;
             text-align: center;
             transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
         .control-button:hover {
             background-color: #475569;
@@ -47,13 +48,14 @@
         }
         .control-button:active {
             transform: translateY(0);
+            background-color: #3e4e62;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="text-3xl font-bold mb-4 text-center">Stream Control Panel 🎮</h1>
-        <p class="text-sm text-center mb-6 text-gray-400">Click a button to instantly switch your live overlay page.</p>
+        <p class="text-sm text-center mb-6 text-gray-400">Control your PC and Mobile overlays with a single click.</p>
         <div class="control-grid">
             <div class="control-button" onclick="sendCommand('going-live-screen')">
                 Going Live
@@ -61,47 +63,29 @@
             <div class="control-button" onclick="sendCommand('brb-screen')">
                 Be Right Back
             </div>
-            <div class="control-button" onclick="sendCommand('in-game-screen')">
-                In-Game
+            <div class="control-button" onclick="sendCommand('in-game-pc')">
+                In-Game (PC)
+            </div>
+            <div class="control-button" onclick="sendCommand('in-game-mobile')">
+                In-Game (Mobile)
             </div>
             <div class="control-button" onclick="sendCommand('thanks-screen')">
                 Thanks for Watching
             </div>
+            <div class="control-button" onclick="toggleFaceit()">
+                Toggle Faceit
+            </div>
         </div>
-        <div id="status-message" style="text-align: center; margin-top: 1rem; font-weight: bold;"></div>
     </div>
+
     <script>
-    // --- IMPORTANT: CONFIGURE THESE ---
-    const API_URL = 'https://stream-controller-worker.darms1er.workers.dev'; // Your Worker URL
-    const API_KEY = '386jsd93kj(wsa2%@#^s2dg30'; // Your API key
-
-    const statusMessage = document.getElementById('status-message');
-
-    const sendCommand = async (page) => {
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ page: page, key: API_KEY })
-            });
-
-            if (response.ok) {
-                statusMessage.textContent = `Command sent: Switched to ${page}`;
-                statusMessage.style.color = '#37BFB0'; // Success color
-            } else {
-                const errorData = await response.json();
-                statusMessage.textContent = `Error: ${errorData.message}`;
-                statusMessage.style.color = '#FF5500'; // Error color
-            }
-        } catch (error) {
-            statusMessage.textContent = 'Network Error: Failed to send command.';
-            statusMessage.style.color = '#FF5500'; // Error color
-        }
-        
-        setTimeout(() => {
-            statusMessage.textContent = '';
-        }, 3000); // Clears the message after 3 seconds
-    };
-</script>
+        const sendCommand = (screenId) => {
+            localStorage.setItem('stream-command', screenId);
+        };
+        const toggleFaceit = () => {
+            const currentState = localStorage.getItem('faceit-visible') === 'true';
+            localStorage.setItem('faceit-visible', !currentState);
+        };
+    </script>
 </body>
 </html>
