@@ -53,7 +53,7 @@
 <body>
     <div class="container">
         <h1 class="text-3xl font-bold mb-4 text-center">Stream Control Panel 🎮</h1>
-        <p class="text-sm text-center mb-6 text-gray-400">Use these buttons to instantly switch your live overlay screen.</p>
+        <p class="text-sm text-center mb-6 text-gray-400">Click a button to instantly switch your live overlay page.</p>
         <div class="control-grid">
             <div class="control-button" onclick="sendCommand('going-live-screen')">
                 Going Live
@@ -68,17 +68,40 @@
                 Thanks for Watching
             </div>
         </div>
+        <div id="status-message" style="text-align: center; margin-top: 1rem; font-weight: bold;"></div>
     </div>
-
     <script>
-        const sendCommand = (screenId) => {
-            const command = {
-                type: 'switch-screen',
-                payload: screenId
-            };
-            localStorage.setItem('stream-command', JSON.stringify(command));
-            console.log(`Command sent: Switch to ${screenId}`);
-        };
-    </script>
+    // --- IMPORTANT: CONFIGURE THESE ---
+    const API_URL = 'https://stream-controller-worker.darms1er.workers.dev'; // Your Worker URL
+    const API_KEY = '293smnadlkjwa8%d2983eh$(@sjad'; // Your API key
+
+    const statusMessage = document.getElementById('status-message');
+
+    const sendCommand = async (page) => {
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ page: page, key: API_KEY })
+            });
+
+            if (response.ok) {
+                statusMessage.textContent = `Command sent: Switched to ${page}`;
+                statusMessage.style.color = '#37BFB0'; // Success color
+            } else {
+                const errorData = await response.json();
+                statusMessage.textContent = `Error: ${errorData.message}`;
+                statusMessage.style.color = '#FF5500'; // Error color
+            }
+        } catch (error) {
+            statusMessage.textContent = 'Network Error: Failed to send command.';
+            statusMessage.style.color = '#FF5500'; // Error color
+        }
+        
+        setTimeout(() => {
+            statusMessage.textContent = '';
+        }, 3000); // Clears the message after 3 seconds
+    };
+</script>
 </body>
 </html>
