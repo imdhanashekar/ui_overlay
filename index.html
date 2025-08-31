@@ -337,7 +337,7 @@
 
         const fetchState = async () => {
             try {
-                const response = await fetch(`${API_URL}?target=master`);
+                const response = await fetch(`${API_URL}?target=index`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
