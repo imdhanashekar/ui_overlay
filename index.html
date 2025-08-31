@@ -15,15 +15,13 @@
             background-color: transparent;
             overflow: hidden;
             color: #E2E8F0;
-            width: 1920px;
-            height: 1080px;
-            margin: 0;
+            margin: 0; /* Ensures no default body margin */
             padding: 0;
             position: relative;
         }
         .overlay-screen {
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             position: absolute;
             top: 0;
             left: 0;
@@ -56,7 +54,6 @@
             height: 100%;
             pointer-events: none;
             overflow: hidden;
-            z-index: 0;
         }
         .particle {
             position: absolute;
@@ -128,7 +125,7 @@
         #in-game-screen { 
             background-color: transparent; 
         }
-        
+
         /* --- Animated Border Styles --- */
         .border-side {
             position: absolute;
@@ -137,16 +134,16 @@
             animation: border-glow-effect 3s infinite alternate;
             z-index: 100;
         }
-        .border-top { top: 0; left: 0; width: 100%; height: 5px; }
-        .border-bottom { bottom: 0; left: 0; width: 100%; height: 5px; }
-        .border-left { top: 0; left: 0; width: 5px; height: 100%; }
-        .border-right { top: 0; right: 0; width: 5px; height: 100%; }
+        .border-top { top: 0; left: 0; width: 100vw; height: 5px; }
+        .border-bottom { bottom: 0; left: 0; width: 100vw; height: 5px; }
+        .border-left { top: 0; left: 0; width: 5px; height: 100vh; }
+        .border-right { top: 0; right: 0; width: 5px; height: 100vh; }
         @keyframes border-glow-effect {
             0%, 100% { box-shadow: 0 0 5px #37BFB0, 0 0 10px #37BFB0; }
             50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
         }
-        /* --- End of Animated Border Styles --- */
 
+        /* --- Card and Text Styles --- */
         .card {
             background-color: rgba(30, 41, 59, 0.7);
             border-radius: 0.75rem;
@@ -246,7 +243,8 @@
                 <div class="w-full max-w-2xl">
                     <div class="card follower-card flex items-center justify-between">
                         <span class="text-base font-bold uppercase text-outline card-label">Recent Follower:</span>
-                        <span id="recent-follower-name" class="text-base font-bold highlight-text uppercase text-outline follower-name"></span>
+                        <span id="recent-follower-name" class="text-base font-bold highlight-text uppercase text-outline follower-name">
+                            Bhavesh Sharma</span>
                     </div>
                 </div>
 
@@ -269,7 +267,12 @@
         // --- IMPORTANT: CONFIGURE THESE ---
         const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
         const POLLING_INTERVAL = 4000;
-        
+        const YOUTUBE_TARGET_GOAL = 10;
+        const YOUTUBE_COUNT_URL = 'https://youtube-count.darms1er.workers.dev';
+        const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
+        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
+        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
+
         // --- DO NOT MODIFY BELOW THIS LINE ---
         let lastPage = '';
         
@@ -289,7 +292,7 @@
             try {
                 const response = await fetch(API_URL);
                 const data = await response.json();
-                if (data.page) {
+                if (response.ok && data.page) {
                     showScreen(data.page);
                 }
             } catch (error) {
@@ -337,32 +340,34 @@
             }
         };
         const fetchYouTubeCount = async () => {
-            const url = 'https://youtube-count.darms1er.workers.dev';
-            const channelId = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
-            if (url === 'YOUTUBE_COUNT' || channelId === 'CHANNEL_ID') {
+            if (YOUTUBE_COUNT_URL === 'YOUTUBE_COUNT_URL' || YOUTUBE_CHANNEL_ID === 'CHANNEL_ID') {
                 document.getElementById('youtube-count').textContent = 'N/A';
                 return;
             }
             try {
-                const response = await fetch(`${url}?channelId=${channelId}`);
+                const response = await fetch(`${YOUTUBE_COUNT_URL}?channelId=${YOUTUBE_CHANNEL_ID}`);
                 const data = await response.json();
                 if (response.ok && data.subscriberCount) {
                     document.getElementById('youtube-count').textContent = data.subscriberCount;
-                    document.getElementById('youtube-goal').textContent = 10;
-                } else { throw new Error(data.error || 'Failed to fetch YouTube count.'); }
-            } catch (error) { document.getElementById('youtube-count').textContent = 'N/A'; }
+                    document.getElementById('youtube-goal').textContent = YOUTUBE_TARGET_GOAL;
+                } else {
+                    throw new Error(data.error || 'Failed to fetch YouTube count.');
+                }
+            } catch (error) {
+                document.getElementById('youtube-count').textContent = 'N/A';
+            }
         };
         const fetchFaceitData = async () => {
-            const url = 'https://faceit-elo.darms1er.workers.dev';
-            const playerId = '57280df3-9f9c-464e-bca9-e943c5d037f0';
-            if (url === 'FACEIT_KEY' || playerId === 'FACEIT_ID') {
+            if (FACEIT_WORKER_URL === 'FACEIT_WORKER_URL' || FACEIT_PLAYER_ID === 'PLAYER_ID') {
                 document.getElementById('elo-value').textContent = 'N/A';
                 document.getElementById('elo-level').textContent = 'N/A';
                 return;
             }
             try {
-                const response = await fetch(`${url}/${playerId}`);
-                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                const response = await fetch(`${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 const elo = data.games.cs2.faceit_elo || 0;
                 const level = data.games.cs2.skill_level || 0;
