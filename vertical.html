@@ -340,15 +340,14 @@
             <div class="top-bar-content"> 
                 <div class="youtube-goal-card"> 
                     <div class="goal-text-left"> 
-                        <i class="fab fa-youtube icon"></i> 
-                        <span>SUB GOAL:</span> 
+                        <span>SUBSCRIBERS:</span> 
                     </div> 
                     <div class="goal-text-right"> 
                         <span id="youtube-count-goal" class="sub-count">0</span> / <span id="youtube-target" class="goal-target">10</span> 
                     </div> 
                 </div> 
                 <div class="card"> 
-                    <span class="text-outline card-label">Recent Follower:</span> 
+                    <span class="text-outline card-label">RECENT FOLLOWER:</span> 
                     <span id="recent-follower-name" class="highlight-text uppercase text-outline name-display"></span> 
                 </div> 
             </div> 
@@ -357,7 +356,7 @@
                 <div class="flex flex-col md:flex-row gap-4 items-center justify-center w-full"> 
                     <div class="card" id="faceit-card"> 
                         <div class="elo-data"> 
-                            <span class="text-outline">Level:</span> 
+                            <span class="text-outline">LEVEL:</span> 
                             <span id="elo-level" class="highlight-text uppercase text-outline ml-1">0</span> 
                         </div> 
                         <div class="elo-data"> 
@@ -405,13 +404,13 @@
     
     <script> 
         // --- IMPORTANT: CONFIGURE THESE --- 
-        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev'; 
-        const POLLING_INTERVAL = 4000; 
-        const YOUTUBE_TARGET_GOAL = 10; 
-        const YOUTUBE_COUNT_URL = 'YOUTUBE_COUNT_URL'; 
-        const YOUTUBE_CHANNEL_ID = 'CHANNEL_ID'; 
-        const FACEIT_WORKER_URL = 'FACEIT_WORKER_URL'; 
-        const FACEIT_PLAYER_ID = 'PLAYER_ID'; 
+        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
+        const POLLING_INTERVAL = 4000;
+        const YOUTUBE_TARGET_GOAL = 10;
+        const YOUTUBE_COUNT_URL = 'https://youtube-count.darms1er.workers.dev';
+        const YOUTUBE_CHANNEL_ID = 'UC3n9I7BZFWY4tF2oemfcqTQ';
+        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
+        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
         
         // --- DO NOT MODIFY BELOW THIS LINE --- 
         let lastState = { page: 'in-game-screen', faceit_visible: true }; 
