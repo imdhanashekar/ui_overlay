@@ -366,7 +366,7 @@
 
         const showScreen = (id) => {
             const currentActiveScreen = document.querySelector('.overlay-screen.active');
-            if (currentActiveScreen && currentActiveScreen.id !== id) {
+            if (currentActiveScreen) {
                 currentActiveScreen.classList.remove('active');
             }
             const newActiveScreen = document.getElementById(id);
