@@ -317,14 +317,14 @@
                 newActiveScreen.classList.add('active');
             }
         };
-
+    
         const updateFaceitCard = (isVisible) => {
             const faceitCard = document.getElementById('faceit-card');
             if (faceitCard) {
                 if (isVisible) {
-                    faceitCard.classList.remove('is-hidden');
+                    faceitCard.classList.remove('hidden-card');
                 } else {
-                    faceitCard.classList.add('is-hidden');
+                    faceitCard.classList.add('hidden-card');
                 }
             } else {
                 console.error("Faceit card element not found in the DOM.");
@@ -333,29 +333,28 @@
         
         const fetchState = async () => {
             try {
-                // Add a unique timestamp to prevent caching
-                const url = `${API_URL}?target=master&cachebuster=${Date.now()}`;
-                
-                const response = await fetch(url);
+                const response = await fetch(`${API_URL}?target=master`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
                 
-                console.log('Received state:', data);
-                
-                if (data.faceit_visible !== undefined) {
-                    updateFaceitCard(data.faceit_visible);
-                }
-                
-                if (data.page) {
+                // Check for a change in the 'page' property
+                if (data.page && data.page !== lastState.page) {
                     showScreen(data.page);
+                    lastState.page = data.page;
+                }
+    
+                // Check for a change in the 'faceit_visible' property
+                if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
+                    updateFaceitCard(data.faceit_visible);
+                    lastState.faceit_visible = data.faceit_visible;
                 }
             } catch (error) {
                 console.error('Failed to fetch master overlay state:', error);
             }
         };
-
+    
         const createParticles = (containerId) => {
             const particlesContainer = document.getElementById(containerId);
             const numParticles = 150;
@@ -447,10 +446,13 @@
         });
         
         document.addEventListener('DOMContentLoaded', async () => {
+            // Fetch the state immediately on page load to set the correct initial visibility
             await fetchState();
             
+            // Then start the polling loop
             setInterval(fetchState, POLLING_INTERVAL);
         
+            // Continue with the rest of your page setup
             animateSubtitle('subtitle-live');
             animateSubtitle('subtitle-brb');
             animateSubtitle('subtitle-thanks');
