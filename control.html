@@ -3,263 +3,466 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Overlay Control Panel</title>
+    <title>Master Stream Overlay</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Base Styles */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #121212;
+            background-color: transparent;
+            overflow: hidden;
             color: #E2E8F0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 2rem;
+            width: 1920px;
+            height: 1080px;
+            margin: 0;
+            padding: 0;
+            position: relative;
         }
-        .container {
-            background-color: #1a1a1a;
-            border-radius: 1rem;
-            padding: 2rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+
+        /* Overlay Screens */
+        .overlay-screen {
             width: 100%;
-            max-width: 800px;
-        }
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            text-align: center;
-            color: #37BFB0;
-            margin-bottom: 2rem;
-        }
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #E2E8F0;
-            border-bottom: 2px solid #2d3748;
-            padding-bottom: 0.5rem;
-        }
-        .controls-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .control-button {
-            background-color: #2d3748;
-            color: #E2E8F0;
-            font-weight: bold;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
-            text-align: center;
-            border: 2px solid #2d3748;
-        }
-        .control-button:hover {
-            background-color: #37BFB0;
-            color: #1a1a1a;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(55, 191, 176, 0.4);
-        }
-        .control-button.active {
-            background-color: #FF5500;
-            color: #1a1a1a;
-            transform: scale(1.05);
-            border-color: #FF5500;
-        }
-        .status-message {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 1rem;
-            font-weight: 600;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            pointer-events: none;
             transition: opacity 0.5s ease-in-out;
-        }
-        .status-message.success { color: #37BFB0; }
-        .status-message.error { color: #FF5500; }
-        .flex-row {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            z-index: 1;
+        }
+        .overlay-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        /* Animated Full-Screen Backgrounds */
+        .animated-screen {
+            background: linear-gradient(135deg, #0f172a, #1a202c, #334155);
+            background-size: 400% 400%;
+            animation: gradient-flow 15s ease-in-out infinite alternate;
+        }
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Particles Effect */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            background-color: #37BFB0;
+            border-radius: 50%;
+            opacity: 0;
+            filter: blur(1px);
+            animation: particle-motion linear infinite;
+        }
+        @keyframes particle-motion {
+            0% { transform: translate(var(--start-x), var(--start-y)) scale(0); opacity: 0; }
+            25% { transform: translate(var(--mid-x), var(--mid-y)) scale(0.8); opacity: 0.7; }
+            100% { transform: translate(var(--end-x), var(--end-y)) scale(1.2); opacity: 0; }
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 2rem;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+        .scene-title {
+            font-size: 6rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #E2E8F0;
+            animation: text-glow 2s infinite alternate, text-pulse 4s infinite ease-in-out;
+            text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+        }
+        @keyframes text-glow {
+            0% { text-shadow: 0 0 10px #37BFB0, 0 0 20px #37BFB0, 0 0 30px #FF5500; }
+            100% { text-shadow: 0 0 20px #37BFB0, 0 0 30px #37BFB0, 0 0 40px #FF5500; }
+        }
+        @keyframes text-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        .scene-subtitle {
+            font-size: 2rem;
+            font-weight: 400;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+        .scene-subtitle span {
+            display: inline-block;
+            animation: character-jump 1s ease-out infinite alternate;
+        }
+        @keyframes character-jump {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25% { transform: translateY(-8px) scale(1.1); }
+            50% { transform: translateY(0) scale(1); }
+        }
+        .highlight-bar {
+            width: 100%;
+            max-width: 30rem;
+            height: 4px;
+            background: linear-gradient(90deg, #FF5500, #37BFB0);
+            margin-top: 2rem;
+            animation: bar-glow 2s infinite alternate;
+        }
+        @keyframes bar-glow {
+            0%, 100% { box-shadow: 0 0 5px #FF5500, 0 0 10px #FF5500; }
+            50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
+        }
+
+        /* In-Game Screen Specifics */
+        #in-game-screen { background-color: transparent; }
+
+        /* Animated Full-Screen Border */
+        .border-side {
+            position: absolute;
+            background-color: #37BFB0;
+            box-shadow: 0 0 10px #37BFB0, 0 0 20px #FF5500;
+            animation: border-glow-effect 3s infinite alternate;
+            z-index: 100;
+        }
+        .border-top { top: 0; left: 0; width: 100%; height: 5px; }
+        .border-bottom { bottom: 0; left: 0; width: 100%; height: 5px; }
+        .border-left { top: 0; left: 0; width: 5px; height: 100%; }
+        .border-right { top: 0; right: 0; width: 5px; height: 100%; }
+        @keyframes border-glow-effect {
+            0%, 100% { box-shadow: 0 0 5px #37BFB0, 0 0 10px #37BFB0; }
+            50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
+        }
+
+        /* NEW CARD LAYOUT */
+        .card-container-new {
+            position: absolute;
+            left: 4rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            z-index: 50;
+            width: 360px; /* Setting a fixed width to be safe */
+        }
+        
+        .card {
+            background-color: rgba(30, 41, 59, 0.7);
+            border-radius: 0.75rem;
+            padding: 14px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(45, 212, 191, 0.8);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card.hidden-card {
+            opacity: 0 !important;
+            transform: scale(0.9) !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+        }
+        .text-outline {
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
+        .highlight-text {
+            color: #FF5500;
+            font-weight: bold;
+        }
+        #alert-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .card-label {
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        .follower-card {
+            min-width: 360px;
+            max-width: 360px;
+        }
+        .follower-name {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+        .elo-data {
+            display: flex;
+            gap: 0.5rem;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Stream Overlay Controls</h1>
-        
-        <h2 class="section-title">Global Controls (Change All Overlays)</h2>
-        <div class="controls-grid" data-target="all">
-            <button class="control-button" data-page="in-game-screen">In-Game</button>
-            <button class="control-button" data-page="brb-screen">Be Right Back</button>
-            <button class="control-button" data-page="going-live-screen">Going Live</button>
-            <button class="control-button" data-page="thanks-screen">Thanks for Watching</button>
-        </div>
-        
-        <hr class="my-6 border-gray-700">
-
-        <h2 class="section-title">Master Overlay Controls (1920x1080)</h2>
-        <div class="controls-grid" data-target="master">
-            <button class="control-button" data-page="in-game-screen">In-Game</button>
-            <button class="control-button" data-page="brb-screen">Be Right Back</button>
-            <button class="control-button" data-page="going-live-screen">Going Live</button>
-            <button class="control-button" data-page="thanks-screen">Thanks for Watching</button>
-        </div>
-        
-        <div class="flex-row">
-            <h2 class="section-title">Faceit Card Visibility</h2>
-            <button class="control-button" id="master-faceit-toggle" data-target="master">Hide/Show Faceit</button>
+<body class="bg-transparent overflow-hidden">
+    <div class="overlay-container">
+        <div id="going-live-screen" class="overlay-screen animated-screen">
+            <div class="particles" id="particles-live"></div>
+            <div class="main-content">
+                <h1 class="scene-title">Going Live</h1>
+                <p id="subtitle-live" class="scene-subtitle">Get ready, we're live in a minute!</p>
+                <div class="highlight-bar"></div>
+            </div>
         </div>
 
-        <hr class="my-6 border-gray-700">
-
-        <h2 class="section-title">Vertical Overlay Controls (1080x1920)</h2>
-        <div class="controls-grid" data-target="vertical">
-            <button class="control-button" data-page="in-game-screen">In-Game</button>
-            <button class="control-button" data-page="brb-screen">Be Right Back</button>
-            <button class="control-button" data-page="going-live-screen">Going Live</button>
-            <button class="control-button" data-page="thanks-screen">Thanks for Watching</button>
+        <div id="brb-screen" class="overlay-screen animated-screen">
+            <div class="particles" id="particles-brb"></div>
+            <div class="main-content">
+                <h1 class="scene-title">Be Right Back</h1>
+                <p id="subtitle-brb" class="scene-subtitle">Stay tuned, I'll be back in a minute!</p>
+                <div class="highlight-bar"></div>
+            </div>
         </div>
 
-        <div class="flex-row">
-            <h2 class="section-title">Faceit Card Visibility</h2>
-            <button class="control-button" id="vertical-faceit-toggle" data-target="vertical">Hide/Show Faceit</button>
+        <div id="thanks-screen" class="overlay-screen animated-screen">
+            <div class="particles" id="particles-thanks"></div>
+            <div class="main-content">
+                <h1 class="scene-title">Thanks For Watching</h1>
+                <p id="subtitle-thanks" class="scene-subtitle">Catch you on the next stream!</p>
+                <div class="highlight-bar"></div>
+            </div>
         </div>
 
-        <p id="status" class="status-message"></p>
+        <div id="in-game-screen" class="overlay-screen active">
+            <div class="border-side border-top"></div>
+            <div class="border-side border-bottom"></div>
+            <div class="border-side border-left"></div>
+            <div class="border-side border-right"></div>
+            
+            <iframe id="alert-iframe" src="https://streamelements.com/overlay/689946b0cc95c40604a44fd8/hbKP0nhO-fRbY7Ng7ZnFjuNWkBHbwnPxgBR1sLMsmYpXZreB"></iframe>
+            
+            <div class="card-container-new">
+                <div class="card flex items-center justify-between">
+                    <span class="text-base font-bold uppercase text-outline card-label">Subscribers:</span>
+                    <div class="flex items-center ml-2">
+                        <span id="youtube-count" class="text-base font-bold highlight-text uppercase text-outline">0</span>
+                        <span class="text-base font-bold uppercase text-outline">/</span>
+                        <span id="youtube-goal" class="text-base uppercase text-outline">10</span>
+                    </div>
+                </div>
+
+                <div class="card follower-card">
+                    <span class="text-base font-bold uppercase text-outline card-label">Recent Follower:</span>
+                    <span id="recent-follower-name" class="text-base font-bold highlight-text uppercase text-outline follower-name">
+                    </span>
+                </div>
+
+                <div class="card" id="faceit-card">
+                    <div class="elo-data">
+                        <span class="text-base font-bold uppercase text-outline">Level:</span>
+                        <span id="elo-level" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
+                    </div>
+                    <div class="elo-data">
+                        <span class="text-base font-bold uppercase text-outline">ELO:</span>
+                        <span id="elo-value" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
     <script>
         // --- IMPORTANT: CONFIGURE THESE ---
         const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
-        const API_KEY = '293smnadlkjwa8%d2983eh$(@sjad';
+        const POLLING_INTERVAL = 4000;
+        const YOUTUBE_TARGET_GOAL = 10;
+        const YOUTUBE_COUNT_URL = 'https://youtube-count.darms1er.workers.dev';
+        const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
+        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
+        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
 
-        const statusElement = document.getElementById('status');
-        const showStatusMessage = (message, type) => {
-            statusElement.textContent = message;
-            statusElement.className = `status-message ${type}`;
-            setTimeout(() => {
-                statusElement.textContent = '';
-                statusElement.className = 'status-message';
-            }, 3000);
+        // --- DO NOT MODIFY BELOW THIS LINE ---
+        let lastState = { page: 'in-game-screen', faceit_visible: true };
+        
+        const showScreen = (id) => {
+            const currentActiveScreen = document.querySelector('.overlay-screen.active');
+            if (currentActiveScreen) {
+                currentActiveScreen.classList.remove('active');
+            }
+            const newActiveScreen = document.getElementById(id);
+            if (newActiveScreen) {
+                newActiveScreen.classList.add('active');
+            }
         };
 
-        const updateButtonState = (target, page) => {
-            if (target === 'all') {
-                document.querySelectorAll('.controls-grid[data-target="master"] .control-button').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.controls-grid[data-target="vertical"] .control-button').forEach(btn => btn.classList.remove('active'));
-            } else {
-                document.querySelectorAll(`.controls-grid[data-target="${target}"] .control-button`).forEach(btn => btn.classList.remove('active'));
-            }
-            
-            document.querySelectorAll(`.controls-grid .control-button[data-page="${page}"]`).forEach(btn => {
-                if (btn.closest(`.controls-grid`).dataset.target === target || target === 'all') {
-                    btn.classList.add('active');
+        const updateFaceitCard = (isVisible) => {
+            const faceitCard = document.getElementById('faceit-card');
+            console.log(`[DEBUG] Attempting to update Faceit card. Element found: ${!!faceitCard}`);
+            if (faceitCard) {
+                if (isVisible) {
+                    faceitCard.classList.remove('hidden-card');
+                } else {
+                    faceitCard.classList.add('hidden-card');
                 }
-            });
+                console.log(`[DEBUG] Faceit card is now visible: ${isVisible}`);
+            } else {
+                console.error("[ERROR] Faceit card element not found in the DOM.");
+            }
         };
         
-        const updateFaceitButton = async (target) => {
-            const buttonId = `${target}-faceit-toggle`;
-            const button = document.getElementById(buttonId);
-            if (!button) return;
-
-            try {
-                const response = await fetch(`${API_URL}?target=${target}`);
-                if (!response.ok) throw new Error('Failed to fetch state for Faceit toggle');
-                const data = await response.json();
-                if (data.faceit_visible) {
-                    button.classList.add('active');
-                } else {
-                    button.classList.remove('active');
-                }
-            } catch (error) {
-                console.error(`Error fetching Faceit visibility for ${target}:`, error);
-            }
-        };
-
-        const fetchInitialState = async () => {
-            try {
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error('Failed to fetch initial state');
-                const data = await response.json();
-                
-                updateButtonState('master', data.master.page);
-                updateButtonState('vertical', data.vertical.page);
-                updateFaceitButton('master');
-                updateFaceitButton('vertical');
-            } catch (error) {
-                console.error('Error fetching initial state:', error);
-                showStatusMessage('Error fetching initial state.', 'error');
-            }
-        };
-
-        const sendPostRequest = async (data, target) => {
-            try {
-                const response = await fetch(`${API_URL}?target=${target}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ...data, key: API_KEY }),
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Network response was not ok.');
-                }
-
-                const responseData = await response.json();
-                showStatusMessage('State updated successfully!', 'success');
-                
-                if (target === 'all') {
-                    updateButtonState('master', responseData.newState.master.page);
-                    updateButtonState('vertical', responseData.newState.vertical.page);
-                } else {
-                    updateButtonState(target, responseData.newState.page);
-                }
-            } catch (error) {
-                console.error('API Error:', error);
-                showStatusMessage(`Error: ${error.message}`, 'error');
-            }
-        };
-
-        document.querySelectorAll('.controls-grid').forEach(grid => {
-            grid.addEventListener('click', (event) => {
-                if (event.target.classList.contains('control-button')) {
-                    const page = event.target.dataset.page;
-                    const target = grid.dataset.target;
-                    if (page) {
-                        sendPostRequest({ page }, target);
-                    }
-                }
-            });
-        });
-
-        document.getElementById('master-faceit-toggle').addEventListener('click', async () => {
+        const fetchState = async () => {
             try {
                 const response = await fetch(`${API_URL}?target=master`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
-                const newVisibility = !data.faceit_visible;
-                await sendPostRequest({ faceit_visible: newVisibility }, 'master');
-                updateFaceitButton('master');
+                
+                // Only update if the page has changed
+                if (data.page && data.page !== lastState.page) {
+                    showScreen(data.page);
+                    lastState.page = data.page;
+                }
+                
+                // Only update if the Faceit visibility has changed
+                if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
+                    updateFaceitCard(data.faceit_visible);
+                    lastState.faceit_visible = data.faceit_visible;
+                }
             } catch (error) {
-                showStatusMessage('Error toggling Faceit card.', 'error');
+                console.error('Failed to fetch master overlay state:', error);
             }
-        });
+        };
 
-        document.getElementById('vertical-faceit-toggle').addEventListener('click', async () => {
+        const createParticles = (containerId) => {
+            const particlesContainer = document.getElementById(containerId);
+            const numParticles = 150;
+            if (particlesContainer) {
+              for (let i = 0; i < numParticles; i++) {
+                  const particle = document.createElement('div');
+                  particle.className = 'particle';
+                  const size = Math.random() * 4 + 1;
+                  particle.style.width = `${size}px`;
+                  particle.style.height = `${size}px`;
+                  const startX = Math.random() * 100;
+                  const startY = 100 + Math.random() * 20;
+                  const midX = Math.random() * 100;
+                  const midY = 50 + Math.random() * 30;
+                  const endX = Math.random() * 100;
+                  const endY = -10;
+                  particle.style.setProperty('--start-x', `${startX}vw`);
+                  particle.style.setProperty('--start-y', `${startY}vh`);
+                  particle.style.setProperty('--mid-x', `${midX}vw`);
+                  particle.style.setProperty('--mid-y', `${midY}vh`);
+                  particle.style.setProperty('--end-x', `${endX}vw`);
+                  particle.style.setProperty('--end-y', `${endY}vh`);
+                  const duration = Math.random() * 10 + 5;
+                  const delay = Math.random() * 10;
+                  particle.style.animationDuration = `${duration}s`;
+                  particle.style.animationDelay = `${delay}s`;
+                  particlesContainer.appendChild(particle);
+              }
+            }
+        };
+        const animateSubtitle = (subtitleId) => {
+            const subtitle = document.getElementById(subtitleId);
+            if (subtitle) {
+              const text = subtitle.innerText;
+              subtitle.innerHTML = '';
+              for (let i = 0; i < text.length; i++) {
+                  const char = text[i];
+                  const span = document.createElement('span');
+                  span.innerText = char === ' ' ? '\u00A0' : char;
+                  span.style.animationDelay = `${i * 0.1}s`;
+                  subtitle.appendChild(span);
+              }
+            }
+        };
+        const fetchYouTubeCount = async () => {
+            if (YOUTUBE_COUNT_URL === 'YOUTUBE_COUNT_URL' || YOUTUBE_CHANNEL_ID === 'CHANNEL_ID') {
+                document.getElementById('youtube-count').textContent = 'N/A';
+                return;
+            }
             try {
-                const response = await fetch(`${API_URL}?target=vertical`);
+                const response = await fetch(`${YOUTUBE_COUNT_URL}?channelId=${YOUTUBE_CHANNEL_ID}`);
                 const data = await response.json();
-                const newVisibility = !data.faceit_visible;
-                await sendPostRequest({ faceit_visible: newVisibility }, 'vertical');
-                updateFaceitButton('vertical');
+                if (response.ok && data.subscriberCount) {
+                    document.getElementById('youtube-count').textContent = data.subscriberCount;
+                    document.getElementById('youtube-goal').textContent = YOUTUBE_TARGET_GOAL;
+                } else {
+                    throw new Error(data.error || 'Failed to fetch YouTube count.');
+                }
             } catch (error) {
-                showStatusMessage('Error toggling Faceit card.', 'error');
+                document.getElementById('youtube-count').textContent = 'N/A';
+            }
+        };
+        const fetchFaceitData = async () => {
+            if (FACEIT_WORKER_URL === 'FACEIT_WORKER_URL' || FACEIT_PLAYER_ID === 'PLAYER_ID') {
+                document.getElementById('elo-value').textContent = 'N/A';
+                document.getElementById('elo-level').textContent = 'N/A';
+                return;
+            }
+            try {
+                const response = await fetch(`${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const elo = data.games.cs2.faceit_elo || 0;
+                const level = data.games.cs2.skill_level || 0;
+                document.getElementById('elo-value').textContent = elo;
+                document.getElementById('elo-level').textContent = level;
+            } catch (error) {
+                document.getElementById('elo-value').textContent = 'N/A';
+                document.getElementById('elo-level').textContent = 'N/A';
+            }
+        };
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'event' && event.data.event && event.data.event.listener === 'follower-latest') {
+                const followerName = event.data.event.name;
+                document.getElementById('recent-follower-name').textContent = followerName;
             }
         });
-
-        fetchInitialState();
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Fetch the state immediately on page load to set the correct initial visibility
+            await fetchState();
+            
+            // Then start the polling loop
+            setInterval(fetchState, POLLING_INTERVAL);
+        
+            // Continue with the rest of your page setup
+            animateSubtitle('subtitle-live');
+            animateSubtitle('subtitle-brb');
+            animateSubtitle('subtitle-thanks');
+            createParticles('particles-live');
+            createParticles('particles-brb');
+            createParticles('particles-thanks');
+            fetchYouTubeCount();
+            fetchFaceitData();
+            setInterval(fetchYouTubeCount, 30000);
+            setInterval(fetchFaceitData, 30000);
+        });
     </script>
 </body>
 </html>
