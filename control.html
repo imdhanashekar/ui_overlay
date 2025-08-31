@@ -137,57 +137,67 @@
                 statusElement.className = 'status-message';
             }, 3000);
         };
-
-        const updateButtonState = (target, page) => {
-            if (target === 'all') {
-                document.querySelectorAll('.controls-grid[data-target="master"] .control-button').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.controls-grid[data-target="vertical"] .control-button').forEach(btn => btn.classList.remove('active'));
-            } else {
-                document.querySelectorAll(`.controls-grid[data-target="${target}"] .control-button`).forEach(btn => btn.classList.remove('active'));
-            }
-            
-            document.querySelectorAll(`.controls-grid .control-button[data-page="${page}"]`).forEach(btn => {
-                if (btn.closest(`.controls-grid`).dataset.target === target || target === 'all') {
-                    btn.classList.add('active');
+    
+        // New function to update all page buttons
+        const updateAllPageButtons = (masterPage, verticalPage) => {
+            // Remove 'active' class from all page buttons first
+            document.querySelectorAll('.controls-grid .control-button').forEach(btn => {
+                if (btn.dataset.page) {
+                    btn.classList.remove('active');
                 }
             });
+            
+            // Add 'active' class to the correct buttons
+            document.querySelectorAll(`.controls-grid[data-target="master"] .control-button[data-page="${masterPage}"]`).forEach(btn => btn.classList.add('active'));
+            document.querySelectorAll(`.controls-grid[data-target="vertical"] .control-button[data-page="${verticalPage}"]`).forEach(btn => btn.classList.add('active'));
+    
+            // If both are the same, activate the global button
+            if (masterPage === verticalPage) {
+                document.querySelectorAll(`.controls-grid[data-target="all"] .control-button[data-page="${masterPage}"]`).forEach(btn => btn.classList.add('active'));
+            }
         };
         
-        const updateFaceitButton = async (target) => {
-            const buttonId = `${target}-faceit-toggle`;
-            const button = document.getElementById(buttonId);
-            if (!button) return;
-
-            try {
-                const response = await fetch(`${API_URL}?target=${target}`);
-                if (!response.ok) throw new Error('Failed to fetch state for Faceit toggle');
-                const data = await response.json();
-                if (data.faceit_visible) {
-                    button.classList.add('active');
-                } else {
-                    button.classList.remove('active');
+        // New function to update all Faceit buttons
+        const updateAllFaceitButtons = (masterVisible, verticalVisible) => {
+            const globalButton = document.getElementById('global-faceit-toggle');
+            const masterButton = document.getElementById('master-faceit-toggle');
+            const verticalButton = document.getElementById('vertical-faceit-toggle');
+            
+            if (masterButton) {
+                if (masterVisible) { masterButton.classList.add('active'); } else { masterButton.classList.remove('active'); }
+            }
+            if (verticalButton) {
+                if (verticalVisible) { verticalButton.classList.add('active'); } else { verticalButton.classList.remove('active'); }
+            }
+            if (globalButton) {
+                // Global button is active if BOTH master and vertical are active
+                if (masterVisible === verticalVisible && masterVisible) { 
+                    globalButton.classList.add('active'); 
+                } else { 
+                    globalButton.classList.remove('active'); 
                 }
-            } catch (error) {
-                console.error(`Error fetching Faceit visibility for ${target}:`, error);
             }
         };
-
-        const fetchInitialState = async () => {
+    
+        // New unified function to fetch the state and update all buttons
+        const refreshAllButtons = async () => {
             try {
                 const response = await fetch(API_URL);
-                if (!response.ok) throw new Error('Failed to fetch initial state');
+                if (!response.ok) throw new Error('Failed to fetch state');
                 const data = await response.json();
                 
-                updateButtonState('master', data.master.page);
-                updateButtonState('vertical', data.vertical.page);
-                updateFaceitButton('master');
-                updateFaceitButton('vertical');
+                // Update page buttons
+                updateAllPageButtons(data.master.page, data.vertical.page);
+                
+                // Update Faceit buttons
+                updateAllFaceitButtons(data.master.faceit_visible, data.vertical.faceit_visible);
+    
             } catch (error) {
-                console.error('Error fetching initial state:', error);
-                showStatusMessage('Error fetching initial state.', 'error');
+                console.error('Error refreshing all buttons:', error);
+                showStatusMessage('Error refreshing state.', 'error');
             }
         };
-
+    
         const sendPostRequest = async (data, target) => {
             try {
                 const response = await fetch(`${API_URL}?target=${target}`, {
@@ -195,77 +205,70 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ ...data, key: API_KEY }),
                 });
-
+    
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Network response was not ok.');
                 }
-
-                const responseData = await response.json();
-                showStatusMessage('State updated successfully!', 'success');
+    
+                // Call the new refresh function instead of individual updates
+                await refreshAllButtons();
                 
-                if (target === 'all') {
-                    updateButtonState('master', responseData.newState.master.page);
-                    updateButtonState('vertical', responseData.newState.vertical.page);
-                } else {
-                    updateButtonState(target, responseData.newState.page);
-                }
+                showStatusMessage('State updated successfully!', 'success');
             } catch (error) {
                 console.error('API Error:', error);
                 showStatusMessage(`Error: ${error.message}`, 'error');
             }
         };
-
+    
+        // Click handlers for the page buttons
         document.querySelectorAll('.controls-grid').forEach(grid => {
             grid.addEventListener('click', (event) => {
-                if (event.target.classList.contains('control-button')) {
-                    const page = event.target.dataset.page;
+                const button = event.target.closest('.control-button');
+                if (button && button.dataset.page) {
+                    const page = button.dataset.page;
                     const target = grid.dataset.target;
-                    if (page) {
-                        sendPostRequest({ page }, target);
-                    }
+                    sendPostRequest({ page }, target);
                 }
             });
         });
-
+    
+        // Click handlers for the faceit buttons
         document.getElementById('global-faceit-toggle').addEventListener('click', async () => {
             try {
-                // This fetches the current state of a single overlay to determine the new visibility
                 const response = await fetch(`${API_URL}?target=master`);
                 const data = await response.json();
                 const newVisibility = !data.faceit_visible;
-                // This sends the update to the 'all' target, which is handled by your worker
                 await sendPostRequest({ faceit_visible: newVisibility }, 'all');
             } catch (error) {
                 showStatusMessage('Error toggling global Faceit card.', 'error');
             }
         });
-
+    
         document.getElementById('master-faceit-toggle').addEventListener('click', async () => {
             try {
                 const response = await fetch(`${API_URL}?target=master`);
                 const data = await response.json();
                 const newVisibility = !data.faceit_visible;
                 await sendPostRequest({ faceit_visible: newVisibility }, 'master');
-                updateFaceitButton('master');
             } catch (error) {
-                showStatusMessage('Error toggling Faceit card.', 'error');
+                showStatusMessage('Error toggling Master Faceit card.', 'error');
             }
         });
-
+    
         document.getElementById('vertical-faceit-toggle').addEventListener('click', async () => {
             try {
                 const response = await fetch(`${API_URL}?target=vertical`);
                 const data = await response.json();
                 const newVisibility = !data.faceit_visible;
                 await sendPostRequest({ faceit_visible: newVisibility }, 'vertical');
-                updateFaceitButton('vertical');
             } catch (error) {
-                showStatusMessage('Error toggling Faceit card.', 'error');
+                showStatusMessage('Error toggling Vertical Faceit card.', 'error');
             }
         });
-
-        fetchInitialState();
+    
+        // Initial state fetch now calls the new unified function
+        refreshAllButtons();
     </script>
 </body>
 </html>
