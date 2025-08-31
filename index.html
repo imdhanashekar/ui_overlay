@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Stream Overlay</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Base Styles */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
         
         body {
@@ -13,11 +15,17 @@
             background-color: transparent;
             overflow: hidden;
             color: #E2E8F0;
+            width: 1920px;
+            height: 1080px;
+            margin: 0;
+            padding: 0;
+            position: relative;
         }
 
+        /* Overlay Screens */
         .overlay-screen {
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             position: absolute;
             top: 0;
             left: 0;
@@ -29,12 +37,15 @@
             justify-content: center;
             flex-direction: column;
             text-align: center;
+            z-index: 1;
         }
         .overlay-screen.active {
             opacity: 1;
             pointer-events: auto;
+            z-index: 10;
         }
 
+        /* Animated Full-Screen Backgrounds */
         .animated-screen {
             background: linear-gradient(135deg, #0f172a, #1a202c, #334155);
             background-size: 400% 400%;
@@ -46,12 +57,14 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Floating Particles Effect */
         .particles {
             position: absolute;
             width: 100%;
             height: 100%;
             pointer-events: none;
             overflow: hidden;
+            z-index: 0;
         }
         .particle {
             position: absolute;
@@ -66,6 +79,8 @@
             25% { transform: translate(var(--mid-x), var(--mid-y)) scale(0.8); opacity: 0.7; }
             100% { transform: translate(var(--end-x), var(--end-y)) scale(1.2); opacity: 0; }
         }
+
+        /* Main Content Styling */
         .main-content {
             position: relative;
             z-index: 10;
@@ -83,6 +98,7 @@
             text-transform: uppercase;
             color: #E2E8F0;
             animation: text-glow 2s infinite alternate, text-pulse 4s infinite ease-in-out;
+            text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
         }
         @keyframes text-glow {
             0% { text-shadow: 0 0 10px #37BFB0, 0 0 20px #37BFB0, 0 0 30px #FF5500; }
@@ -120,7 +136,39 @@
             50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
         }
 
+        /* In-Game Screen Specifics */
         #in-game-screen { background-color: transparent; }
+
+        /* Animated Full-Screen Border */
+        .border-side {
+            position: absolute;
+            background-color: #37BFB0;
+            box-shadow: 0 0 10px #37BFB0, 0 0 20px #FF5500;
+            animation: border-glow-effect 3s infinite alternate;
+            z-index: 100;
+        }
+        .border-top { top: 0; left: 0; width: 100%; height: 5px; }
+        .border-bottom { bottom: 0; left: 0; width: 100%; height: 5px; }
+        .border-left { top: 0; left: 0; width: 5px; height: 100%; }
+        .border-right { top: 0; right: 0; width: 5px; height: 100%; }
+        @keyframes border-glow-effect {
+            0%, 100% { box-shadow: 0 0 5px #37BFB0, 0 0 10px #37BFB0; }
+            50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
+        }
+
+        /* NEW CARD LAYOUT */
+        .card-container-new {
+            position: absolute;
+            left: 4rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            z-index: 50;
+            width: 360px; /* Setting a fixed width to be safe */
+        }
+        
         .card {
             background-color: rgba(30, 41, 59, 0.7);
             border-radius: 0.75rem;
@@ -131,10 +179,13 @@
             transition: all 0.3s ease-in-out;
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
-        .hidden-card {
-            opacity: 0;
-            transform: translateX(-100%);
+        .card.hidden-card {
+            opacity: 0 !important;
+            transform: scale(0.9) !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
         }
         .text-outline {
             text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
@@ -151,11 +202,30 @@
             height: 100%;
             border: none;
             pointer-events: none;
+            z-index: 100;
+        }
+        .card-label {
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        .follower-card {
+            min-width: 360px;
+            max-width: 360px;
+        }
+        .follower-name {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+        .elo-data {
+            display: flex;
+            gap: 0.5rem;
         }
     </style>
 </head>
 <body class="bg-transparent overflow-hidden">
-
     <div class="overlay-container">
         <div id="going-live-screen" class="overlay-screen animated-screen">
             <div class="particles" id="particles-live"></div>
@@ -184,63 +254,65 @@
             </div>
         </div>
 
-        <div id="in-game-screen" class="overlay-screen">
+        <div id="in-game-screen" class="overlay-screen active">
+            <div class="border-side border-top"></div>
+            <div class="border-side border-bottom"></div>
+            <div class="border-side border-left"></div>
+            <div class="border-side border-right"></div>
+            
             <iframe id="alert-iframe" src="https://streamelements.com/overlay/689946b0cc95c40604a44fd8/hbKP0nhO-fRbY7Ng7ZnFjuNWkBHbwnPxgBR1sLMsmYpXZreB"></iframe>
-            <div class="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col space-y-8 z-10">
-                <div class="w-full max-w-2xl">
-                    <div class="card flex items-center justify-between">
-                        <span class="text-base font-bold uppercase text-outline">Subscribers:</span>
-                        <div class="flex items-center">
-                            <span id="youtube-count" class="ml-2 text-base font-bold highlight-text uppercase text-outline">0</span>
-                            <span class="text-base font-bold uppercase text-outline">/</span>
-                            <span id="youtube-goal" class="text-base uppercase text-outline">75</span>
-                        </div>
+            
+            <div class="card-container-new">
+                <div class="card flex items-center justify-between">
+                    <span class="text-base font-bold uppercase text-outline card-label">Subscribers:</span>
+                    <div class="flex items-center ml-2">
+                        <span id="youtube-count" class="text-base font-bold highlight-text uppercase text-outline">0</span>
+                        <span class="text-base font-bold uppercase text-outline">/</span>
+                        <span id="youtube-goal" class="text-base uppercase text-outline">10</span>
                     </div>
                 </div>
-                <div class="w-full max-w-2xl">
-                    <div id="faceit-card" class="card flex items-center justify-between">
-                        <div class="flex items-center">
-                            <span class="text-base font-bold uppercase text-outline">Level:</span>
-                            <span id="elo-level" class="ml-2 text-base font-bold highlight-text uppercase text-outline">0</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-base font-bold uppercase text-outline">ELO:</span>
-                            <span id="elo-value" class="ml-2 text-base font-bold highlight-text uppercase text-outline">0</span>
-                        </div>
+
+                <div class="card follower-card">
+                    <span class="text-base font-bold uppercase text-outline card-label">Recent Follower:</span>
+                    <span id="recent-follower-name" class="text-base font-bold highlight-text uppercase text-outline follower-name">
+                    </span>
+                </div>
+
+                <div class="card" id="faceit-card">
+                    <div class="elo-data">
+                        <span class="text-base font-bold uppercase text-outline">Level:</span>
+                        <span id="elo-level" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
+                    </div>
+                    <div class="elo-data">
+                        <span class="text-base font-bold uppercase text-outline">ELO:</span>
+                        <span id="elo-value" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
-        // --- CONFIGURATION ---
-        // IMPORTANT: Replace the placeholder URLs and IDs below with your actual values.
-         const YOUTUBE_COUNT_WORKER_URL = 'https://youtube-count.darms1er.workers.dev';
+        // --- IMPORTANT: CONFIGURE THESE ---
+        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
+        const POLLING_INTERVAL = 4000;
+        const YOUTUBE_TARGET_GOAL = 10;
+        const YOUTUBE_COUNT_URL = 'https://youtube-count.darms1er.workers.dev';
         const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
-        const SUBSCRIBER_GOAL = 10;
         const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
         const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
-        const REFRESH_RATE = 4000;
-        ;
-        
-        // **CRITICAL**: REPLACE THIS PLACEHOLDER WITH THE URL OF YOUR worker.js
-        const STATE_WORKER_URL = 'https://stream-controller-worker.darms1er.workers.dev';
-        const OVERLAY_TARGET = 'master'
 
         // --- DO NOT MODIFY BELOW THIS LINE ---
-
-        let lastState = null;
-
+        let lastState = { page: 'in-game-screen', faceit_visible: true };
+        
         const showScreen = (id) => {
-            document.querySelectorAll('.overlay-screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            const screen = document.getElementById(id);
-            if (screen) {
-                screen.classList.add('active');
+            const currentActiveScreen = document.querySelector('.overlay-screen.active');
+            if (currentActiveScreen) {
+                currentActiveScreen.classList.remove('active');
             }
-            localStorage.setItem('active-stream-screen', id);
+            const newActiveScreen = document.getElementById(id);
+            if (newActiveScreen) {
+                newActiveScreen.classList.add('active');
+            }
         };
 
         const updateFaceitCard = (isVisible) => {
@@ -248,77 +320,91 @@
             if (faceitCard) {
                 if (isVisible) {
                     faceitCard.classList.remove('hidden-card');
-                    faceitCard.style.transition = 'all 0.5s ease-in-out';
                 } else {
                     faceitCard.classList.add('hidden-card');
-                    faceitCard.style.transition = 'all 0.5s ease-in-out';
                 }
+            } else {
+                console.error("Faceit card element not found in the DOM.");
             }
         };
-
-        const initialLoad = () => {
-            const lastScreenId = localStorage.getItem('active-stream-screen');
-            if (lastScreenId) {
-                showScreen(lastScreenId);
-            } else {
-                showScreen('going-live-screen');
+        
+        const fetchState = async () => {
+            try {
+                const response = await fetch(`${API_URL}?target=master`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                // This is the fix: we will always call the update function
+                if (data.faceit_visible !== undefined) {
+                    updateFaceitCard(data.faceit_visible);
+                }
+                
+                // Continue with the rest of the original logic
+                if (data.page) {
+                    showScreen(data.page);
+                }
+            } catch (error) {
+                console.error('Failed to fetch master overlay state:', error);
             }
         };
 
         const createParticles = (containerId) => {
             const particlesContainer = document.getElementById(containerId);
             const numParticles = 150;
-            for (let i = 0; i < numParticles; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const size = Math.random() * 4 + 1;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                const startX = Math.random() * 100;
-                const startY = 100 + Math.random() * 20;
-                const midX = Math.random() * 100;
-                const midY = 50 + Math.random() * 30;
-                const endX = Math.random() * 100;
-                const endY = -10;
-                particle.style.setProperty('--start-x', `${startX}vw`);
-                particle.style.setProperty('--start-y', `${startY}vh`);
-                particle.style.setProperty('--mid-x', `${midX}vw`);
-                particle.style.setProperty('--mid-y', `${midY}vh`);
-                particle.style.setProperty('--end-x', `${endX}vw`);
-                particle.style.setProperty('--end-y', `${endY}vh`);
-                const duration = Math.random() * 10 + 5;
-                const delay = Math.random() * 10;
-                particle.style.animationDuration = `${duration}s`;
-                particle.style.animationDelay = `${delay}s`;
-                particlesContainer.appendChild(particle);
+            if (particlesContainer) {
+              for (let i = 0; i < numParticles; i++) {
+                  const particle = document.createElement('div');
+                  particle.className = 'particle';
+                  const size = Math.random() * 4 + 1;
+                  particle.style.width = `${size}px`;
+                  particle.style.height = `${size}px`;
+                  const startX = Math.random() * 100;
+                  const startY = 100 + Math.random() * 20;
+                  const midX = Math.random() * 100;
+                  const midY = 50 + Math.random() * 30;
+                  const endX = Math.random() * 100;
+                  const endY = -10;
+                  particle.style.setProperty('--start-x', `${startX}vw`);
+                  particle.style.setProperty('--start-y', `${startY}vh`);
+                  particle.style.setProperty('--mid-x', `${midX}vw`);
+                  particle.style.setProperty('--mid-y', `${midY}vh`);
+                  particle.style.setProperty('--end-x', `${endX}vw`);
+                  particle.style.setProperty('--end-y', `${endY}vh`);
+                  const duration = Math.random() * 10 + 5;
+                  const delay = Math.random() * 10;
+                  particle.style.animationDuration = `${duration}s`;
+                  particle.style.animationDelay = `${delay}s`;
+                  particlesContainer.appendChild(particle);
+              }
             }
         };
-
         const animateSubtitle = (subtitleId) => {
             const subtitle = document.getElementById(subtitleId);
-            const text = subtitle.innerText;
-            subtitle.innerHTML = '';
-            for (let i = 0; i < text.length; i++) {
-                const char = text[i];
-                const span = document.createElement('span');
-                span.innerText = char === ' ' ? '\u00A0' : char;
-                span.style.animationDelay = `${i * 0.1}s`;
-                subtitle.appendChild(span);
+            if (subtitle) {
+              const text = subtitle.innerText;
+              subtitle.innerHTML = '';
+              for (let i = 0; i < text.length; i++) {
+                  const char = text[i];
+                  const span = document.createElement('span');
+                  span.innerText = char === ' ' ? '\u00A0' : char;
+                  span.style.animationDelay = `${i * 0.1}s`;
+                  subtitle.appendChild(span);
+              }
             }
         };
-
         const fetchYouTubeCount = async () => {
-            if (YOUTUBE_COUNT_WORKER_URL === 'YOUTUBE_COUNT' || YOUTUBE_CHANNEL_ID === 'CHANNEL_ID') {
+            if (YOUTUBE_COUNT_URL === 'YOUTUBE_COUNT_URL' || YOUTUBE_CHANNEL_ID === 'CHANNEL_ID') {
                 document.getElementById('youtube-count').textContent = 'N/A';
                 return;
             }
-            const url = `${YOUTUBE_COUNT_WORKER_URL}?channelId=${YOUTUBE_CHANNEL_ID}`;
             try {
-                const response = await fetch(url);
+                const response = await fetch(`${YOUTUBE_COUNT_URL}?channelId=${YOUTUBE_CHANNEL_ID}`);
                 const data = await response.json();
                 if (response.ok && data.subscriberCount) {
                     document.getElementById('youtube-count').textContent = data.subscriberCount;
-                    document.getElementById('youtube-goal').textContent = SUBSCRIBER_GOAL;
+                    document.getElementById('youtube-goal').textContent = YOUTUBE_TARGET_GOAL;
                 } else {
                     throw new Error(data.error || 'Failed to fetch YouTube count.');
                 }
@@ -326,17 +412,17 @@
                 document.getElementById('youtube-count').textContent = 'N/A';
             }
         };
-
         const fetchFaceitData = async () => {
-            if (FACEIT_WORKER_URL === 'FACEIT_KEY' || FACEIT_PLAYER_ID === 'FACEIT_ID') {
+            if (FACEIT_WORKER_URL === 'FACEIT_WORKER_URL' || FACEIT_PLAYER_ID === 'PLAYER_ID') {
                 document.getElementById('elo-value').textContent = 'N/A';
                 document.getElementById('elo-level').textContent = 'N/A';
                 return;
             }
-            const apiUrl = `${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`;
             try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                const response = await fetch(`${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 const elo = data.games.cs2.faceit_elo || 0;
                 const level = data.games.cs2.skill_level || 0;
@@ -347,63 +433,31 @@
                 document.getElementById('elo-level').textContent = 'N/A';
             }
         };
-
-        const fetchState = async () => {
-            if (STATE_WORKER_URL === 'YOUR_STATE_WORKER_URL_HERE') {
-                console.warn('STATE_WORKER_URL is not configured. Faceit card visibility will not work.');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${STATE_WORKER_URL}?target=${OVERLAY_TARGET}`);
-                const data = await response.json();
-                
-                // Only update if the state has changed
-                if (JSON.stringify(data) !== JSON.stringify(lastState)) {
-                    lastState = data;
-                    
-                    // Update screen visibility
-                    if (data.page) {
-                        showScreen(data.page);
-                    }
-
-                    // Update faceit card visibility
-                    if (data.faceit_visible !== undefined) {
-                        updateFaceitCard(data.faceit_visible);
-                    }
-                }
-            } catch (error) {
-                console.error('Failed to fetch state:', error);
-            }
-        };
-
-        window.addEventListener('storage', (event) => {
-            if (event.key === 'stream-command') {
-                const command = JSON.parse(event.newValue);
-                if (command.type === 'switch-screen') {
-                    showScreen(command.payload);
-                }
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'event' && event.data.event && event.data.event.listener === 'follower-latest') {
+                const followerName = event.data.event.name;
+                document.getElementById('recent-follower-name').textContent = followerName;
             }
         });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initialLoad();
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Fetch the state immediately on page load to set the correct initial visibility
+            await fetchState();
+            
+            // Then start the polling loop
+            setInterval(fetchState, POLLING_INTERVAL);
+        
+            // Continue with the rest of your page setup
             animateSubtitle('subtitle-live');
             animateSubtitle('subtitle-brb');
             animateSubtitle('subtitle-thanks');
             createParticles('particles-live');
             createParticles('particles-brb');
             createParticles('particles-thanks');
-            
-            // Initial fetch for all data
             fetchYouTubeCount();
             fetchFaceitData();
-            fetchState();
-            
-            // Set up intervals for periodic updates
-            setInterval(fetchYouTubeCount, REFRESH_RATE);
-            setInterval(fetchFaceitData, REFRESH_RATE);
-            setInterval(fetchState, 500); // Poll the state worker more frequently
+            setInterval(fetchYouTubeCount, 30000);
+            setInterval(fetchFaceitData, 30000);
         });
     </script>
 </body>
