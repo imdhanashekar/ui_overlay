@@ -333,17 +333,14 @@
                 }
                 const data = await response.json();
                 
-                // Log the incoming data to debug the structure
-                console.log('Fetched data:', data);
-        
-                // Check for a change in the 'page' property
-                if (data.page !== undefined && data.page !== lastState.page) {
+                // Check and update the page state if it has changed
+                if (data.page !== lastState.page) {
                     showScreen(data.page);
                     lastState.page = data.page;
                 }
-        
-                // Check for a change in the 'faceit_visible' property
-                if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
+    
+                // Check and update the Faceit card visibility if it has changed
+                if (data.faceit_visible !== lastState.faceit_visible) {
                     updateFaceitCard(data.faceit_visible);
                     lastState.faceit_visible = data.faceit_visible;
                 }
@@ -443,13 +440,8 @@
         });
         
         document.addEventListener('DOMContentLoaded', async () => {
-            // Fetch the state immediately on page load to set the correct initial visibility
             await fetchState();
-            
-            // Then start the polling loop
             setInterval(fetchState, POLLING_INTERVAL);
-        
-            // Continue with the rest of your page setup
             animateSubtitle('subtitle-live');
             animateSubtitle('subtitle-brb');
             animateSubtitle('subtitle-thanks');
