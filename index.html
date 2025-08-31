@@ -182,9 +182,10 @@
             justify-content: space-between;
         }
         .card.hidden-card {
-            opacity: 0;
-            transform: scale(0.9);
-            pointer-events: none;
+            opacity: 0 !important;
+            transform: scale(0.9) !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
         }
         .text-outline {
             text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
@@ -313,7 +314,7 @@
                 newActiveScreen.classList.add('active');
             }
         };
-    
+
         const updateFaceitCard = (isVisible) => {
             const faceitCard = document.getElementById('faceit-card');
             if (faceitCard) {
@@ -322,6 +323,8 @@
                 } else {
                     faceitCard.classList.add('hidden-card');
                 }
+            } else {
+                console.error("Faceit card element not found in the DOM.");
             }
         };
         
@@ -333,14 +336,14 @@
                 }
                 const data = await response.json();
                 
-                // Check and update the page state if it has changed
-                if (data.page !== lastState.page) {
+                // Only update if the page has changed
+                if (data.page && data.page !== lastState.page) {
                     showScreen(data.page);
                     lastState.page = data.page;
                 }
-    
-                // Check and update the Faceit card visibility if it has changed
-                if (data.faceit_visible !== lastState.faceit_visible) {
+                
+                // Only update if the Faceit visibility has changed
+                if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
                     updateFaceitCard(data.faceit_visible);
                     lastState.faceit_visible = data.faceit_visible;
                 }
@@ -348,49 +351,49 @@
                 console.error('Failed to fetch master overlay state:', error);
             }
         };
-    
+
         const createParticles = (containerId) => {
             const particlesContainer = document.getElementById(containerId);
             const numParticles = 150;
             if (particlesContainer) {
-                for (let i = 0; i < numParticles; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    const size = Math.random() * 4 + 1;
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    const startX = Math.random() * 100;
-                    const startY = 100 + Math.random() * 20;
-                    const midX = Math.random() * 100;
-                    const midY = 50 + Math.random() * 30;
-                    const endX = Math.random() * 100;
-                    const endY = -10;
-                    particle.style.setProperty('--start-x', `${startX}vw`);
-                    particle.style.setProperty('--start-y', `${startY}vh`);
-                    particle.style.setProperty('--mid-x', `${midX}vw`);
-                    particle.style.setProperty('--mid-y', `${midY}vh`);
-                    particle.style.setProperty('--end-x', `${endX}vw`);
-                    particle.style.setProperty('--end-y', `${endY}vh`);
-                    const duration = Math.random() * 10 + 5;
-                    const delay = Math.random() * 10;
-                    particle.style.animationDuration = `${duration}s`;
-                    particle.style.animationDelay = `${delay}s`;
-                    particlesContainer.appendChild(particle);
-                }
+              for (let i = 0; i < numParticles; i++) {
+                  const particle = document.createElement('div');
+                  particle.className = 'particle';
+                  const size = Math.random() * 4 + 1;
+                  particle.style.width = `${size}px`;
+                  particle.style.height = `${size}px`;
+                  const startX = Math.random() * 100;
+                  const startY = 100 + Math.random() * 20;
+                  const midX = Math.random() * 100;
+                  const midY = 50 + Math.random() * 30;
+                  const endX = Math.random() * 100;
+                  const endY = -10;
+                  particle.style.setProperty('--start-x', `${startX}vw`);
+                  particle.style.setProperty('--start-y', `${startY}vh`);
+                  particle.style.setProperty('--mid-x', `${midX}vw`);
+                  particle.style.setProperty('--mid-y', `${midY}vh`);
+                  particle.style.setProperty('--end-x', `${endX}vw`);
+                  particle.style.setProperty('--end-y', `${endY}vh`);
+                  const duration = Math.random() * 10 + 5;
+                  const delay = Math.random() * 10;
+                  particle.style.animationDuration = `${duration}s`;
+                  particle.style.animationDelay = `${delay}s`;
+                  particlesContainer.appendChild(particle);
+              }
             }
         };
         const animateSubtitle = (subtitleId) => {
             const subtitle = document.getElementById(subtitleId);
             if (subtitle) {
-                const text = subtitle.innerText;
-                subtitle.innerHTML = '';
-                for (let i = 0; i < text.length; i++) {
-                    const char = text[i];
-                    const span = document.createElement('span');
-                    span.innerText = char === ' ' ? '\u00A0' : char;
-                    span.style.animationDelay = `${i * 0.1}s`;
-                    subtitle.appendChild(span);
-                }
+              const text = subtitle.innerText;
+              subtitle.innerHTML = '';
+              for (let i = 0; i < text.length; i++) {
+                  const char = text[i];
+                  const span = document.createElement('span');
+                  span.innerText = char === ' ' ? '\u00A0' : char;
+                  span.style.animationDelay = `${i * 0.1}s`;
+                  subtitle.appendChild(span);
+              }
             }
         };
         const fetchYouTubeCount = async () => {
@@ -440,8 +443,13 @@
         });
         
         document.addEventListener('DOMContentLoaded', async () => {
+            // Fetch the state immediately on page load to set the correct initial visibility
             await fetchState();
+            
+            // Then start the polling loop
             setInterval(fetchState, POLLING_INTERVAL);
+        
+            // Continue with the rest of your page setup
             animateSubtitle('subtitle-live');
             animateSubtitle('subtitle-brb');
             animateSubtitle('subtitle-thanks');
