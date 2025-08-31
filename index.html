@@ -22,13 +22,6 @@
             position: relative;
         }
 
-        .card.hidden-card {
-            opacity: 0 !important;
-            transform: scale(0.9) !important;
-            pointer-events: none !important;
-            visibility: hidden !important;
-        }
-
         /* Overlay Screens */
         .overlay-screen {
             width: 100%;
@@ -337,24 +330,42 @@
 
         const fetchState = async () => {
             try {
-                const response = await fetch(`${API_URL}?target=index`);
+                const response = await fetch(`${API_URL}?target=master`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
                 
-                if (data.page && data.page !== lastState.page) {
+                // This is the new, unconditional check
+                if (data.page) {
                     showScreen(data.page);
-                    lastState.page = data.page;
                 }
                 
-                if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
+                // This is the fix: we will always call the update function
+                if (data.faceit_visible !== undefined) {
                     updateFaceitCard(data.faceit_visible);
-                    lastState.faceit_visible = data.faceit_visible;
                 }
-
+        
+                // We also need to update lastState at the end
+                if (data.page) lastState.page = data.page;
+                if (data.faceit_visible !== undefined) lastState.faceit_visible = data.faceit_visible;
+        
             } catch (error) {
                 console.error('Failed to fetch master overlay state:', error);
+            }
+        };
+        
+        const updateFaceitCard = (isVisible) => {
+            console.log("updateFaceitCard called. isVisible:", isVisible);
+            const faceitCard = document.getElementById('faceit-card');
+            if (faceitCard) {
+                if (isVisible) {
+                    faceitCard.classList.remove('hidden-card');
+                } else {
+                    faceitCard.classList.add('hidden-card');
+                }
+            } else {
+                console.error("Faceit card element not found in the DOM.");
             }
         };
 
