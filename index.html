@@ -299,13 +299,12 @@
         const YOUTUBE_COUNT_URL = 'https://youtube-count.darms1er.workers.dev';
         const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
         const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
-        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
+        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0'
 
         // --- DO NOT MODIFY BELOW THIS LINE ---
-        let lastState = { page: 'in-game-screen' };
+        let lastState = { page: 'in-game-screen', faceit_visible: true };
         
         const showScreen = (id) => {
-            if (lastState.page === id) return;
             const currentActiveScreen = document.querySelector('.overlay-screen.active');
             if (currentActiveScreen) {
                 currentActiveScreen.classList.remove('active');
@@ -314,7 +313,6 @@
             if (newActiveScreen) {
                 newActiveScreen.classList.add('active');
             }
-            lastState.page = id;
         };
 
         const updateFaceitCard = (isVisible) => {
@@ -340,9 +338,13 @@
                 
                 if (data.page && data.page !== lastState.page) {
                     showScreen(data.page);
+                    lastState.page = data.page;
                 }
                 
-                updateFaceitCard(data.faceit_visible);
+                if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
+                    updateFaceitCard(data.faceit_visible);
+                    lastState.faceit_visible = data.faceit_visible;
+                }
 
             } catch (error) {
                 console.error('Failed to fetch master overlay state:', error);
