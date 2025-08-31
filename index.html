@@ -356,16 +356,20 @@
         };
         
         const updateFaceitCard = (isVisible) => {
-            console.log("updateFaceitCard called. isVisible:", isVisible);
+            // This is a new, critical log
             const faceitCard = document.getElementById('faceit-card');
+            console.log("Looking for faceit-card element. Found:", faceitCard);
+        
             if (faceitCard) {
                 if (isVisible) {
                     faceitCard.classList.remove('hidden-card');
+                    console.log("Removed hidden-card class. Card should be visible.");
                 } else {
                     faceitCard.classList.add('hidden-card');
+                    console.log("Added hidden-card class. Card should be hidden.");
                 }
             } else {
-                console.error("Faceit card element not found in the DOM.");
+                console.error("Faceit card element was not found in the DOM.");
             }
         };
 
