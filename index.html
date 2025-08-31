@@ -156,7 +156,19 @@
             50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
         }
 
-        /* Card and Text Styles */
+        /* New Card Layout */
+        .card-container-new {
+            position: absolute;
+            left: 4rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            z-index: 50;
+            width: 360px; /* Setting a fixed width to be safe */
+        }
+        
         .card {
             background-color: rgba(30, 41, 59, 0.7);
             border-radius: 0.75rem;
@@ -167,6 +179,7 @@
             transition: all 0.3s ease-in-out;
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
         .card.hidden-card {
             opacity: 0;
@@ -189,16 +202,6 @@
             border: none;
             pointer-events: none;
             z-index: 100;
-        }
-        .card-container {
-            position: absolute;
-            left: 4rem;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            space-y: 2rem;
-            z-index: 50;
         }
         .card-label {
             flex-shrink: 0;
@@ -257,35 +260,31 @@
             <div class="border-side border-right"></div>
             
             <iframe id="alert-iframe" src="https://streamelements.com/overlay/689946b0cc95c40604a44fd8/hbKP0nhO-fRbY7Ng7ZnFjuNWkBHbwnPxgBR1sLMsmYpXZreB"></iframe>
-            <div class="card-container flex flex-col space-y-8">
-                <div class="w-full max-w-2xl">
-                    <div class="card flex items-center justify-between">
-                        <span class="text-base font-bold uppercase text-outline card-label">Subscribers:</span>
-                        <div class="flex items-center ml-2">
-                            <span id="youtube-count" class="text-base font-bold highlight-text uppercase text-outline">0</span>
-                            <span class="text-base font-bold uppercase text-outline">/</span>
-                            <span id="youtube-goal" class="text-base uppercase text-outline">10</span>
-                        </div>
+            
+            <div class="card-container-new">
+                <div class="card flex items-center justify-between">
+                    <span class="text-base font-bold uppercase text-outline card-label">Subscribers:</span>
+                    <div class="flex items-center ml-2">
+                        <span id="youtube-count" class="text-base font-bold highlight-text uppercase text-outline">0</span>
+                        <span class="text-base font-bold uppercase text-outline">/</span>
+                        <span id="youtube-goal" class="text-base uppercase text-outline">10</span>
                     </div>
                 </div>
 
-                <div class="w-full max-w-2xl">
-                    <div class="card follower-card flex items-center justify-between">
-                        <span class="text-base font-bold uppercase text-outline card-label">Recent Follower:</span>
-                        <span id="recent-follower-name" class="text-base font-bold highlight-text uppercase text-outline follower-name"></span>
-                    </div>
+                <div class="card follower-card">
+                    <span class="text-base font-bold uppercase text-outline card-label">Recent Follower:</span>
+                    <span id="recent-follower-name" class="text-base font-bold highlight-text uppercase text-outline follower-name">
+                    </span>
                 </div>
 
-                <div class="w-full max-w-2xl">
-                    <div class="card flex items-center justify-between" id="faceit-card">
-                        <div class="elo-data">
-                            <span class="text-base font-bold uppercase text-outline">Level:</span>
-                            <span id="elo-level" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
-                        </div>
-                        <div class="elo-data">
-                            <span class="text-base font-bold uppercase text-outline">ELO:</span>
-                            <span id="elo-value" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
-                        </div>
+                <div class="card" id="faceit-card">
+                    <div class="elo-data">
+                        <span class="text-base font-bold uppercase text-outline">Level:</span>
+                        <span id="elo-level" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
+                    </div>
+                    <div class="elo-data">
+                        <span class="text-base font-bold uppercase text-outline">ELO:</span>
+                        <span id="elo-value" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
                     </div>
                 </div>
             </div>
@@ -316,6 +315,7 @@
         };
 
         const updateFaceitCard = (isVisible) => {
+            console.log("updateFaceitCard called. isVisible:", isVisible); // This is a new log to help debug
             const faceitCard = document.getElementById('faceit-card');
             if (faceitCard) {
                 if (isVisible) {
