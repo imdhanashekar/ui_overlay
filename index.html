@@ -276,7 +276,7 @@
                     </div>
                 </div>
 
-                <div class="w-full max-w-2xl" id="faceit-card-container">
+                <div class="w-full max-w-2xl">
                     <div class="card flex items-center justify-between" id="faceit-card">
                         <div class="elo-data">
                             <span class="text-base font-bold uppercase text-outline">Level:</span>
@@ -318,7 +318,7 @@
         };
 
         const updateFaceitCard = (isVisible) => {
-            const faceitCard = document.getElementById('faceit-card-container');
+            const faceitCard = document.getElementById('faceit-card');
             if (faceitCard) {
                 if (isVisible) {
                     faceitCard.classList.remove('hidden-card');
@@ -340,6 +340,7 @@
                     showScreen(data.page);
                 }
                 
+                // This line now correctly calls the function to update the card's visibility
                 updateFaceitCard(data.faceit_visible);
 
             } catch (error) {
