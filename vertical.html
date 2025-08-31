@@ -21,7 +21,7 @@
             height: 1920px; 
             position: relative; 
         } 
-
+    
         /* Overlay Screens */ 
         .overlay-screen { 
             width: 100%; 
@@ -44,7 +44,7 @@
             pointer-events: auto; 
             z-index: 10; 
         } 
-
+    
         /* Animated Full-Screen Backgrounds */ 
         .animated-screen { 
             background: linear-gradient(135deg, #0f172a, #1a202c, #334155); 
@@ -56,7 +56,7 @@
             50% { background-position: 100% 50%; } 
             100% { background-position: 0% 50%; } 
         } 
-
+    
         /* Floating Particles Effect */ 
         .particles { 
             position: absolute; 
@@ -79,7 +79,7 @@
             25% { transform: translate(var(--mid-x), var(--mid-y)) scale(0.8); opacity: 0.7; } 
             100% { transform: translate(var(--end-x), var(--end-y)) scale(1.2); opacity: 0; } 
         } 
-
+    
         /* Full-Screen Content */ 
         .scene-content { 
             width: 100%; 
@@ -137,7 +137,7 @@
             0%, 100% { box-shadow: 0 0 5px #FF5500, 0 0 10px #FF5500; } 
             50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; } 
         } 
-
+    
         /* In-Game Screen Specifics */ 
         #in-game-screen { background-color: transparent; } 
         .in-game-content { 
@@ -178,8 +178,9 @@
             background-color: rgba(15, 23, 42, 0.7); 
             position: relative; 
             z-index: 1; 
-            border-bottom: 5px solid #37BFB0; /* Added neon border */
-            box-shadow: 0 10px 20px rgba(55, 191, 176, 0.7); /* Added glowing effect */
+            border-bottom: 5px solid #37BFB0; 
+            box-shadow: 0 0 10px #37BFB0, 0 0 20px #FF5500;
+            animation: border-glow-effect 3s infinite alternate;
         } 
         .bottom-bar-filler { 
             width: 100%; 
@@ -193,8 +194,9 @@
             background-color: rgba(15, 23, 42, 0.7); 
             position: relative; 
             z-index: 1; 
-            border-top: 5px solid #37BFB0; /* Added neon border */
-            box-shadow: 0 -10px 20px rgba(55, 191, 176, 0.7); /* Added glowing effect */
+            border-top: 5px solid #37BFB0; 
+            box-shadow: 0 0 10px #37BFB0, 0 0 20px #FF5500;
+            animation: border-glow-effect 3s infinite alternate;
         } 
         @keyframes wavy-bg-scroll { 
             0% { background-position: center top; } 
@@ -322,7 +324,7 @@
         .social-icon.twitter:hover { color: #1DA1F2; text-shadow: 0 0 10px #1DA1F2; } 
         .social-icon.instagram:hover { color: #C13584; text-shadow: 0 0 10px #C13584; } 
         .social-icon.discord:hover { color: #5865F2; text-shadow: 0 0 10px #5865F2; } 
-    </style> 
+    </style>
 </head> 
 <body> 
     <div id="in-game-screen" class="overlay-screen active"> 
