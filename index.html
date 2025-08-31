@@ -333,14 +333,16 @@
                 }
                 const data = await response.json();
                 
-                // This is the correct logic from the Vertical Overlay.
-                // Check for a change in the 'page' property.
-                if (data.page && data.page !== lastState.page) {
+                // Log the incoming data to debug the structure
+                console.log('Fetched data:', data);
+        
+                // Check for a change in the 'page' property
+                if (data.page !== undefined && data.page !== lastState.page) {
                     showScreen(data.page);
                     lastState.page = data.page;
                 }
-    
-                // Check for a change in the 'faceit_visible' property.
+        
+                // Check for a change in the 'faceit_visible' property
                 if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
                     updateFaceitCard(data.faceit_visible);
                     lastState.faceit_visible = data.faceit_visible;
