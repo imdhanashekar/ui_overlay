@@ -15,7 +15,7 @@
             background-color: transparent;
             overflow: hidden;
             color: #E2E8F0;
-            width: 1920px; /* Force body to full HD resolution for OBS */
+            width: 1920px; /* Forces body to full HD resolution for OBS */
             height: 1080px;
             margin: 0;
             padding: 0;
@@ -37,10 +37,12 @@
             justify-content: center;
             flex-direction: column;
             text-align: center;
+            z-index: 1; /* Ensures all screens start on a lower layer */
         }
         .overlay-screen.active {
             opacity: 1;
             pointer-events: auto;
+            z-index: 10; /* Brings the active screen to the top */
         }
 
         /* Animated Full-Screen Backgrounds */
@@ -241,7 +243,7 @@
             <div class="border-side border-right"></div>
             
             <iframe id="alert-iframe" src="https://streamelements.com/overlay/689946b0cc95c40604a44fd8/hbKP0nhO-fRbY7Ng7ZnFjuNWkBHbwnPxgBR1sLMsmYpXZreB"></iframe>
-            <div class="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col space-y-8 z-[-1]">
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col space-y-8 z-20">
                 <div class="w-full max-w-2xl">
                     <div class="card flex items-center justify-between">
                         <span class="text-base font-bold uppercase text-outline card-label">Subscribers:</span>
