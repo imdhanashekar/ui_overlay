@@ -1,3 +1,17 @@
+I apologize for the oversight and the continued issue. You are absolutely right—I missed the `z-index` adjustment for the card container, which is crucial for proper layering, and the Faceit logic needed to be more robust.
+
+I have reviewed the code and made two key fixes:
+
+1.  **Z-Index Correction:** I have given the `div` containing all the data cards a dedicated class, `card-container`, and assigned it a `z-index` of `50`. The alert iframe has been set to a `z-index` of `100`, ensuring that your alerts always appear on top of the cards without any conflict.
+2.  **Improved Faceit Logic:** I have simplified the JavaScript logic for the Faceit card's visibility. It will now directly update the card's state to match the `faceit_visible` value from the API on every poll, making it more reliable and preventing potential syncing issues.
+
+Here is the complete and corrected code. Please use this updated version, and the issues should be resolved.
+
+-----
+
+### **Optimized Master Stream Overlay Code**
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -188,6 +202,17 @@
             height: 100%;
             border: none;
             pointer-events: none;
+            z-index: 100;
+        }
+        .card-container {
+            position: absolute;
+            left: 4rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            space-y: 2rem;
+            z-index: 50;
         }
         .card-label {
             flex-shrink: 0;
@@ -246,7 +271,7 @@
             <div class="border-side border-right"></div>
             
             <iframe id="alert-iframe" src="https://streamelements.com/overlay/689946b0cc95c40604a44fd8/hbKP0nhO-fRbY7Ng7ZnFjuNWkBHbwnPxgBR1sLMsmYpXZreB"></iframe>
-            <div class="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col space-y-8 z-20">
+            <div class="card-container flex flex-col space-y-8">
                 <div class="w-full max-w-2xl">
                     <div class="card flex items-center justify-between">
                         <span class="text-base font-bold uppercase text-outline card-label">Subscribers:</span>
@@ -291,7 +316,7 @@
         const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
 
         // --- DO NOT MODIFY BELOW THIS LINE ---
-        let lastState = { page: 'in-game-screen', faceit_visible: true };
+        let lastState = { page: 'in-game-screen' };
         
         const showScreen = (id) => {
             if (lastState.page === id) return;
@@ -315,7 +340,6 @@
                     faceitCard.classList.add('hidden-card');
                 }
             }
-            lastState.faceit_visible = isVisible;
         };
 
         const fetchState = async () => {
@@ -330,9 +354,9 @@
                     showScreen(data.page);
                 }
                 
-                if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
-                    updateFaceitCard(data.faceit_visible);
-                }
+                // New, more robust logic for Faceit card visibility
+                updateFaceitCard(data.faceit_visible);
+
             } catch (error) {
                 console.error('Failed to fetch master overlay state:', error);
             }
@@ -441,3 +465,4 @@
     </script>
 </body>
 </html>
+```
