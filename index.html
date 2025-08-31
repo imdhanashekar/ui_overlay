@@ -156,7 +156,7 @@
             50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
         }
 
-        /* New Card Layout */
+        /* NEW CARD LAYOUT */
         .card-container-new {
             position: absolute;
             left: 4rem;
@@ -182,9 +182,10 @@
             justify-content: space-between;
         }
         .card.hidden-card {
-            opacity: 0;
-            transform: scale(0.9);
-            pointer-events: none;
+            opacity: 0 !important;
+            transform: scale(0.9) !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
         }
         .text-outline {
             text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
@@ -259,7 +260,7 @@
             <div class="border-side border-left"></div>
             <div class="border-side border-right"></div>
             
-            <iframe id="alert-iframe" src="https://streamelements.com/overlay/689946b0cc95c40604a44fd8/hbKP0nhO-fRbY7Ng7ZnFjuNWkBHbwnPxgBR1sLMsmYpXZreB"></iframe>
+            <iframe id="alert-iframe" src="YOUR_STREAM_ELEMENTS_ALERT_URL_HERE"></iframe>
             
             <div class="card-container-new">
                 <div class="card flex items-center justify-between">
@@ -292,13 +293,13 @@
     </div>
     <script>
         // --- IMPORTANT: CONFIGURE THESE ---
-        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
+        const API_URL = 'WORKER_URL';
         const POLLING_INTERVAL = 4000;
         const YOUTUBE_TARGET_GOAL = 10;
-        const YOUTUBE_COUNT_URL = 'https://youtube-count.darms1er.workers.dev';
-        const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
-        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
-        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0'
+        const YOUTUBE_COUNT_URL = 'YOUTUBE_COUNT_URL';
+        const YOUTUBE_CHANNEL_ID = 'CHANNEL_ID';
+        const FACEIT_WORKER_URL = 'FACEIT_WORKER_URL';
+        const FACEIT_PLAYER_ID = 'PLAYER_ID'
 
         // --- DO NOT MODIFY BELOW THIS LINE ---
         let lastState = { page: 'in-game-screen', faceit_visible: true };
@@ -315,16 +316,19 @@
         };
 
         const updateFaceitCard = (isVisible) => {
-            console.log("updateFaceitCard called. isVisible:", isVisible); // This is a new log to help debug
             const faceitCard = document.getElementById('faceit-card');
+            console.log("Looking for faceit-card element. Found:", faceitCard);
+
             if (faceitCard) {
                 if (isVisible) {
                     faceitCard.classList.remove('hidden-card');
+                    console.log("Removed hidden-card class. Card should be visible.");
                 } else {
                     faceitCard.classList.add('hidden-card');
+                    console.log("Added hidden-card class. Card should be hidden.");
                 }
             } else {
-                console.error("Faceit card element not found in the DOM.");
+                console.error("Faceit card element was not found in the DOM.");
             }
         };
 
@@ -336,40 +340,19 @@
                 }
                 const data = await response.json();
                 
-                // This is the new, unconditional check
                 if (data.page) {
                     showScreen(data.page);
                 }
                 
-                // This is the fix: we will always call the update function
                 if (data.faceit_visible !== undefined) {
                     updateFaceitCard(data.faceit_visible);
                 }
-        
-                // We also need to update lastState at the end
+
                 if (data.page) lastState.page = data.page;
                 if (data.faceit_visible !== undefined) lastState.faceit_visible = data.faceit_visible;
-        
+
             } catch (error) {
                 console.error('Failed to fetch master overlay state:', error);
-            }
-        };
-        
-        const updateFaceitCard = (isVisible) => {
-            // This is a new, critical log
-            const faceitCard = document.getElementById('faceit-card');
-            console.log("Looking for faceit-card element. Found:", faceitCard);
-        
-            if (faceitCard) {
-                if (isVisible) {
-                    faceitCard.classList.remove('hidden-card');
-                    console.log("Removed hidden-card class. Card should be visible.");
-                } else {
-                    faceitCard.classList.add('hidden-card');
-                    console.log("Added hidden-card class. Card should be hidden.");
-                }
-            } else {
-                console.error("Faceit card element was not found in the DOM.");
             }
         };
 
