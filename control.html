@@ -89,35 +89,52 @@
     <div class="container">
         <h1>Stream Overlay Controls</h1>
         
-        <h2 class="section-title">All Overlays</h2>
+        <h2 class="section-title">Global Controls (Change All Overlays)</h2>
+        <div class="controls-grid" data-target="all">
+            <button class="control-button" data-page="in-game-screen">In-Game</button>
+            <button class="control-button" data-page="brb-screen">Be Right Back</button>
+            <button class="control-button" data-page="going-live-screen">Going Live</button>
+            <button class="control-button" data-page="thanks-screen">Thanks for Watching</button>
+            <button class="control-button" id="global-faceit-toggle" data-target="all">Faceit</button>
+        </div>
+        
+        <hr class="my-6 border-gray-700">
+
+        <h2 class="section-title">Master Overlay Controls (1920x1080)</h2>
+        <div class="controls-grid" data-target="master">
+            <button class="control-button" data-page="in-game-screen">In-Game</button>
+            <button class="control-button" data-page="brb-screen">Be Right Back</button>
+            <button class="control-button" data-page="going-live-screen">Going Live</button>
+            <button class="control-button" data-page="thanks-screen">Thanks for Watching</button>
+            <button class="control-button" data-page="thanks-screen">Faceit</button>
+        </div>
+        
         <div class="flex-row">
-            <button class="control-button" data-target="all" data-page="in-game-screen">In-Game (All)</button>
-            <button class="control-button" data-target="all" data-faceit-toggle>Toggle Faceit (All)</button>
+            <h2 class="section-title">Faceit Card Visibility</h2>
+            <button class="control-button" id="master-faceit-toggle" data-target="master">Faceit</button>
         </div>
-        
-        <h2 class="section-title mt-8">Master Overlay</h2>
-        <div class="controls-grid" id="master-controls">
-            <button class="control-button" data-target="master" data-page="in-game-screen">In-Game</button>
-            <button class="control-button" data-target="master" data-page="brb-screen">Be Right Back</button>
-            <button class="control-button" data-target="master" data-page="going-live-screen">Going Live</button>
-            <button class="control-button" data-target="master" data-page="thanks-screen">Thanks for Watching</button>
-            <button class="control-button" data-target="master" data-faceit-toggle>Toggle Faceit</button>
+
+        <hr class="my-6 border-gray-700">
+
+        <h2 class="section-title">Vertical Overlay Controls (1080x1920)</h2>
+        <div class="controls-grid" data-target="vertical">
+            <button class="control-button" data-page="in-game-screen">In-Game</button>
+            <button class="control-button" data-page="brb-screen">Be Right Back</button>
+            <button class="control-button" data-page="going-live-screen">Going Live</button>
+            <button class="control-button" data-page="thanks-screen">Thanks for Watching</button>
         </div>
-        
-        <h2 class="section-title mt-8">Vertical Overlay</h2>
-        <div class="controls-grid" id="vertical-controls">
-            <button class="control-button" data-target="vertical" data-page="in-game-screen">In-Game</button>
-            <button class="control-button" data-target="vertical" data-page="brb-screen">Be Right Back</button>
-            <button class="control-button" data-target="vertical" data-page="going-live-screen">Going Live</button>
-            <button class="control-button" data-target="vertical" data-page="thanks-screen">Thanks for Watching</button>
-            <button class="control-button" data-target="vertical" data-faceit-toggle>Toggle Faceit</button>
+
+        <div class="flex-row">
+            <h2 class="section-title">Faceit Card Visibility</h2>
+            <button class="control-button" id="vertical-faceit-toggle" data-target="vertical">Faceit</button>
         </div>
 
         <p id="status" class="status-message"></p>
     </div>
 
     <script>
-        const API_URL = 'https://youtube-count.darms1er.workers.dev';
+        // --- IMPORTANT: CONFIGURE THESE ---
+        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
         const API_KEY = '293smnadlkjwa8%d2983eh$(@sjad';
 
         const statusElement = document.getElementById('status');
@@ -130,51 +147,62 @@
             }, 3000);
         };
 
-        const updateButtonState = (newState) => {
-            // Update master buttons
-            document.querySelectorAll('#master-controls .control-button[data-page]').forEach(btn => btn.classList.remove('active'));
-            const masterPageBtn = document.querySelector(`#master-controls .control-button[data-page="${newState.master.page}"]`);
-            if (masterPageBtn) masterPageBtn.classList.add('active');
-
-            const masterFaceitBtn = document.querySelector('#master-controls .control-button[data-faceit-toggle]');
-            if (newState.master.faceit_visible) {
-                masterFaceitBtn.classList.add('active');
+        const updateButtonState = (target, page) => {
+            if (target === 'all') {
+                document.querySelectorAll('.controls-grid[data-target="master"] .control-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.controls-grid[data-target="vertical"] .control-button').forEach(btn => btn.classList.remove('active'));
             } else {
-                masterFaceitBtn.classList.remove('active');
+                document.querySelectorAll(`.controls-grid[data-target="${target}"] .control-button`).forEach(btn => btn.classList.remove('active'));
             }
-
-            // Update vertical buttons
-            document.querySelectorAll('#vertical-controls .control-button[data-page]').forEach(btn => btn.classList.remove('active'));
-            const verticalPageBtn = document.querySelector(`#vertical-controls .control-button[data-page="${newState.vertical.page}"]`);
-            if (verticalPageBtn) verticalPageBtn.classList.add('active');
-
-            const verticalFaceitBtn = document.querySelector('#vertical-controls .control-button[data-faceit-toggle]');
-            if (newState.vertical.faceit_visible) {
-                verticalFaceitBtn.classList.add('active');
-            } else {
-                verticalFaceitBtn.classList.remove('active');
-            }
+            
+            document.querySelectorAll(`.controls-grid .control-button[data-page="${page}"]`).forEach(btn => {
+                if (btn.closest(`.controls-grid`).dataset.target === target || target === 'all') {
+                    btn.classList.add('active');
+                }
+            });
         };
         
+        const updateFaceitButton = async (target) => {
+            const buttonId = `${target}-faceit-toggle`;
+            const button = document.getElementById(buttonId);
+            if (!button) return;
+
+            try {
+                const response = await fetch(`${API_URL}?target=${target}`);
+                if (!response.ok) throw new Error('Failed to fetch state for Faceit toggle');
+                const data = await response.json();
+                if (data.faceit_visible) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            } catch (error) {
+                console.error(`Error fetching Faceit visibility for ${target}:`, error);
+            }
+        };
+
         const fetchInitialState = async () => {
             try {
                 const response = await fetch(API_URL);
                 if (!response.ok) throw new Error('Failed to fetch initial state');
                 const data = await response.json();
-                updateButtonState(data);
+                
+                updateButtonState('master', data.master.page);
+                updateButtonState('vertical', data.vertical.page);
+                updateFaceitButton('master');
+                updateFaceitButton('vertical');
             } catch (error) {
                 console.error('Error fetching initial state:', error);
                 showStatusMessage('Error fetching initial state.', 'error');
             }
         };
 
-        const sendPostRequest = async (target, updates) => {
+        const sendPostRequest = async (data, target) => {
             try {
-                const url = `${API_URL}?target=${target}`;
-                const response = await fetch(url, {
+                const response = await fetch(`${API_URL}?target=${target}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ...updates, key: API_KEY }),
+                    body: JSON.stringify({ ...data, key: API_KEY }),
                 });
 
                 if (!response.ok) {
@@ -184,50 +212,65 @@
 
                 const responseData = await response.json();
                 showStatusMessage('State updated successfully!', 'success');
-                updateButtonState(responseData.newState);
+                
+                if (target === 'all') {
+                    updateButtonState('master', responseData.newState.master.page);
+                    updateButtonState('vertical', responseData.newState.vertical.page);
+                } else {
+                    updateButtonState(target, responseData.newState.page);
+                }
             } catch (error) {
                 console.error('API Error:', error);
                 showStatusMessage(`Error: ${error.message}`, 'error');
             }
         };
 
-        document.getElementById('master-controls').addEventListener('click', (event) => {
-            const button = event.target.closest('button');
-            if (button) {
-                if (button.dataset.page) {
-                    sendPostRequest('master', { page: button.dataset.page });
-                } else if (button.dataset.faceitToggle !== undefined) {
-                    fetch(API_URL + '?target=master').then(res => res.json()).then(data => {
-                        sendPostRequest('master', { faceit_visible: !data.faceit_visible });
-                    });
+        document.querySelectorAll('.controls-grid').forEach(grid => {
+            grid.addEventListener('click', (event) => {
+                if (event.target.classList.contains('control-button')) {
+                    const page = event.target.dataset.page;
+                    const target = grid.dataset.target;
+                    if (page) {
+                        sendPostRequest({ page }, target);
+                    }
                 }
+            });
+        });
+
+        document.getElementById('global-faceit-toggle').addEventListener('click', async () => {
+            try {
+                // This fetches the current state of a single overlay to determine the new visibility
+                const response = await fetch(`${API_URL}?target=master`);
+                const data = await response.json();
+                const newVisibility = !data.faceit_visible;
+                // This sends the update to the 'all' target, which is handled by your worker
+                await sendPostRequest({ faceit_visible: newVisibility }, 'all');
+            } catch (error) {
+                showStatusMessage('Error toggling global Faceit card.', 'error');
             }
         });
 
-        document.getElementById('vertical-controls').addEventListener('click', (event) => {
-            const button = event.target.closest('button');
-            if (button) {
-                if (button.dataset.page) {
-                    sendPostRequest('vertical', { page: button.dataset.page });
-                } else if (button.dataset.faceitToggle !== undefined) {
-                    fetch(API_URL + '?target=vertical').then(res => res.json()).then(data => {
-                        sendPostRequest('vertical', { faceit_visible: !data.faceit_visible });
-                    });
-                }
+        document.getElementById('master-faceit-toggle').addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${API_URL}?target=master`);
+                const data = await response.json();
+                const newVisibility = !data.faceit_visible;
+                await sendPostRequest({ faceit_visible: newVisibility }, 'master');
+                updateFaceitButton('master');
+            } catch (error) {
+                showStatusMessage('Error toggling Faceit card.', 'error');
             }
         });
 
-        document.querySelector('.flex-row').addEventListener('click', (event) => {
-            const button = event.target.closest('button');
-            if (button) {
-                if (button.dataset.page) {
-                    sendPostRequest('all', { page: button.dataset.page });
-                } else if (button.dataset.faceitToggle !== undefined) {
-                    fetch(API_URL).then(res => res.json()).then(data => {
-                        const newVisibility = !data.master.faceit_visible;
-                        sendPostRequest('all', { faceit_visible: newVisibility });
-                    });
-                }
+        document.getElementById('vertical-faceit-toggle').addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${API_URL}?target=vertical`);
+                const data = await response.json();
+                const newVisibility = !data.faceit_visible;
+                await sendPostRequest({ faceit_visible: newVisibility }, 'vertical');
+                updateFaceitButton('vertical');
+            } catch (error) {
+                showStatusMessage('Error toggling Faceit card.', 'error');
             }
         });
 
