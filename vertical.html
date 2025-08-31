@@ -148,22 +148,26 @@
             0% { background-position: center top; }
             100% { background-position: center -200px; }
         }
-        .top-bar-content, .bottom-bar-content {
-            position: absolute;
+        .top-bar-content {
+            position: absolute; /* Kept positioning */
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1.5rem;
             z-index: 3;
-        }
-        .top-bar-content {
-            top: 120px;
+            top: 120px; /* Set a specific top value */
         }
         .bottom-bar-content {
-            bottom: 50px;
+            position: absolute; /* Kept positioning */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            z-index: 3;
+            bottom: 120px; /* Matched the top value for equal spacing */
         }
-        /* Adjusted card styles for consistency */
         .card {
             background-color: rgba(30, 41, 59, 0.7);
             border-radius: 0.75rem;
@@ -233,25 +237,24 @@
         .youtube-goal-card .sub-count { color: #FF5500; }
         .youtube-goal-card .goal-target { color: #CBD5E1; }
         
-        /* Updated social media bar styles */
         .social-media-bar {
             background-color: rgba(30, 41, 59, 0.85);
             border-radius: 0.75rem;
-            padding: 18px 24px; /* Increased padding */
+            padding: 18px 24px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-            border: 3px solid rgba(45, 212, 191, 0.9); /* Increased border */
+            border: 3px solid rgba(45, 212, 191, 0.9);
             backdrop-filter: blur(8px);
             display: flex;
             justify-content: center;
-            gap: 2rem; /* Increased gap */
+            gap: 2rem;
             animation: card-glow 2s infinite alternate;
-            width: 500px; /* Increased width */
+            width: 500px;
             margin-top: 1.5rem;
         }
         .social-icon { 
             color: #E2E8F0; 
             transition: color 0.3s ease, text-shadow 0.3s ease; 
-            font-size: 2.5rem; /* Increased font size for icons */
+            font-size: 2.5rem;
         }
         .social-icon:hover { color: #FF5500; text-shadow: 0 0 10px #FF5500; }
         .social-icon.youtube:hover { color: #FF0000; text-shadow: 0 0 10px #FF0000; }
