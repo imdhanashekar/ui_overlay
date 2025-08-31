@@ -308,7 +308,7 @@
     </div>
 
     <div id="going-live-screen" class="overlay-screen">
-        <div class="vertical-screen-content">
+        <div class="vertical-scene-content">
             <h1 class="vertical-scene-title">Going Live</h1>
             <p class="vertical-scene-subtitle">Get ready, we're live!</p>
             <div class="vertical-highlight-bar"></div>
@@ -316,7 +316,7 @@
     </div>
 
     <div id="brb-screen" class="overlay-screen">
-        <div class="vertical-screen-content">
+        <div class="vertical-scene-content">
             <h1 class="vertical-scene-title">Be Right Back</h1>
             <p class="vertical-scene-subtitle">Stay tuned, I'll be back soon!</p>
             <div class="vertical-highlight-bar"></div>
@@ -324,7 +324,7 @@
     </div>
     
     <div id="thanks-screen" class="overlay-screen">
-        <div class="vertical-screen-content">
+        <div class="vertical-scene-content">
             <h1 class="vertical-scene-title">Thanks For Watching</h1>
             <p class="vertical-scene-subtitle">Catch you on the next stream!</p>
             <div class="vertical-highlight-bar"></div>
@@ -341,7 +341,7 @@
         const FACEIT_PLAYER_ID = 'PLAYER_ID';
         
         // --- DO NOT MODIFY BELOW THIS LINE ---
-        let lastState = { page: 'in-game-screen', faceit_visible: true };
+        let lastState = { page: '', faceit_visible: true };
 
         const showScreen = (id) => {
             const currentActiveScreen = document.querySelector('.overlay-screen.active');
@@ -368,6 +368,9 @@
         const fetchState = async () => {
             try {
                 const response = await fetch(`${API_URL}?target=vertical`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 
                 if (data.page && data.page !== lastState.page) {
@@ -432,7 +435,6 @@
         });
         
         document.addEventListener('DOMContentLoaded', () => {
-            showScreen('in-game-screen');
             fetchState();
             setInterval(fetchState, POLLING_INTERVAL);
             fetchYouTubeCount();
