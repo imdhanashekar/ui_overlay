@@ -329,22 +329,22 @@
         const fetchState = async () => {
             try {
                 const response = await fetch(`${API_URL}?target=master`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
                 const data = await response.json();
                 
-                // This is the fix: we will always call the update function
-                if (data.faceit_visible !== undefined) {
+                // This is where you likely have your page transition logic.
+                if (data.page && data.page !== lastState.page) {
+                    showScreen(data.page);
+                    lastState.page = data.page;
+                }
+        
+                // Add the new code snippet here.
+                if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
                     updateFaceitCard(data.faceit_visible);
+                    lastState.faceit_visible = data.faceit_visible;
                 }
                 
-                // Continue with the rest of the original logic
-                if (data.page) {
-                    showScreen(data.page);
-                }
             } catch (error) {
-                console.error('Failed to fetch master overlay state:', error);
+                console.error('Failed to fetch state for master overlay:', error);
             }
         };
 
