@@ -333,6 +333,7 @@
         
         const fetchState = async () => {
             try {
+                // Add a unique timestamp to prevent caching
                 const url = `${API_URL}?target=master&cachebuster=${Date.now()}`;
                 
                 const response = await fetch(url);
