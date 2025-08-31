@@ -41,16 +41,7 @@
             pointer-events: auto;
         }
 
-        /* --- Master-specific styling --- */
-        .main-content {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-color: transparent;
-            box-sizing: border-box;
-        }
-
-        /* Particles container for both vertical and master overlays */
+        /* Particles container for visual effects, only active on specific screens */
         .particles-container {
             position: absolute;
             top: 0;
@@ -95,8 +86,8 @@
             align-items: center;
             text-align: center;
         }
-
-        .main-title {
+        
+        .generic-scene-content .main-title {
             font-size: 6rem;
             font-weight: 800;
             text-transform: uppercase;
@@ -105,7 +96,7 @@
             text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
         }
 
-        .sub-title {
+        .generic-scene-content .sub-title {
             font-size: 2.5rem;
             font-weight: 400;
             margin-top: 1rem;
@@ -113,7 +104,7 @@
             text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
         }
 
-        .highlight-bar {
+        .generic-scene-content .highlight-bar {
             width: 80%;
             height: 6px;
             background: linear-gradient(90deg, #FF5500, #37BFB0);
@@ -133,7 +124,15 @@
             0%, 100% { box-shadow: 0 0 5px #FF5500, 0 0 10px #FF5500; }
             50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
         }
-
+        
+        /* Master-specific styling for the in-game screen elements */
+        .main-content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: transparent;
+            box-sizing: border-box;
+        }
         .border-side {
             position: absolute;
             background-color: #37BFB0;
@@ -237,7 +236,7 @@
     </style>
 </head>
 <body>
-    <div class="particles-container">
+    <div id="particle-overlay" class="particles-container">
         <div class="particle"></div>
         <div class="particle"></div>
         <div class="particle"></div>
@@ -334,6 +333,15 @@
             const newActiveScreen = document.getElementById(id);
             if (newActiveScreen) {
                 newActiveScreen.classList.add('active');
+            }
+            // Control particles and background based on the active screen
+            const particleOverlay = document.getElementById('particle-overlay');
+            if (id === 'in-game-screen') {
+                document.body.style.backgroundColor = 'transparent';
+                particleOverlay.style.display = 'none';
+            } else {
+                document.body.style.backgroundColor = '#121212';
+                particleOverlay.style.display = 'block';
             }
         };
 
