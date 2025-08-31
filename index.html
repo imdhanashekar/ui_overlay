@@ -332,15 +332,10 @@
             try {
                 const response = await fetch(`${API_URL}?target=master`);
                 const data = await response.json();
-        
-                // Handle page transitions
-                if (data.page && data.page !== lastState.page) {
-                    showScreen(data.page);
-                    lastState.page = data.page;
-                }
-        
-                // Handle Faceit visibility
+                
+                // This is the key line. Ensure it is exactly as shown.
                 if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
+                    console.log('Toggling Faceit card visibility.'); // Add this line for debugging!
                     updateFaceitCard(data.faceit_visible);
                     lastState.faceit_visible = data.faceit_visible;
                 }
