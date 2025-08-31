@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Base Styles for Vertical Layout */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
         
         body {
@@ -14,13 +15,14 @@
             background-color: transparent;
             overflow: hidden;
             color: #E2E8F0;
+            width: 1080px; /* Width for a vertical screen */
+            height: 1920px; /* Height for a vertical screen */
             margin: 0;
             padding: 0;
-            width: 1080px; 
-            height: 1920px;
             position: relative;
         }
 
+        /* Overlay Screens - Vertical */
         .overlay-screen {
             width: 100%;
             height: 100%;
@@ -35,57 +37,69 @@
             justify-content: center;
             flex-direction: column;
             text-align: center;
+            z-index: 1;
         }
         .overlay-screen.active {
             opacity: 1;
             pointer-events: auto;
+            z-index: 10;
         }
 
-        .main-content {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-color: transparent;
-            box-sizing: border-box;
+        /* Animated Full-Screen Backgrounds - Vertical Flow */
+        .animated-screen {
+            background: linear-gradient(135deg, #0f172a, #1a202c, #334155);
+            background-size: 400% 400%;
+            animation: gradient-flow-vertical 15s ease-in-out infinite alternate;
         }
-        
-        .vertical-scene-content {
+        @keyframes gradient-flow-vertical {
+            0% { background-position: 50% 0%; }
+            50% { background-position: 50% 100%; }
+            100% { background-position: 50% 0%; }
+        }
+
+        /* Floating Particles Effect */
+        .particles {
+            position: absolute;
             width: 100%;
             height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            background-color: #37BFB0;
+            border-radius: 50%;
+            opacity: 0;
+            filter: blur(1px);
+            animation: particle-motion-vertical linear infinite;
+        }
+        @keyframes particle-motion-vertical {
+            0% { transform: translate(var(--start-x), var(--start-y)) scale(0); opacity: 0; }
+            25% { transform: translate(var(--mid-x), var(--mid-y)) scale(0.8); opacity: 0.7; }
+            100% { transform: translate(var(--end-x), var(--end-y)) scale(1.2); opacity: 0; }
+        }
+
+        /* Main Content Styling */
+        .main-content {
             position: relative;
-            background-color: transparent;
-            box-sizing: border-box;
+            z-index: 10;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
+            justify-content: center;
+            height: 100%;
+            padding: 2rem;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
         }
-        
-        .vertical-scene-title {
-            font-size: 6rem;
+        .scene-title {
+            font-size: 8rem; /* Adjusted for vertical screen */
             font-weight: 800;
             text-transform: uppercase;
             color: #E2E8F0;
             animation: text-glow 2s infinite alternate, text-pulse 4s infinite ease-in-out;
             text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
-            margin-top: -350px;
         }
-        .vertical-scene-subtitle {
-            font-size: 2.5rem;
-            font-weight: 400;
-            margin-top: 1rem;
-            display: inline-block;
-            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-        }
-        .vertical-highlight-bar {
-            width: 80%;
-            height: 6px;
-            background: linear-gradient(90deg, #FF5500, #37BFB0);
-            margin-top: 2rem;
-            animation: bar-glow 2s infinite alternate;
-        }
-
         @keyframes text-glow {
             0% { text-shadow: 0 0 10px #37BFB0, 0 0 20px #37BFB0, 0 0 30px #FF5500; }
             100% { text-shadow: 0 0 20px #37BFB0, 0 0 30px #37BFB0, 0 0 40px #FF5500; }
@@ -94,11 +108,40 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.02); }
         }
+        .scene-subtitle {
+            font-size: 2.5rem; /* Adjusted for vertical screen */
+            font-weight: 400;
+            margin-top: 1.5rem;
+            display: inline-block;
+        }
+        .scene-subtitle span {
+            display: inline-block;
+            animation: character-jump 1s ease-out infinite alternate;
+        }
+        @keyframes character-jump {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25% { transform: translateY(-10px) scale(1.1); }
+            50% { transform: translateY(0) scale(1); }
+        }
+        .highlight-bar {
+            width: 100%;
+            max-width: 40rem; /* Adjusted for vertical screen */
+            height: 4px;
+            background: linear-gradient(90deg, #FF5500, #37BFB0);
+            margin-top: 3rem;
+            animation: bar-glow 2s infinite alternate;
+        }
         @keyframes bar-glow {
             0%, 100% { box-shadow: 0 0 5px #FF5500, 0 0 10px #FF5500; }
             50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
         }
 
+        /* In-Game Screen Specifics */
+        #in-game-screen { 
+            background-color: transparent; 
+        }
+
+        /* Animated Full-Screen Border */
         .border-side {
             position: absolute;
             background-color: #37BFB0;
@@ -114,119 +157,119 @@
             0%, 100% { box-shadow: 0 0 5px #37BFB0, 0 0 10px #37BFB0; }
             50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
         }
-        .top-bar-filler {
-            position: absolute; top: 0; left: 0; width: 100%; height: 575px;
-            background-image: url('https://googleusercontent.com/file_content/1');
-            background-size: 100% auto; background-repeat: repeat-y; background-position: center top;
-            animation: wavy-bg-scroll 20s linear infinite;
-            z-index: 1;
-            background-blend-mode: overlay;
-            background-color: rgba(15, 23, 42, 0.7);
-        }
-        .bottom-bar-filler {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 575px;
-            background-image: url('https://googleusercontent.com/file_content/1');
-            background-size: 100% auto; background-repeat: repeat-y; background-position: center bottom;
-            animation: wavy-bg-scroll 20s linear infinite reverse;
-            z-index: 1;
-            background-blend-mode: overlay;
-            background-color: rgba(15, 23, 42, 0.7);
-        }
-        @keyframes wavy-bg-scroll {
-            0% { background-position: center top; }
-            100% { background-position: center -200px; }
-        }
-        .top-bar-content {
-            position: absolute; top: 120px; width: 100%;
-            display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
-            z-index: 3;
-        }
-        .bottom-bar-content {
-            position: absolute; bottom: 50px; width: 100%;
-            display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
-            z-index: 3;
-        }
+
+        /* Card and Text Styles */
         .card {
             background-color: rgba(30, 41, 59, 0.7);
-            border-radius: 0.75rem; padding: 14px;
+            border-radius: 0.75rem;
+            padding: 14px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
             border: 2px solid rgba(45, 212, 191, 0.8);
             backdrop-filter: blur(8px);
-            display: flex; align-items: center;
-            animation: card-glow 2s infinite alternate;
-            width: 400px;
             transition: all 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
         }
-        .card.hidden-card {
-            opacity: 0; transform: scale(0.9); pointer-events: none;
+        .text-outline {
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
         }
-        @keyframes card-glow {
-            0%, 100% { box-shadow: 0 0 5px #37BFB0, 0 0 10px #37BFB0; }
-            50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
+        .highlight-text {
+            color: #FF5500;
+            font-weight: bold;
         }
-        .text-outline { text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; }
-        .highlight-text { color: #FF5500; font-weight: bold; }
-        .card-label { white-space: nowrap; flex-shrink: 0; margin-right: 0.5rem; }
-        .name-display { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px; }
-        .elo-data { display: flex; justify-content: space-between; width: 100%; }
-        .youtube-goal-card {
-            background-color: rgba(30, 41, 59, 0.85);
-            border-radius: 0.75rem; padding: 18px 24px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
-            border: 3px solid rgba(45, 212, 191, 0.9);
-            backdrop-filter: blur(10px);
-            display: flex; align-items: center; justify-content: center;
-            animation: card-glow 2.5s infinite alternate;
-            width: 500px;
+        #alert-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: none;
+        }
+        .card-label {
+            flex-shrink: 0;
             white-space: nowrap;
         }
-        .youtube-goal-card .icon { font-size: 2.5rem; margin-right: 1rem; color: #FF0000; text-shadow: 0 0 10px #FF0000; }
-        .youtube-goal-card .goal-text { font-size: 2.2rem; font-weight: 800; color: #E2E8F0; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 15px #FF5500; }
-        .youtube-goal-card .sub-count { color: #FF5500; }
-        .youtube-goal-card .goal-target { color: #CBD5E1; }
-        .social-media-bar {
-            background-color: rgba(30, 41, 59, 0.85);
-            border-radius: 0.75rem; padding: 10px 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(45, 212, 191, 0.8);
-            backdrop-filter: blur(8px);
-            display: flex; justify-content: center; gap: 1.5rem;
-            animation: card-glow 2s infinite alternate;
-            width: 400px;
+        .follower-card {
+            min-width: 360px;
+            max-width: 360px;
         }
-        .social-icon { color: #E2E8F0; transition: color 0.3s ease, text-shadow 0.3s ease; }
-        .social-icon:hover { color: #FF5500; text-shadow: 0 0 10px #FF5500; }
-        .social-icon.youtube:hover { color: #FF0000; text-shadow: 0 0 10px #FF0000; }
-        .social-icon.twitter:hover { color: #1DA1F2; text-shadow: 0 0 10px #1DA1F2; }
-        .social-icon.instagram:hover { color: #C13584; text-shadow: 0 0 10px #C13584; }
+        .follower-name {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+        .elo-data {
+            display: flex;
+            gap: 0.5rem;
+        }
     </style>
 </head>
-<body>
-    <div id="in-game-screen" class="overlay-screen active">
-        <div class="main-content">
+<body class="bg-transparent overflow-hidden">
+    <div class="overlay-container">
+        <div id="going-live-screen" class="overlay-screen animated-screen">
+            <div class="particles" id="particles-live"></div>
+            <div class="main-content">
+                <h1 class="scene-title">Going Live</h1>
+                <p id="subtitle-live" class="scene-subtitle">Get ready, we're live in a minute!</p>
+                <div class="highlight-bar"></div>
+            </div>
+        </div>
+
+        <div id="brb-screen" class="overlay-screen animated-screen">
+            <div class="particles" id="particles-brb"></div>
+            <div class="main-content">
+                <h1 class="scene-title">Be Right Back</h1>
+                <p id="subtitle-brb" class="scene-subtitle">Stay tuned, I'll be back in a minute!</p>
+                <div class="highlight-bar"></div>
+            </div>
+        </div>
+
+        <div id="thanks-screen" class="overlay-screen animated-screen">
+            <div class="particles" id="particles-thanks"></div>
+            <div class="main-content">
+                <h1 class="scene-title">Thanks For Watching</h1>
+                <p id="subtitle-thanks" class="scene-subtitle">Catch you on the next stream!</p>
+                <div class="highlight-bar"></div>
+            </div>
+        </div>
+
+        <div id="in-game-screen" class="overlay-screen active">
             <div class="border-side border-top"></div>
             <div class="border-side border-bottom"></div>
             <div class="border-side border-left"></div>
             <div class="border-side border-right"></div>
             
-            <div class="top-bar-filler"></div>
-            <div class="bottom-bar-filler"></div>
-
-            <div class="top-bar-content">
-                <div class="youtube-goal-card">
-                    <i class="fab fa-youtube icon"></i>
-                    <span class="goal-text">SUB GOAL: <span id="youtube-count-goal" class="sub-count">0</span> / <span id="youtube-target" class="goal-target">10</span></span>
+<!--             <iframe id="alert-iframe" src="YOUR_STREAM_ELEMENTS_ALERT_URL_HERE"></iframe> -->
+            <div class="absolute flex flex-col items-center top-4 w-full z-20 space-y-4">
+                <div class="w-full max-w-2xl">
+                    <div class="card flex items-center justify-between">
+                        <span class="text-base font-bold uppercase text-outline card-label">Subscribers:</span>
+                        <div class="flex items-center ml-2">
+                            <span id="youtube-count" class="text-base font-bold highlight-text uppercase text-outline">0</span>
+                            <span class="text-base font-bold uppercase text-outline">/</span>
+                            <span id="youtube-goal" class="text-base uppercase text-outline">10</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="bottom-bar-content">
-                <div class="flex flex-col md:flex-row gap-4 items-center justify-center w-full">
-                    <div class="card flex items-center justify-between">
+            <div class="absolute flex flex-col items-center bottom-4 w-full z-20 space-y-4">
+                <div class="w-full max-w-2xl">
+                    <div class="card follower-card flex items-center justify-between">
                         <span class="text-base font-bold uppercase text-outline card-label">Recent Follower:</span>
-                        <span id="recent-follower-name" class="text-base font-bold highlight-text uppercase text-outline name-display">
-                            </span>
+                        <span id="recent-follower-name" class="text-base font-bold highlight-text uppercase text-outline follower-name">
+                            Bhavesh Sharma
+                        </span>
                     </div>
-                    <div class="card" id="faceit-card">
+                </div>
+
+                <div class="w-full max-w-2xl">
+                    <div class="card flex items-center justify-between">
                         <div class="elo-data">
                             <span class="text-base font-bold uppercase text-outline">Level:</span>
                             <span id="elo-level" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
@@ -237,52 +280,24 @@
                         </div>
                     </div>
                 </div>
-                <div class="social-media-bar">
-                    <a href="https://www.youtube.com/watch?v=OUXvrWeQU0g8" target="_blank" class="social-icon youtube"><i class="fab fa-youtube"></i></a>
-                    <a href="https://www.twitter.com/darms1erGG" target="_blank" class="social-icon twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.instagram.com/darms1erGG" target="_blank" class="social-icon instagram"><i class="fab fa-instagram"></i></a>
-                </div>
             </div>
-        </div>
-    </div>
-
-    <div id="going-live-screen" class="overlay-screen">
-        <div class="vertical-screen-content">
-            <h1 class="vertical-scene-title">Going Live</h1>
-            <p class="vertical-scene-subtitle">Get ready, we're live!</p>
-            <div class="vertical-highlight-bar"></div>
-        </div>
-    </div>
-
-    <div id="brb-screen" class="overlay-screen">
-        <div class="vertical-screen-content">
-            <h1 class="vertical-scene-title">Be Right Back</h1>
-            <p class="vertical-scene-subtitle">Stay tuned, I'll be back soon!</p>
-            <div class="vertical-highlight-bar"></div>
-        </div>
-    </div>
-    
-    <div id="thanks-screen" class="overlay-screen">
-        <div class="vertical-screen-content">
-            <h1 class="vertical-scene-title">Thanks For Watching</h1>
-            <p class="vertical-scene-subtitle">Catch you on the next stream!</p>
-            <div class="vertical-highlight-bar"></div>
         </div>
     </div>
     <script>
         // --- IMPORTANT: CONFIGURE THESE ---
-        const API_URL = 'WORKER_URL';
+        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
         const POLLING_INTERVAL = 4000;
         const YOUTUBE_TARGET_GOAL = 10;
-        const YOUTUBE_COUNT_URL = 'YOUTUBE_COUNT_URL';
-        const YOUTUBE_CHANNEL_ID = 'CHANNEL_ID';
-        const FACEIT_WORKER_URL = 'FACEIT_WORKER_URL';
-        const FACEIT_PLAYER_ID = 'PLAYER_ID';
-        
-        // --- DO NOT MODIFY BELOW THIS LINE ---
-        let lastState = { page: 'in-game-screen', faceit_visible: true };
+        const YOUTUBE_COUNT_URL = 'https://youtube-count.darms1er.workers.dev';
+        const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
+        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
+        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
 
+        // --- DO NOT MODIFY BELOW THIS LINE ---
+        let lastPage = '';
+        
         const showScreen = (id) => {
+            if (lastPage === id) return;
             const currentActiveScreen = document.querySelector('.overlay-screen.active');
             if (currentActiveScreen) {
                 currentActiveScreen.classList.remove('active');
@@ -291,67 +306,93 @@
             if (newActiveScreen) {
                 newActiveScreen.classList.add('active');
             }
-        };
-
-        const updateFaceitCard = (isVisible) => {
-            const faceitCard = document.getElementById('faceit-card');
-            if (faceitCard) {
-                if (isVisible) {
-                    faceitCard.classList.remove('hidden-card');
-                } else {
-                    faceitCard.classList.add('hidden-card');
-                }
-            }
+            lastPage = id;
         };
 
         const fetchState = async () => {
             try {
-                const response = await fetch(`${API_URL}?target=vertical`);
-                const data = await response.json();
-                
-                if (data.page && data.page !== lastState.page) {
-                    showScreen(data.page);
-                    lastState.page = data.page;
+                const response = await fetch(`${API_URL}?target=master`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
-                if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
-                    updateFaceitCard(data.faceit_visible);
-                    lastState.faceit_visible = data.faceit_visible;
+                const data = await response.json();
+                if (data.page) {
+                    showScreen(data.page);
                 }
             } catch (error) {
-                console.error('Failed to fetch state for vertical overlay:', error);
+                console.error('Failed to fetch master overlay state:', error);
             }
         };
 
+        const createParticles = (containerId) => {
+            const particlesContainer = document.getElementById(containerId);
+            const numParticles = 150;
+            for (let i = 0; i < numParticles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 4 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                const startX = Math.random() * 100;
+                const startY = 100 + Math.random() * 20;
+                const midX = Math.random() * 100;
+                const midY = 50 + Math.random() * 30;
+                const endX = Math.random() * 100;
+                const endY = -10;
+                particle.style.setProperty('--start-x', `${startX}vw`);
+                particle.style.setProperty('--start-y', `${startY}vh`);
+                particle.style.setProperty('--mid-x', `${midX}vw`);
+                particle.style.setProperty('--mid-y', `${midY}vh`);
+                particle.style.setProperty('--end-x', `${endX}vw`);
+                particle.style.setProperty('--end-y', `${endY}vh`);
+                const duration = Math.random() * 10 + 5;
+                const delay = Math.random() * 10;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                particlesContainer.appendChild(particle);
+            }
+        };
+        const animateSubtitle = (subtitleId) => {
+            const subtitle = document.getElementById(subtitleId);
+            const text = subtitle.innerText;
+            subtitle.innerHTML = '';
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const span = document.createElement('span');
+                span.innerText = char === ' ' ? '\u00A0' : char;
+                span.style.animationDelay = `${i * 0.1}s`;
+                subtitle.appendChild(span);
+            }
+        };
         const fetchYouTubeCount = async () => {
-            const url = YOUTUBE_COUNT_URL;
-            const channelId = YOUTUBE_CHANNEL_ID;
-            if (url === 'YOUTUBE_COUNT_URL' || channelId === 'CHANNEL_ID') {
-                document.getElementById('youtube-count-goal').textContent = 'N/A';
-                document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
+            if (YOUTUBE_COUNT_URL === 'YOUTUBE_COUNT_URL' || YOUTUBE_CHANNEL_ID === 'CHANNEL_ID') {
+                document.getElementById('youtube-count').textContent = 'N/A';
                 return;
             }
             try {
-                const response = await fetch(`${url}?channelId=${channelId}`);
+                const response = await fetch(`${YOUTUBE_COUNT_URL}?channelId=${YOUTUBE_CHANNEL_ID}`);
                 const data = await response.json();
                 if (response.ok && data.subscriberCount) {
-                    document.getElementById('youtube-count-goal').textContent = data.subscriberCount.toLocaleString();
-                    document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
-                } else { throw new Error(data.error || 'Failed to fetch YouTube count.'); }
-            } catch (error) { document.getElementById('youtube-count-goal').textContent = 'N/A'; }
+                    document.getElementById('youtube-count').textContent = data.subscriberCount;
+                    document.getElementById('youtube-goal').textContent = YOUTUBE_TARGET_GOAL;
+                } else {
+                    throw new Error(data.error || 'Failed to fetch YouTube count.');
+                }
+            } catch (error) {
+                document.getElementById('youtube-count').textContent = 'N/A';
+            }
         };
-
         const fetchFaceitData = async () => {
-            const url = FACEIT_WORKER_URL;
-            const playerId = FACEIT_PLAYER_ID;
-            if (url === 'FACEIT_WORKER_URL' || playerId === 'PLAYER_ID') {
+            if (FACEIT_WORKER_URL === 'FACEIT_WORKER_URL' || FACEIT_PLAYER_ID === 'PLAYER_ID') {
                 document.getElementById('elo-value').textContent = 'N/A';
                 document.getElementById('elo-level').textContent = 'N/A';
                 return;
             }
             try {
-                const response = await fetch(`${url}/${playerId}`);
-                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                const response = await fetch(`${FACEIT_WORKER_URL}/${FACEIT_PLAYER_ID}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 const elo = data.games.cs2.faceit_elo || 0;
                 const level = data.games.cs2.skill_level || 0;
@@ -362,7 +403,6 @@
                 document.getElementById('elo-level').textContent = 'N/A';
             }
         };
-
         window.addEventListener('message', (event) => {
             if (event.data.type === 'event' && event.data.event && event.data.event.listener === 'follower-latest') {
                 const followerName = event.data.event.name;
@@ -371,9 +411,14 @@
         });
         
         document.addEventListener('DOMContentLoaded', () => {
-            showScreen('in-game-screen');
             fetchState();
             setInterval(fetchState, POLLING_INTERVAL);
+            animateSubtitle('subtitle-live');
+            animateSubtitle('subtitle-brb');
+            animateSubtitle('subtitle-thanks');
+            createParticles('particles-live');
+            createParticles('particles-brb');
+            createParticles('particles-thanks');
             fetchYouTubeCount();
             fetchFaceitData();
             setInterval(fetchYouTubeCount, 30000);
