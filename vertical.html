@@ -177,10 +177,12 @@
             backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
+            justify-content: space-between; /* Ensures content is spread out */
             animation: card-glow 2s infinite alternate;
-            width: 500px;
+            width: 500px; /* Fixed width */
+            min-height: 80px; /* Fixed minimum height for consistency */
             transition: all 0.3s ease-in-out;
-            gap: 1rem;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
         }
         .card.hidden-card {
             opacity: 0;
@@ -206,7 +208,13 @@
             font-size: 2.2rem;
             font-weight: 800;
             flex-grow: 1;
-            min-width: 0;
+            min-width: 0; /* Allows the text to shrink if necessary */
+            text-align: right; /* Aligns the name to the right */
+        }
+        .elo-data-group { /* New class to group Level and ELO */
+            display: flex;
+            align-items: center;
+            gap: 1.5rem; /* Space between "Level: N/A" and "ELO: N/A" */
         }
         .elo-data { 
             display: flex; 
@@ -227,12 +235,25 @@
             backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: space-between; /* Spreads content to ends */
             animation: card-glow 2.5s infinite alternate;
-            width: 500px;
+            width: 500px; /* Fixed width */
+            min-height: 80px; /* Fixed minimum height for consistency */
+            box-sizing: border-box;
         }
-        .youtube-goal-card .icon { font-size: 2.5rem; margin-right: 1rem; color: #FF0000; text-shadow: 0 0 10px #FF0000; }
-        .youtube-goal-card .goal-text { font-size: 2.2rem; font-weight: 800; color: #E2E8F0; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 15px #FF5500; }
+        .youtube-goal-card .goal-label { /* New class for the "SUB GOAL:" text */
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #E2E8F0;
+            text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 15px #FF5500;
+            white-space: nowrap;
+        }
+        .youtube-goal-card .sub-count-display { /* New class for the "N/A / 10" text */
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 15px #FF5500;
+            white-space: nowrap;
+        }
         .youtube-goal-card .sub-count { color: #FF5500; }
         .youtube-goal-card .goal-target { color: #CBD5E1; }
         
@@ -247,8 +268,10 @@
             justify-content: center;
             gap: 2rem;
             animation: card-glow 2s infinite alternate;
-            width: 500px;
+            width: 500px; /* Fixed width */
+            min-height: 80px; /* Fixed minimum height for consistency */
             margin-top: 1.5rem;
+            box-sizing: border-box;
         }
         .social-icon { 
             color: #E2E8F0; 
@@ -275,12 +298,12 @@
 
             <div class="top-bar-content">
                 <div class="youtube-goal-card">
-                    <span class="goal-text">SUB GOAL: <span id="youtube-count-goal" class="sub-count">0</span> / <span id="youtube-target" class="goal-target">10</span></span>
+                    <span class="goal-label">SUB GOAL:</span>
+                    <span class="sub-count-display"><span id="youtube-count-goal" class="sub-count">0</span> / <span id="youtube-target" class="goal-target">10</span></span>
                 </div>
-                <div class="card flex items-center justify-between">
+                <div class="card">
                     <span class="text-outline card-label">Recent Follower:</span>
-                    <span id="recent-follower-name" class="highlight-text uppercase text-outline name-display">
-                        </span>
+                    <span id="recent-follower-name" class="highlight-text uppercase text-outline name-display">Bhavesh Sharma</span>
                 </div>
             </div>
 
@@ -395,7 +418,7 @@
                 const data = await response.json();
                 if (response.ok && data.subscriberCount) {
                     document.getElementById('youtube-count-goal').textContent = data.subscriberCount.toLocaleString();
-                    document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOal.toLocaleString();
+                    document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
                 } else { throw new Error(data.error || 'Failed to fetch YouTube count.'); }
             } catch (error) { document.getElementById('youtube-count-goal').textContent = 'N/A'; }
         };
