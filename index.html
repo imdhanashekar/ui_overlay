@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* All your beautiful CSS styles go here */
+        /* Base Styles */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
         
         body {
@@ -15,13 +15,17 @@
             background-color: transparent;
             overflow: hidden;
             color: #E2E8F0;
-            margin: 0; /* Ensures no default body margin */
+            width: 1920px; /* Force body to full HD resolution */
+            height: 1080px;
+            margin: 0;
             padding: 0;
             position: relative;
         }
+
+        /* Overlay Screens */
         .overlay-screen {
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             position: absolute;
             top: 0;
             left: 0;
@@ -38,6 +42,8 @@
             opacity: 1;
             pointer-events: auto;
         }
+
+        /* Animated Full-Screen Backgrounds */
         .animated-screen {
             background: linear-gradient(135deg, #0f172a, #1a202c, #334155);
             background-size: 400% 400%;
@@ -48,12 +54,15 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
+        /* Floating Particles Effect */
         .particles {
             position: absolute;
             width: 100%;
             height: 100%;
             pointer-events: none;
             overflow: hidden;
+            z-index: 0;
         }
         .particle {
             position: absolute;
@@ -68,6 +77,8 @@
             25% { transform: translate(var(--mid-x), var(--mid-y)) scale(0.8); opacity: 0.7; }
             100% { transform: translate(var(--end-x), var(--end-y)) scale(1.2); opacity: 0; }
         }
+
+        /* Main Content Styling */
         .main-content {
             position: relative;
             z-index: 10;
@@ -122,11 +133,13 @@
             0%, 100% { box-shadow: 0 0 5px #FF5500, 0 0 10px #FF5500; }
             50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
         }
+
+        /* In-Game Screen Specifics */
         #in-game-screen { 
             background-color: transparent; 
         }
 
-        /* --- Animated Border Styles --- */
+        /* Animated Full-Screen Border */
         .border-side {
             position: absolute;
             background-color: #37BFB0;
@@ -134,16 +147,16 @@
             animation: border-glow-effect 3s infinite alternate;
             z-index: 100;
         }
-        .border-top { top: 0; left: 0; width: 100vw; height: 5px; }
-        .border-bottom { bottom: 0; left: 0; width: 100vw; height: 5px; }
-        .border-left { top: 0; left: 0; width: 5px; height: 100vh; }
-        .border-right { top: 0; right: 0; width: 5px; height: 100vh; }
+        .border-top { top: 0; left: 0; width: 100%; height: 5px; }
+        .border-bottom { bottom: 0; left: 0; width: 100%; height: 5px; }
+        .border-left { top: 0; left: 0; width: 5px; height: 100%; }
+        .border-right { top: 0; right: 0; width: 5px; height: 100%; }
         @keyframes border-glow-effect {
             0%, 100% { box-shadow: 0 0 5px #37BFB0, 0 0 10px #37BFB0; }
             50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
         }
 
-        /* --- Card and Text Styles --- */
+        /* Card and Text Styles */
         .card {
             background-color: rgba(30, 41, 59, 0.7);
             border-radius: 0.75rem;
