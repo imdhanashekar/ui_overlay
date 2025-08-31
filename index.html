@@ -326,23 +326,25 @@
             }
         };
         
+        let lastState = { page: 'in-game-screen', faceit_visible: true };
+
         const fetchState = async () => {
             try {
                 const response = await fetch(`${API_URL}?target=master`);
                 const data = await response.json();
-                
-                // This is where you likely have your page transition logic.
+        
+                // Handle page transitions
                 if (data.page && data.page !== lastState.page) {
                     showScreen(data.page);
                     lastState.page = data.page;
                 }
         
-                // Add the new code snippet here.
+                // Handle Faceit visibility
                 if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
                     updateFaceitCard(data.faceit_visible);
                     lastState.faceit_visible = data.faceit_visible;
                 }
-                
+        
             } catch (error) {
                 console.error('Failed to fetch state for master overlay:', error);
             }
