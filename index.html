@@ -278,7 +278,7 @@
                     </span>
                 </div>
 
-                <div class="card" id="faceit-card">
+                <div class="card" id="faceit-card-master">
                     <div class="elo-data">
                         <span class="text-base font-bold uppercase text-outline">Level:</span>
                         <span id="elo-level" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
@@ -316,16 +316,14 @@
         };
 
         const updateFaceitCard = (isVisible) => {
-            const faceitCard = document.getElementById('faceit-card');
-            console.log("Looking for faceit-card element. Found:", faceitCard);
-
+            // This now looks for the new ID
+            const faceitCard = document.getElementById('faceit-card-master');
+        
             if (faceitCard) {
                 if (isVisible) {
                     faceitCard.classList.remove('hidden-card');
-                    console.log("Removed hidden-card class. Card should be visible.");
                 } else {
                     faceitCard.classList.add('hidden-card');
-                    console.log("Added hidden-card class. Card should be hidden.");
                 }
             } else {
                 console.error("Faceit card element was not found in the DOM.");
