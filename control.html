@@ -160,6 +160,25 @@
             });
         };
         
+        const updateFaceitButton = async (target) => {
+            const buttonId = `${target}-faceit-toggle`;
+            const button = document.getElementById(buttonId);
+            if (!button) return;
+
+            try {
+                const response = await fetch(`${API_URL}?target=${target}`);
+                if (!response.ok) throw new Error('Failed to fetch state for Faceit toggle');
+                const data = await response.json();
+                if (data.faceit_visible) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            } catch (error) {
+                console.error(`Error fetching Faceit visibility for ${target}:`, error);
+            }
+        };
+
         const fetchInitialState = async () => {
             try {
                 const response = await fetch(API_URL);
@@ -168,7 +187,8 @@
                 
                 updateButtonState('master', data.master.page);
                 updateButtonState('vertical', data.vertical.page);
-
+                updateFaceitButton('master');
+                updateFaceitButton('vertical');
             } catch (error) {
                 console.error('Error fetching initial state:', error);
                 showStatusMessage('Error fetching initial state.', 'error');
@@ -192,12 +212,11 @@
                 showStatusMessage('State updated successfully!', 'success');
                 
                 if (target === 'all') {
-                     updateButtonState('master', responseData.newState.master.page);
-                     updateButtonState('vertical', responseData.newState.vertical.page);
+                    updateButtonState('master', responseData.newState.master.page);
+                    updateButtonState('vertical', responseData.newState.vertical.page);
                 } else {
                     updateButtonState(target, responseData.newState.page);
                 }
-
             } catch (error) {
                 console.error('API Error:', error);
                 showStatusMessage(`Error: ${error.message}`, 'error');
@@ -221,7 +240,8 @@
                 const response = await fetch(`${API_URL}?target=master`);
                 const data = await response.json();
                 const newVisibility = !data.faceit_visible;
-                sendPostRequest({ faceit_visible: newVisibility }, 'master');
+                await sendPostRequest({ faceit_visible: newVisibility }, 'master');
+                updateFaceitButton('master');
             } catch (error) {
                 showStatusMessage('Error toggling Faceit card.', 'error');
             }
@@ -232,7 +252,8 @@
                 const response = await fetch(`${API_URL}?target=vertical`);
                 const data = await response.json();
                 const newVisibility = !data.faceit_visible;
-                sendPostRequest({ faceit_visible: newVisibility }, 'vertical');
+                await sendPostRequest({ faceit_visible: newVisibility }, 'vertical');
+                updateFaceitButton('vertical');
             } catch (error) {
                 showStatusMessage('Error toggling Faceit card.', 'error');
             }
