@@ -178,6 +178,8 @@
             background-color: rgba(15, 23, 42, 0.7); 
             position: relative; 
             z-index: 1; 
+            border-bottom: 5px solid #37BFB0; /* Added neon border */
+            box-shadow: 0 10px 20px rgba(55, 191, 176, 0.7); /* Added glowing effect */
         } 
         .bottom-bar-filler { 
             width: 100%; 
@@ -191,6 +193,8 @@
             background-color: rgba(15, 23, 42, 0.7); 
             position: relative; 
             z-index: 1; 
+            border-top: 5px solid #37BFB0; /* Added neon border */
+            box-shadow: 0 -10px 20px rgba(55, 191, 176, 0.7); /* Added glowing effect */
         } 
         @keyframes wavy-bg-scroll { 
             0% { background-position: center top; } 
@@ -226,7 +230,7 @@
             display: flex; 
             align-items: center; 
             animation: card-glow 2s infinite alternate; 
-            width: 680px; /* Updated width */ 
+            width: 680px; 
             transition: all 0.3s ease-in-out; 
             justify-content: space-between; 
         } 
@@ -244,7 +248,7 @@
         .card-label { 
             white-space: nowrap; 
             flex-shrink: 0; 
-            font-size: 1.9rem; /* Updated font size */ 
+            font-size: 1.9rem; 
             font-weight: 800; 
         } 
         .name-display { 
@@ -252,14 +256,14 @@
             white-space: nowrap; 
             text-overflow: ellipsis; 
             max-width: 100%; 
-            font-size: 1.9rem; /* Updated font size */ 
+            font-size: 1.9rem; 
             font-weight: 800; 
             margin-left: auto; 
         } 
         .elo-data { 
             display: flex; 
             align-items: center; 
-            font-size: 1.9rem; /* Updated font size */ 
+            font-size: 1.9rem; 
             font-weight: 800; 
         } 
         .elo-data .ml-1 { margin-left: 0.75rem; } 
@@ -274,20 +278,20 @@
             align-items: center; 
             justify-content: space-between; 
             animation: card-glow 2.5s infinite alternate; 
-            width: 680px; /* Updated width */ 
+            width: 680px; 
             white-space: nowrap; 
         } 
         .youtube-goal-card .icon { font-size: 2.2rem; margin-right: 1rem; color: #FF0000; text-shadow: 0 0 10px #FF0000; } 
         .youtube-goal-card .goal-text-left { 
             display: flex; 
             align-items: center; 
-            font-size: 1.9rem; /* Updated font size */ 
+            font-size: 1.9rem; 
             font-weight: 800; 
             color: #E2E8F0; 
             text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000; 
         } 
         .youtube-goal-card .goal-text-right { 
-            font-size: 1.9rem; /* Updated font size */ 
+            font-size: 1.9rem; 
             font-weight: 800; 
             color: #E2E8F0; 
             text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000; 
@@ -305,13 +309,13 @@
             justify-content: center; 
             gap: 2rem; 
             animation: card-glow 2s infinite alternate; 
-            width: 680px; /* Updated width */ 
+            width: 680px; 
             margin-top: 1.5rem; 
         } 
         .social-icon { 
             color: #E2E8F0; 
             transition: color 0.3s ease, text-shadow 0.3s ease; 
-            font-size: 2.2rem; /* Updated font size for icons */ 
+            font-size: 2.2rem; 
         } 
         .social-icon:hover { color: #FF5500; text-shadow: 0 0 10px #FF5500; } 
         .social-icon.youtube:hover { color: #FF0000; text-shadow: 0 0 10px #FF0000; } 
@@ -334,14 +338,15 @@
             <div class="top-bar-content"> 
                 <div class="youtube-goal-card"> 
                     <div class="goal-text-left"> 
-                        <span>SUBSCRIBERS:</span> 
+                        <i class="fab fa-youtube icon"></i> 
+                        <span>SUB GOAL:</span> 
                     </div> 
                     <div class="goal-text-right"> 
                         <span id="youtube-count-goal" class="sub-count">0</span> / <span id="youtube-target" class="goal-target">10</span> 
                     </div> 
                 </div> 
                 <div class="card"> 
-                    <span class="text-outline card-label">RECENT FOLLOWER:</span> 
+                    <span class="text-outline card-label">Recent Follower:</span> 
                     <span id="recent-follower-name" class="highlight-text uppercase text-outline name-display"></span> 
                 </div> 
             </div> 
@@ -350,7 +355,7 @@
                 <div class="flex flex-col md:flex-row gap-4 items-center justify-center w-full"> 
                     <div class="card" id="faceit-card"> 
                         <div class="elo-data"> 
-                            <span class="text-outline">LEVEL:</span> 
+                            <span class="text-outline">Level:</span> 
                             <span id="elo-level" class="highlight-text uppercase text-outline ml-1">0</span> 
                         </div> 
                         <div class="elo-data"> 
