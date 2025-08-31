@@ -181,12 +181,15 @@
             align-items: center;
             justify-content: space-between;
         }
-        .card.hidden-card {
+
+        /* NEW DEDICATED HIDE CLASS */
+        .is-hidden {
             opacity: 0 !important;
             transform: scale(0.9) !important;
             pointer-events: none !important;
             visibility: hidden !important;
         }
+
         .text-outline {
             text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
         }
@@ -278,7 +281,7 @@
                     </span>
                 </div>
 
-                <div class="card hidden-card" id="faceit-card">
+                <div id="faceit-card" class="card">
                     <div class="elo-data">
                         <span class="text-base font-bold uppercase text-outline">Level:</span>
                         <span id="elo-level" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
@@ -301,7 +304,7 @@
         const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
         const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
 
-       // --- DO NOT MODIFY BELOW THIS LINE ---
+        // --- DO NOT MODIFY BELOW THIS LINE ---
         let lastState = { page: 'in-game-screen', faceit_visible: true };
         
         const showScreen = (id) => {
@@ -314,14 +317,14 @@
                 newActiveScreen.classList.add('active');
             }
         };
-    
+
         const updateFaceitCard = (isVisible) => {
             const faceitCard = document.getElementById('faceit-card');
             if (faceitCard) {
                 if (isVisible) {
-                    faceitCard.classList.remove('hidden-card');
+                    faceitCard.classList.remove('is-hidden');
                 } else {
-                    faceitCard.classList.add('hidden-card');
+                    faceitCard.classList.add('is-hidden');
                 }
             } else {
                 console.error("Faceit card element not found in the DOM.");
@@ -330,7 +333,6 @@
         
         const fetchState = async () => {
             try {
-                // Add a unique timestamp to prevent caching
                 const url = `${API_URL}?target=master&cachebuster=${Date.now()}`;
                 
                 const response = await fetch(url);
@@ -339,7 +341,6 @@
                 }
                 const data = await response.json();
                 
-                // Log the received data for debugging
                 console.log('Received state:', data);
                 
                 if (data.faceit_visible !== undefined) {
@@ -353,7 +354,7 @@
                 console.error('Failed to fetch master overlay state:', error);
             }
         };
-    
+
         const createParticles = (containerId) => {
             const particlesContainer = document.getElementById(containerId);
             const numParticles = 150;
