@@ -316,9 +316,7 @@
         };
 
         const updateFaceitCard = (isVisible) => {
-            // This now looks for the new ID
-            const faceitCard = document.getElementById('faceit-card-master');
-        
+            const faceitCard = document.getElementById('faceit-card');
             if (faceitCard) {
                 if (isVisible) {
                     faceitCard.classList.remove('hidden-card');
@@ -326,10 +324,10 @@
                     faceitCard.classList.add('hidden-card');
                 }
             } else {
-                console.error("Faceit card element was not found in the DOM.");
+                console.error("Faceit card element not found in the DOM.");
             }
         };
-
+        
         const fetchState = async () => {
             try {
                 const response = await fetch(`${API_URL}?target=master`);
@@ -338,17 +336,15 @@
                 }
                 const data = await response.json();
                 
-                if (data.page) {
-                    showScreen(data.page);
-                }
-                
+                // This is the fix: we will always call the update function
                 if (data.faceit_visible !== undefined) {
                     updateFaceitCard(data.faceit_visible);
                 }
-
-                if (data.page) lastState.page = data.page;
-                if (data.faceit_visible !== undefined) lastState.faceit_visible = data.faceit_visible;
-
+                
+                // Continue with the rest of the original logic
+                if (data.page) {
+                    showScreen(data.page);
+                }
             } catch (error) {
                 console.error('Failed to fetch master overlay state:', error);
             }
