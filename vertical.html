@@ -1,384 +1,442 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertical Stream Overlay</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: transparent;
-            overflow: hidden;
-            color: #E2E8F0;
-            margin: 0;
-            padding: 0;
-            width: 1080px; 
-            height: 1920px;
-            position: relative;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertical Stream Overlay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: transparent;
+            overflow: hidden;
+            color: #E2E8F0;
+            margin: 0;
+            padding: 0;
+            width: 1080px; 
+            height: 1920px;
+            position: relative;
+        }
 
-        .overlay-screen {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease-in-out;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            text-align: center;
-        }
-        .overlay-screen.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .overlay-screen {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+        .overlay-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
 
-        .main-content {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-color: transparent;
-            box-sizing: border-box;
-        }
-        
-        .vertical-scene-content {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-color: transparent;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-        
-        .vertical-scene-title {
-            font-size: 6rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #E2E8F0;
-            animation: text-glow 2s infinite alternate, text-pulse 4s infinite ease-in-out;
-            text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
-            margin-top: -350px;
-        }
-        .vertical-scene-subtitle {
-            font-size: 2.5rem;
-            font-weight: 400;
-            margin-top: 1rem;
-            display: inline-block;
-            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-        }
-        .vertical-highlight-bar {
-            width: 80%;
-            height: 6px;
-            background: linear-gradient(90deg, #FF5500, #37BFB0);
-            margin-top: 2rem;
-            animation: bar-glow 2s infinite alternate;
-        }
+        .main-content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: transparent;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .vertical-scene-content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: transparent;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .vertical-scene-title {
+            font-size: 6rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #E2E8F0;
+            animation: text-glow 2s infinite alternate, text-pulse 4s infinite ease-in-out;
+            text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+            margin-top: -350px;
+        }
+        .vertical-scene-subtitle {
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-top: 1rem;
+            display: inline-block;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
+        .vertical-highlight-bar {
+            width: 80%;
+            height: 6px;
+            background: linear-gradient(90deg, #FF5500, #37BFB0);
+            margin-top: 2rem;
+            animation: bar-glow 2s infinite alternate;
+        }
 
-        @keyframes text-glow {
-            0% { text-shadow: 0 0 10px #37BFB0, 0 0 20px #37BFB0, 0 0 30px #FF5500; }
-            100% { text-shadow: 0 0 20px #37BFB0, 0 0 30px #37BFB0, 0 0 40px #FF5500; }
-        }
-        @keyframes text-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-        @keyframes bar-glow {
-            0%, 100% { box-shadow: 0 0 5px #FF5500, 0 0 10px #FF5500; }
-            50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
-        }
+        @keyframes text-glow {
+            0% { text-shadow: 0 0 10px #37BFB0, 0 0 20px #37BFB0, 0 0 30px #FF5500; }
+            100% { text-shadow: 0 0 20px #37BFB0, 0 0 30px #37BFB0, 0 0 40px #FF5500; }
+        }
+        @keyframes text-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        @keyframes bar-glow {
+            0%, 100% { box-shadow: 0 0 5px #FF5500, 0 0 10px #FF5500; }
+            50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
+        }
 
-        .border-side {
-            position: absolute;
-            background-color: #37BFB0;
-            box-shadow: 0 0 10px #37BFB0, 0 0 20px #FF5500;
-            animation: border-glow-effect 3s infinite alternate;
-            z-index: 100;
-        }
-        .border-top { top: 0; left: 0; width: 100%; height: 5px; }
-        .border-bottom { bottom: 0; left: 0; width: 100%; height: 5px; }
-        .border-left { top: 0; left: 0; width: 5px; height: 100%; }
-        .border-right { top: 0; right: 0; width: 5px; height: 100%; }
-        @keyframes border-glow-effect {
-            0%, 100% { box-shadow: 0 0 5px #37BFB0, 0 0 10px #37BFB0; }
-            50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
-        }
-        .top-bar-filler {
-            position: absolute; top: 0; left: 0; width: 100%; height: 575px;
-            background-image: url('https://googleusercontent.com/file_content/1');
-            background-size: 100% auto; background-repeat: repeat-y; background-position: center top;
-            animation: wavy-bg-scroll 20s linear infinite;
-            z-index: 1;
-            background-blend-mode: overlay;
-            background-color: rgba(15, 23, 42, 0.7);
-        }
-        .bottom-bar-filler {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 575px;
-            background-image: url('https://googleusercontent.com/file_content/1');
-            background-size: 100% auto; background-repeat: repeat-y; background-position: center bottom;
-            animation: wavy-bg-scroll 20s linear infinite reverse;
-            z-index: 1;
-            background-blend-mode: overlay;
-            background-color: rgba(15, 23, 42, 0.7);
-        }
-        @keyframes wavy-bg-scroll {
-            0% { background-position: center top; }
-            100% { background-position: center -200px; }
-        }
-        .top-bar-content {
-            position: absolute; top: 120px; width: 100%;
-            display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
-            z-index: 3;
-        }
-        .bottom-bar-content {
-            position: absolute; bottom: 50px; width: 100%;
-            display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
-            z-index: 3;
-        }
-        .card {
-            background-color: rgba(30, 41, 59, 0.7);
-            border-radius: 0.75rem; padding: 14px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(45, 212, 191, 0.8);
-            backdrop-filter: blur(8px);
-            display: flex; align-items: center;
-            animation: card-glow 2s infinite alternate;
-            width: 400px;
-            transition: all 0.3s ease-in-out;
-        }
-        .card.hidden-card {
-            opacity: 0; transform: scale(0.9); pointer-events: none;
-        }
-        @keyframes card-glow {
-            0%, 100% { box-shadow: 0 0 5px #37BFB0, 0 0 10px #37BFB0; }
-            50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
-        }
-        .text-outline { text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; }
-        .highlight-text { color: #FF5500; font-weight: bold; }
-        .card-label { white-space: nowrap; flex-shrink: 0; margin-right: 0.5rem; }
-        .name-display { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px; }
-        .elo-data { display: flex; justify-content: space-between; width: 100%; }
-        .youtube-goal-card {
-            background-color: rgba(30, 41, 59, 0.85);
-            border-radius: 0.75rem; padding: 18px 24px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
-            border: 3px solid rgba(45, 212, 191, 0.9);
-            backdrop-filter: blur(10px);
-            display: flex; align-items: center; justify-content: center;
-            animation: card-glow 2.5s infinite alternate;
-            width: 500px;
-            white-space: nowrap;
-        }
-        .youtube-goal-card .icon { font-size: 2.5rem; margin-right: 1rem; color: #FF0000; text-shadow: 0 0 10px #FF0000; }
-        .youtube-goal-card .goal-text { font-size: 2.2rem; font-weight: 800; color: #E2E8F0; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 15px #FF5500; }
-        .youtube-goal-card .sub-count { color: #FF5500; }
-        .youtube-goal-card .goal-target { color: #CBD5E1; }
-        .social-media-bar {
-            background-color: rgba(30, 41, 59, 0.85);
-            border-radius: 0.75rem; padding: 10px 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(45, 212, 191, 0.8);
-            backdrop-filter: blur(8px);
-            display: flex; justify-content: center; gap: 1.5rem;
-            animation: card-glow 2s infinite alternate;
-            width: 400px;
-        }
-        .social-icon { color: #E2E8F0; transition: color 0.3s ease, text-shadow 0.3s ease; }
-        .social-icon:hover { color: #FF5500; text-shadow: 0 0 10px #FF5500; }
-        .social-icon.youtube:hover { color: #FF0000; text-shadow: 0 0 10px #FF0000; }
-        .social-icon.twitter:hover { color: #1DA1F2; text-shadow: 0 0 10px #1DA1F2; }
-        .social-icon.instagram:hover { color: #C13584; text-shadow: 0 0 10px #C13584; }
-    </style>
+        .border-side {
+            position: absolute;
+            background-color: #37BFB0;
+            box-shadow: 0 0 10px #37BFB0, 0 0 20px #FF5500;
+            animation: border-glow-effect 3s infinite alternate;
+            z-index: 100;
+        }
+        .border-top { top: 0; left: 0; width: 100%; height: 5px; }
+        .border-bottom { bottom: 0; left: 0; width: 100%; height: 5px; }
+        .border-left { top: 0; left: 0; width: 5px; height: 100%; }
+        .border-right { top: 0; right: 0; width: 5px; height: 100%; }
+        @keyframes border-glow-effect {
+            0%, 100% { box-shadow: 0 0 5px #37BFB0, 0 0 10px #37BFB0; }
+            50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
+        }
+        .top-bar-filler {
+            width: 100%;
+            height: 420px;
+            background-image: url('https://googleusercontent.com/file_content/1');
+            background-size: 100% auto;
+            background-repeat: repeat-y;
+            background-position: center top;
+            animation: wavy-bg-scroll 20s linear infinite;
+            background-blend-mode: overlay;
+            background-color: rgba(15, 23, 42, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+        .bottom-bar-filler {
+            width: 100%;
+            height: 420px;
+            background-image: url('https://googleusercontent.com/file_content/1');
+            background-size: 100% auto;
+            background-repeat: repeat-y;
+            background-position: center bottom;
+            animation: wavy-bg-scroll 20s linear infinite reverse;
+            background-blend-mode: overlay;
+            background-color: rgba(15, 23, 42, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes wavy-bg-scroll {
+            0% { background-position: center top; }
+            100% { background-position: center -200px; }
+        }
+        .top-bar-content, .bottom-bar-content {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            z-index: 3;
+        }
+        .top-bar-content {
+            top: 120px;
+        }
+        .bottom-bar-content {
+            bottom: 50px;
+        }
+        /* Adjusted card styles for consistency */
+        .card {
+            background-color: rgba(30, 41, 59, 0.7);
+            border-radius: 0.75rem;
+            padding: 18px 24px; 
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            border: 3px solid rgba(45, 212, 191, 0.9);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            animation: card-glow 2s infinite alternate;
+            width: 500px;
+            transition: all 0.3s ease-in-out;
+            justify-content: space-between;
+        }
+        .card.hidden-card {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+        @keyframes card-glow {
+            0%, 100% { box-shadow: 0 0 5px #37BFB0, 0 0 10px #37BFB0; }
+            50% { box-shadow: 0 0 15px #FF5500, 0 0 20px #FF5500; }
+        }
+        .text-outline { text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; }
+        .highlight-text { color: #FF5500; font-weight: bold; }
+        .card-label { 
+            white-space: nowrap; 
+            flex-shrink: 0; 
+            margin-right: 1.5rem;
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+        .name-display { 
+            overflow: hidden; 
+            white-space: nowrap; 
+            text-overflow: ellipsis; 
+            max-width: 250px;
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+        .elo-data { 
+            display: flex; 
+            align-items: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+        .elo-data .ml-1 {
+            margin-left: 0.75rem;
+        }
+
+        .youtube-goal-card {
+            background-color: rgba(30, 41, 59, 0.85);
+            border-radius: 0.75rem;
+            padding: 18px 24px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+            border: 3px solid rgba(45, 212, 191, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: card-glow 2.5s infinite alternate;
+            width: 500px;
+            white-space: nowrap;
+        }
+        .youtube-goal-card .icon { font-size: 2.5rem; margin-right: 1rem; color: #FF0000; text-shadow: 0 0 10px #FF0000; }
+        .youtube-goal-card .goal-text { font-size: 2.2rem; font-weight: 800; color: #E2E8F0; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 15px #FF5500; }
+        .youtube-goal-card .sub-count { color: #FF5500; }
+        .youtube-goal-card .goal-target { color: #CBD5E1; }
+        
+        /* Updated social media bar styles */
+        .social-media-bar {
+            background-color: rgba(30, 41, 59, 0.85);
+            border-radius: 0.75rem;
+            padding: 18px 24px; /* Increased padding */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            border: 3px solid rgba(45, 212, 191, 0.9); /* Increased border */
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            gap: 2rem; /* Increased gap */
+            animation: card-glow 2s infinite alternate;
+            width: 500px; /* Increased width */
+            margin-top: 1.5rem;
+        }
+        .social-icon { 
+            color: #E2E8F0; 
+            transition: color 0.3s ease, text-shadow 0.3s ease; 
+            font-size: 2.5rem; /* Increased font size for icons */
+        }
+        .social-icon:hover { color: #FF5500; text-shadow: 0 0 10px #FF5500; }
+        .social-icon.youtube:hover { color: #FF0000; text-shadow: 0 0 10px #FF0000; }
+        .social-icon.twitter:hover { color: #1DA1F2; text-shadow: 0 0 10px #1DA1F2; }
+        .social-icon.instagram:hover { color: #C13584; text-shadow: 0 0 10px #C13584; }
+    </style>
 </head>
 <body>
-    <div id="in-game-screen" class="overlay-screen active">
-        <div class="main-content">
-            <div class="border-side border-top"></div>
-            <div class="border-side border-bottom"></div>
-            <div class="border-side border-left"></div>
-            <div class="border-side border-right"></div>
-            
-            <div class="top-bar-filler"></div>
-            <div class="bottom-bar-filler"></div>
+    <div id="in-game-screen" class="overlay-screen active">
+        <div class="main-content">
+            <div class="border-side border-top"></div>
+            <div class="border-side border-bottom"></div>
+            <div class="border-side border-left"></div>
+            <div class="border-side border-right"></div>
+            
+            <div class="top-bar-filler"></div>
+            <div class="bottom-bar-filler"></div>
 
-            <div class="top-bar-content">
-                <div class="youtube-goal-card">
-                    <i class="fab fa-youtube icon"></i>
-                    <span class="goal-text">SUB GOAL: <span id="youtube-count-goal" class="sub-count">0</span> / <span id="youtube-target" class="goal-target">10</span></span>
-                </div>
-                                <div class="card flex items-center justify-between">
-                    <span class="text-base font-bold uppercase text-outline card-label">Recent Follower:</span>
-                    <span id="recent-follower-name" class="text-base font-bold highlight-text uppercase text-outline name-display">
-                        </span>
-                </div>
-            </div>
+            <div class="top-bar-content">
+                <div class="youtube-goal-card">
+                    <i class="fab fa-youtube icon"></i>
+                    <span class="goal-text">SUB GOAL: <span id="youtube-count-goal" class="sub-count">0</span> / <span id="youtube-target" class="goal-target">10</span></span>
+                </div>
+                <div class="card flex items-center justify-between">
+                    <span class="text-outline card-label">Recent Follower:</span>
+                    <span id="recent-follower-name" class="highlight-text uppercase text-outline name-display">
+                        </span>
+                </div>
+            </div>
 
-            <div class="bottom-bar-content">
-                <div class="flex flex-col md:flex-row gap-4 items-center justify-center w-full">
-                    <div class="card" id="faceit-card">
-                        <div class="elo-data">
-                            <span class="text-base font-bold uppercase text-outline">Level:</span>
-                            <span id="elo-level" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
-                        </div>
-                        <div class="elo-data">
-                            <span class="text-base font-bold uppercase text-outline">ELO:</span>
-                            <span id="elo-value" class="ml-1 text-base font-bold highlight-text uppercase text-outline">0</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="social-media-bar">
-                    <a href="https://www.youtube.com/watch?v=OUXvrWeQU0g8" target="_blank" class="social-icon youtube"><i class="fab fa-youtube"></i></a>
-                    <a href="https://www.twitter.com/darms1erGG" target="_blank" class="social-icon twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.instagram.com/darms1erGG" target="_blank" class="social-icon instagram"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
+            <div class="bottom-bar-content">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-center w-full">
+                    <div class="card" id="faceit-card">
+                        <div class="elo-data">
+                            <span class="text-outline">Level:</span>
+                            <span id="elo-level" class="highlight-text uppercase text-outline ml-1">0</span>
+                        </div>
+                        <div class="elo-data">
+                            <span class="text-outline">ELO:</span>
+                            <span id="elo-value" class="highlight-text uppercase text-outline ml-1">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="social-media-bar">
+                    <a href="https://www.youtube.com/watch?v=OUXvrWeQU0g8" target="_blank" class="social-icon youtube"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.twitter.com/darms1erGG" target="_blank" class="social-icon twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/darms1erGG" target="_blank" class="social-icon instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <div id="going-live-screen" class="overlay-screen">
-        <div class="vertical-screen-content">
-            <h1 class="vertical-scene-title">Going Live</h1>
-            <p class="vertical-scene-subtitle">Get ready, we're live!</p>
-            <div class="vertical-highlight-bar"></div>
-        </div>
-    </div>
+    <div id="going-live-screen" class="overlay-screen">
+        <div class="vertical-screen-content">
+            <h1 class="vertical-scene-title">Going Live</h1>
+            <p class="vertical-scene-subtitle">Get ready, we're live!</p>
+            <div class="vertical-highlight-bar"></div>
+        </div>
+    </div>
 
-    <div id="brb-screen" class="overlay-screen">
-        <div class="vertical-screen-content">
-            <h1 class="vertical-scene-title">Be Right Back</h1>
-            <p class="vertical-scene-subtitle">Stay tuned, I'll be back soon!</p>
-            <div class="vertical-highlight-bar"></div>
-        </div>
-    </div>
-    
-    <div id="thanks-screen" class="overlay-screen">
-        <div class="vertical-screen-content">
-            <h1 class="vertical-scene-title">Thanks For Watching</h1>
-            <p class="vertical-scene-subtitle">Catch you on the next stream!</p>
-            <div class="vertical-highlight-bar"></div>
-        </div>
-    </div>
-    <script>
-        // --- IMPORTANT: CONFIGURE THESE ---
-        const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
+    <div id="brb-screen" class="overlay-screen">
+        <div class="vertical-screen-content">
+            <h1 class="vertical-scene-title">Be Right Back</h1>
+            <p class="vertical-scene-subtitle">Stay tuned, I'll be back soon!</p>
+            <div class="vertical-highlight-bar"></div>
+        </div>
+    </div>
+    
+    <div id="thanks-screen" class="overlay-screen">
+        <div class="vertical-screen-content">
+            <h1 class="vertical-scene-title">Thanks For Watching</h1>
+            <p class="vertical-scene-subtitle">Catch you on the next stream!</p>
+            <div class="vertical-highlight-bar"></div>
+        </div>
+    </div>
+    <script>
+        // --- IMPORTANT: CONFIGURE THESE ---
+        const API_URL = 'WORKER_URL';
         const POLLING_INTERVAL = 4000;
         const YOUTUBE_TARGET_GOAL = 10;
-        const YOUTUBE_COUNT_URL = 'https://youtube-count.darms1er.workers.dev';
-        const YOUTUBE_CHANNEL_ID = 'UC_uN3iaa1OZxpQ05Fl-dhgA';
-        const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
-        const FACEIT_PLAYER_ID = '57280df3-9f9c-464e-bca9-e943c5d037f0';
-        
-        // --- DO NOT MODIFY BELOW THIS LINE ---
-        let lastState = { page: 'in-game-screen', faceit_visible: true };
+        const YOUTUBE_COUNT_URL = 'YOUTUBE_COUNT_URL';
+        const YOUTUBE_CHANNEL_ID = 'CHANNEL_ID';
+        const FACEIT_WORKER_URL = 'FACEIT_WORKER_URL';
+        const FACEIT_PLAYER_ID = 'PLAYER_ID';
+        
+        // --- DO NOT MODIFY BELOW THIS LINE ---
+        let lastState = { page: 'in-game-screen', faceit_visible: true };
 
-        const showScreen = (id) => {
-            const currentActiveScreen = document.querySelector('.overlay-screen.active');
-            if (currentActiveScreen) {
-                currentActiveScreen.classList.remove('active');
-            }
-            const newActiveScreen = document.getElementById(id);
-            if (newActiveScreen) {
-                newActiveScreen.classList.add('active');
-            }
-        };
+        const showScreen = (id) => {
+            const currentActiveScreen = document.querySelector('.overlay-screen.active');
+            if (currentActiveScreen) {
+                currentActiveScreen.classList.remove('active');
+            }
+            const newActiveScreen = document.getElementById(id);
+            if (newActiveScreen) {
+                newActiveScreen.classList.add('active');
+            }
+        };
 
-        const updateFaceitCard = (isVisible) => {
-            const faceitCard = document.getElementById('faceit-card');
-            if (faceitCard) {
-                if (isVisible) {
-                    faceitCard.classList.remove('hidden-card');
-                } else {
-                    faceitCard.classList.add('hidden-card');
-                }
-            }
-        };
+        const updateFaceitCard = (isVisible) => {
+            const faceitCard = document.getElementById('faceit-card');
+            if (faceitCard) {
+                if (isVisible) {
+                    faceitCard.classList.remove('hidden-card');
+                } else {
+                    faceitCard.classList.add('hidden-card');
+                }
+            }
+        };
 
-        const fetchState = async () => {
-            try {
-                const response = await fetch(`${API_URL}?target=vertical`);
-                const data = await response.json();
-                
-                if (data.page && data.page !== lastState.page) {
-                    showScreen(data.page);
-                    lastState.page = data.page;
-                }
-                
-                if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
-                    updateFaceitCard(data.faceit_visible);
-                    lastState.faceit_visible = data.faceit_visible;
-                }
-            } catch (error) {
-                console.error('Failed to fetch state for vertical overlay:', error);
-            }
-        };
+        const fetchState = async () => {
+            try {
+                const response = await fetch(`${API_URL}?target=vertical`);
+                const data = await response.json();
+                
+                if (data.page && data.page !== lastState.page) {
+                    showScreen(data.page);
+                    lastState.page = data.page;
+                }
+                
+                if (data.faceit_visible !== undefined && data.faceit_visible !== lastState.faceit_visible) {
+                    updateFaceitCard(data.faceit_visible);
+                    lastState.faceit_visible = data.faceit_visible;
+                }
+            } catch (error) {
+                console.error('Failed to fetch state for vertical overlay:', error);
+            }
+        };
 
-        const fetchYouTubeCount = async () => {
-            const url = YOUTUBE_COUNT_URL;
-            const channelId = YOUTUBE_CHANNEL_ID;
-            if (url === 'YOUTUBE_COUNT_URL' || channelId === 'CHANNEL_ID') {
-                document.getElementById('youtube-count-goal').textContent = 'N/A';
-                document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
-                return;
-            }
-            try {
-                const response = await fetch(`${url}?channelId=${channelId}`);
-                const data = await response.json();
-                if (response.ok && data.subscriberCount) {
-                    document.getElementById('youtube-count-goal').textContent = data.subscriberCount.toLocaleString();
-                    document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
-                } else { throw new Error(data.error || 'Failed to fetch YouTube count.'); }
-            } catch (error) { document.getElementById('youtube-count-goal').textContent = 'N/A'; }
-        };
+        const fetchYouTubeCount = async () => {
+            const url = YOUTUBE_COUNT_URL;
+            const channelId = YOUTUBE_CHANNEL_ID;
+            if (url === 'YOUTUBE_COUNT_URL' || channelId === 'CHANNEL_ID') {
+                document.getElementById('youtube-count-goal').textContent = 'N/A';
+                document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
+                return;
+            }
+            try {
+                const response = await fetch(`${url}?channelId=${channelId}`);
+                const data = await response.json();
+                if (response.ok && data.subscriberCount) {
+                    document.getElementById('youtube-count-goal').textContent = data.subscriberCount.toLocaleString();
+                    document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
+                } else { throw new Error(data.error || 'Failed to fetch YouTube count.'); }
+            } catch (error) { document.getElementById('youtube-count-goal').textContent = 'N/A'; }
+        };
 
-        const fetchFaceitData = async () => {
-            const url = FACEIT_WORKER_URL;
-            const playerId = FACEIT_PLAYER_ID;
-            if (url === 'FACEIT_WORKER_URL' || playerId === 'PLAYER_ID') {
-                document.getElementById('elo-value').textContent = 'N/A';
-                document.getElementById('elo-level').textContent = 'N/A';
-                return;
-            }
-            try {
-                const response = await fetch(`${url}/${playerId}`);
-                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-                const data = await response.json();
-                const elo = data.games.cs2.faceit_elo || 0;
-                const level = data.games.cs2.skill_level || 0;
-                document.getElementById('elo-value').textContent = elo;
-                document.getElementById('elo-level').textContent = level;
-            } catch (error) {
-                document.getElementById('elo-value').textContent = 'N/A';
-                document.getElementById('elo-level').textContent = 'N/A';
-            }
-        };
+        const fetchFaceitData = async () => {
+            const url = FACEIT_WORKER_URL;
+            const playerId = FACEIT_PLAYER_ID;
+            if (url === 'FACEIT_WORKER_URL' || playerId === 'PLAYER_ID') {
+                document.getElementById('elo-value').textContent = 'N/A';
+                document.getElementById('elo-level').textContent = 'N/A';
+                return;
+            }
+            try {
+                const response = await fetch(`${url}/${playerId}`);
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                const data = await response.json();
+                const elo = data.games.cs2.faceit_elo || 0;
+                const level = data.games.cs2.skill_level || 0;
+                document.getElementById('elo-value').textContent = elo;
+                document.getElementById('elo-level').textContent = level;
+            } catch (error) {
+                document.getElementById('elo-value').textContent = 'N/A';
+                document.getElementById('elo-level').textContent = 'N/A';
+            }
+        };
 
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'event' && event.data.event && event.data.event.listener === 'follower-latest') {
-                const followerName = event.data.event.name;
-                document.getElementById('recent-follower-name').textContent = followerName;
-            }
-        });
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            showScreen('in-game-screen');
-            fetchState();
-            setInterval(fetchState, POLLING_INTERVAL);
-            fetchYouTubeCount();
-            fetchFaceitData();
-            setInterval(fetchYouTubeCount, 30000);
-            setInterval(fetchFaceitData, 30000);
-        });
-    </script>
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'event' && event.data.event && event.data.event.listener === 'follower-latest') {
+                const followerName = event.data.event.name;
+                document.getElementById('recent-follower-name').textContent = followerName;
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            showScreen('in-game-screen');
+            fetchState();
+            setInterval(fetchState, POLLING_INTERVAL);
+            fetchYouTubeCount();
+            fetchFaceitData();
+            setInterval(fetchYouTubeCount, 30000);
+            setInterval(fetchFaceitData, 30000);
+        });
+    </script>
 </body>
 </html>
