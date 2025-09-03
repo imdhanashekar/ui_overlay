@@ -26,6 +26,7 @@
         .overlay-screen { 
             width: 100%; 
             height: 100%; 
+            background-image: url(mobile_background.png); 
             position: absolute; 
             top: 0; 
             left: 0; 
@@ -343,7 +344,7 @@
                         <span>SUBSCRIBERS:</span> 
                     </div> 
                     <div class="goal-text-right"> 
-                        <span id="youtube-count-goal" class="sub-count">0</span> / <span id="youtube-target" class="goal-target">10</span> 
+                        <span id="youtube-count-goal" class="sub-count">0</span> / <span id="youtube-target" class="goal-target">15</span> 
                     </div> 
                 </div> 
                 <div class="card"> 
@@ -406,7 +407,7 @@
         // --- IMPORTANT: CONFIGURE THESE --- 
         const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
         const POLLING_INTERVAL = 4000;
-        const YOUTUBE_TARGET_GOAL = 10;
+        const YOUTUBE_TARGET_GOAL = 15;
         const YOUTUBE_COUNT_URL = 'https://youtube-count.darms1er.workers.dev';
         const YOUTUBE_CHANNEL_ID = 'UC3n9I7BZFWY4tF2oemfcqTQ';
         const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
