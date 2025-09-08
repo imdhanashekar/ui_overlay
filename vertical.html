@@ -346,7 +346,7 @@
                         <span>SUBSCRIBERS:</span> 
                     </div> 
                     <div class="goal-text-right"> 
-                        <span id="youtube-count-goal" class="sub-count">0</span> / <span id="youtube-target" class="goal-target">18</span> 
+                        <span id="youtube-count-goal" class="sub-count">0</span> / <span id="youtube-target" class="goal-target">21</span> 
                     </div> 
                 </div> 
                 <div class="card"> 
@@ -409,7 +409,7 @@
         // --- IMPORTANT: CONFIGURE THESE --- 
         const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
         const POLLING_INTERVAL = 4000;
-        const YOUTUBE_TARGET_GOAL = 18;
+        const YOUTUBE_TARGET_GOAL = 21;
         const YOUTUBE_COUNT_URL = 'https://youtube-count.darms1er.workers.dev';
         const YOUTUBE_CHANNEL_ID = 'UC3n9I7BZFWY4tF2oemfcqTQ';
         const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
@@ -459,33 +459,28 @@
             } 
         }; 
 
-        let lastKnownYouTubeCount = 'N/A';
-
         const fetchYouTubeCount = async () => {
-            const url = YOUTUBE_COUNT_URL;
-            const channelId = YOUTUBE_CHANNEL_ID;
-            if (url === 'YOUTUBE_COUNT_URL' || channelId === 'CHANNEL_ID') {
-                document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
-                document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
-                return;
-            }
-            try {
-                const response = await fetch(`${url}?channelId=${channelId}`);
-                const data = await response.json();
-                if (response.ok && data.subscriberCount) {
-                    lastKnownYouTubeCount = data.subscriberCount.toLocaleString();
-                    document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
-                    document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
-                } else {
-                    // Keep the last successful count if the response is not OK
-                    throw new Error(data.error || 'Failed to fetch YouTube count.');
-                }
-            } catch (error) {
-                console.error('Failed to fetch YouTube count:', error);
-                // On error, the count remains the last known value
-                document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
-            }
-        }; 
+            if (YOUTUBE_COUNT_URL === 'YOUTUBE_COUNT_URL' || YOUTUBE_CHANNEL_ID === 'CHANNEL_ID') {
+                document.getElementById('youtube-count').textContent = lastKnownYouTubeCount;
+                document.getElementById('youtube-goal').textContent = YOUTUBE_TARGET_GOAL;
+                return;
+            }
+            try {
+                const response = await fetch(`${YOUTUBE_COUNT_URL}?channelId=${YOUTUBE_CHANNEL_ID}`);
+                const data = await response.json();
+                if (response.ok && data.subscriberCount !== undefined && data.subscriberCount !== null) {
+                    lastKnownYouTubeCount = data.subscriberCount.toLocaleString();
+                    document.getElementById('youtube-count').textContent = lastKnownYouTubeCount;
+                    document.getElementById('youtube-goal').textContent = YOUTUBE_TARGET_GOAL;
+                } else {
+                    console.error('API returned an invalid or empty subscriber count:', data);
+                    document.getElementById('youtube-count').textContent = lastKnownYouTubeCount;
+                }
+            } catch (error) {
+                console.error('Failed to fetch YouTube count:', error);
+                document.getElementById('youtube-count').textContent = lastKnownYouTubeCount;
+            }
+        };
 
         const fetchFaceitData = async () => { 
             const url = FACEIT_WORKER_URL; 
