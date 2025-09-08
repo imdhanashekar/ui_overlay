@@ -400,40 +400,28 @@
               }
             }
         };
-        let lastKnownYouTubeCount = 'N/A'; // Use a string to avoid showing a number initially
-    
         const fetchYouTubeCount = async () => {
-            const url = YOUTUBE_COUNT_URL;
-            const channelId = YOUTUBE_CHANNEL_ID;
-    
-            // If configuration is missing, show the initial placeholder value
-            if (url === 'YOUTUBE_COUNT_URL' || channelId === 'CHANNEL_ID') {
-                document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
-                document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
-                return;
-            }
-    
-            try {
-                const response = await fetch(`${url}?channelId=${channelId}`);
-                const data = await response.json();
-                
-                // Check for a valid response and subscriber count
-                if (response.ok && data.subscriberCount !== undefined && data.subscriberCount !== null) {
-                    // Update the stored count with the new, valid number
-                    lastKnownYouTubeCount = data.subscriberCount.toLocaleString();
-                    document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
-                    document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
-                } else {
-                    // If response is not ok or count is invalid, log an error and keep the last known value
-                    console.error('API returned an invalid or empty subscriber count:', data);
-                    document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
-                }
-            } catch (error) {
-                // On a network or server error, the count remains the last known value
-                console.error('Failed to fetch YouTube count:', error);
-                document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
-            }
-        };
+            if (YOUTUBE_COUNT_URL === 'YOUTUBE_COUNT_URL' || YOUTUBE_CHANNEL_ID === 'CHANNEL_ID') {
+                document.getElementById('youtube-count').textContent = lastKnownYouTubeCount;
+                document.getElementById('youtube-goal').textContent = YOUTUBE_TARGET_GOAL;
+                return;
+            }
+            try {
+                const response = await fetch(`${YOUTUBE_COUNT_URL}?channelId=${YOUTUBE_CHANNEL_ID}`);
+                const data = await response.json();
+                if (response.ok && data.subscriberCount !== undefined && data.subscriberCount !== null) {
+                    lastKnownYouTubeCount = data.subscriberCount.toLocaleString();
+                    document.getElementById('youtube-count').textContent = lastKnownYouTubeCount;
+                    document.getElementById('youtube-goal').textContent = YOUTUBE_TARGET_GOAL;
+                } else {
+                    console.error('API returned an invalid or empty subscriber count:', data);
+                    document.getElementById('youtube-count').textContent = lastKnownYouTubeCount;
+                }
+            } catch (error) {
+                console.error('Failed to fetch YouTube count:', error);
+                document.getElementById('youtube-count').textContent = lastKnownYouTubeCount;
+            }
+        };
         const fetchFaceitData = async () => {
             if (FACEIT_WORKER_URL === 'FACEIT_WORKER_URL' || FACEIT_PLAYER_ID === 'PLAYER_ID') {
                 document.getElementById('elo-value').textContent = 'N/A';
