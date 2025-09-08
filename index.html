@@ -272,7 +272,7 @@
                     <div class="flex items-center ml-2">
                         <span id="youtube-count" class="text-base font-bold highlight-text uppercase text-outline">0</span>
                         <span class="text-base font-bold uppercase text-outline">/</span>
-                        <span id="youtube-goal" class="text-base uppercase text-outline">18</span>
+                        <span id="youtube-goal" class="text-base uppercase text-outline">21</span>
                     </div>
                 </div>
 
@@ -299,7 +299,7 @@
         // --- IMPORTANT: CONFIGURE THESE ---
         const API_URL = 'https://stream-controller-worker.darms1er.workers.dev';
         const POLLING_INTERVAL = 4000;
-        const YOUTUBE_TARGET_GOAL = 18;
+        const YOUTUBE_TARGET_GOAL = 21;
         const YOUTUBE_COUNT_URL = 'https://youtube-count.darms1er.workers.dev';
         const YOUTUBE_CHANNEL_ID = 'UC3n9I7BZFWY4tF2oemfcqTQ';
         const FACEIT_WORKER_URL = 'https://faceit-elo.darms1er.workers.dev';
@@ -400,30 +400,37 @@
               }
             }
         };
-        let lastKnownYouTubeCount = 'N/A';
-
+        let lastKnownYouTubeCount = 'N/A'; // Use a string to avoid showing a number initially
+    
         const fetchYouTubeCount = async () => {
             const url = YOUTUBE_COUNT_URL;
             const channelId = YOUTUBE_CHANNEL_ID;
+    
+            // If configuration is missing, show the initial placeholder value
             if (url === 'YOUTUBE_COUNT_URL' || channelId === 'CHANNEL_ID') {
                 document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
                 document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
                 return;
             }
+    
             try {
                 const response = await fetch(`${url}?channelId=${channelId}`);
                 const data = await response.json();
-                if (response.ok && data.subscriberCount) {
+                
+                // Check for a valid response and subscriber count
+                if (response.ok && data.subscriberCount !== undefined && data.subscriberCount !== null) {
+                    // Update the stored count with the new, valid number
                     lastKnownYouTubeCount = data.subscriberCount.toLocaleString();
                     document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
                     document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
                 } else {
-                    // Keep the last successful count if the response is not OK
-                    throw new Error(data.error || 'Failed to fetch YouTube count.');
+                    // If response is not ok or count is invalid, log an error and keep the last known value
+                    console.error('API returned an invalid or empty subscriber count:', data);
+                    document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
                 }
             } catch (error) {
+                // On a network or server error, the count remains the last known value
                 console.error('Failed to fetch YouTube count:', error);
-                // On error, the count remains the last known value
                 document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
             }
         };
