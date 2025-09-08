@@ -400,22 +400,31 @@
               }
             }
         };
+        let lastKnownYouTubeCount = 'N/A';
+
         const fetchYouTubeCount = async () => {
-            if (YOUTUBE_COUNT_URL === 'YOUTUBE_COUNT_URL' || YOUTUBE_CHANNEL_ID === 'CHANNEL_ID') {
-                document.getElementById('youtube-count').textContent = 'N/A';
+            const url = YOUTUBE_COUNT_URL;
+            const channelId = YOUTUBE_CHANNEL_ID;
+            if (url === 'YOUTUBE_COUNT_URL' || channelId === 'CHANNEL_ID') {
+                document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
+                document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
                 return;
             }
             try {
-                const response = await fetch(`${YOUTUBE_COUNT_URL}?channelId=${YOUTUBE_CHANNEL_ID}`);
+                const response = await fetch(`${url}?channelId=${channelId}`);
                 const data = await response.json();
                 if (response.ok && data.subscriberCount) {
-                    document.getElementById('youtube-count').textContent = data.subscriberCount;
-                    document.getElementById('youtube-goal').textContent = YOUTUBE_TARGET_GOAL;
+                    lastKnownYouTubeCount = data.subscriberCount.toLocaleString();
+                    document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
+                    document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL.toLocaleString();
                 } else {
+                    // Keep the last successful count if the response is not OK
                     throw new Error(data.error || 'Failed to fetch YouTube count.');
                 }
             } catch (error) {
-                document.getElementById('youtube-count').textContent = 'N/A';
+                console.error('Failed to fetch YouTube count:', error);
+                // On error, the count remains the last known value
+                document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
             }
         };
         const fetchFaceitData = async () => {
