@@ -461,8 +461,8 @@
 
         const fetchYouTubeCount = async () => {
             if (YOUTUBE_COUNT_URL === 'YOUTUBE_COUNT_URL' || YOUTUBE_CHANNEL_ID === 'CHANNEL_ID') {
-                document.getElementById('youtube-count').textContent = lastKnownYouTubeCount;
-                document.getElementById('youtube-goal').textContent = YOUTUBE_TARGET_GOAL;
+                document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
+                document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL;
                 return;
             }
             try {
@@ -470,15 +470,15 @@
                 const data = await response.json();
                 if (response.ok && data.subscriberCount !== undefined && data.subscriberCount !== null) {
                     lastKnownYouTubeCount = data.subscriberCount.toLocaleString();
-                    document.getElementById('youtube-count').textContent = lastKnownYouTubeCount;
-                    document.getElementById('youtube-goal').textContent = YOUTUBE_TARGET_GOAL;
+                    document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
+                    document.getElementById('youtube-target').textContent = YOUTUBE_TARGET_GOAL;
                 } else {
                     console.error('API returned an invalid or empty subscriber count:', data);
-                    document.getElementById('youtube-count').textContent = lastKnownYouTubeCount;
+                    document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
                 }
             } catch (error) {
                 console.error('Failed to fetch YouTube count:', error);
-                document.getElementById('youtube-count').textContent = lastKnownYouTubeCount;
+                document.getElementById('youtube-count-goal').textContent = lastKnownYouTubeCount;
             }
         };
 
